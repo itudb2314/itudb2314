@@ -1,5 +1,28 @@
 pwd := $(shell pwd)
 
+mysql:
+	docker run --name fifa-mysql -e MYSQL_ROOT_PASSWORD=root -d -p 3306:3306 mysql:8.1
+
+mysql-start:
+	docker start fifa-mysql
+
+mysql-stop:
+	docker stop fifa-mysql
+
+mysql-remove:
+	docker stop fifa-mysql && \
+	docker rm fifa-mysql
+
+createdb:
+	docker exec -it fifa-mysql mysql -u root --password=root -e "CREATE DATABASE fifa;"
+
+removedb:
+	docker exec -it fifa-mysql mysql -u root --password=root -e "DROP DATABASE fifa;"
+
+server:
+	cd backend/ && \
+	python3 main.py
+
 frontend-build:
 	cd ./frontend && \
 	docker build -t fifa-frontend .
@@ -15,4 +38,4 @@ remove-frontend-docker:
 	docker stop fifa-frontend && \
 	docker rm fifa-frontend
 
-.PHONY: frontend-build frontend-start frontend-stop remove-frontend-docker
+.PHONY: mysql mysql-start mysql-stop mysql-remove frontend-build frontend-start frontend-stop remove-frontend-docker
