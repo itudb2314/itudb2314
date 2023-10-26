@@ -1,6 +1,7 @@
 # Description: This file contains the class for the database object
 
 import mysql.connector
+from db.models.squad import *
 
 # Class: db
 # Description: This class contains the database object
@@ -30,3 +31,24 @@ class db:
             self.conn = None
         else:
             print("No active connection to close.")
+
+    def get_squad(self, tournament_id):
+        if self.conn:
+            cursor = self.conn.cursor()
+            cursor.execute(f"SELECT * FROM squads WHERE tournament_id = '{tournament_id}'")
+            squads = []
+            rows = cursor.fetchall()
+            for row in rows:
+                squad = Squad(
+                    row[0],
+                    row[1],
+                    row[2],
+                    row[3],
+                    row[4],
+                    row[5],
+                )
+                squads.append(squad)
+            return squads
+
+        else:
+            print("No active connection to database.")
