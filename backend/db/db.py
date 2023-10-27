@@ -2,8 +2,6 @@
 
 import mysql.connector
 from db.models.squads import *
-from db.models.player_apperances import *
-from db.models.players import *
 
 # Class: db
 # Description: This class contains the database object

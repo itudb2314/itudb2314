@@ -1,11 +1,7 @@
-from db import db
-
-from db.models.squads import *
-from db.models.player_apperances import *
-from db.models.players import *
+from db.db import db
 
 def main():
-    database = db.db('fifa')
+    database = db('fifa')
     database.connect()
 
     # test module fore squads
@@ -20,7 +16,7 @@ def main():
     #     print()
     #     database.delete_squad('WC-1930', 'T-07', 'P-33095')
 
-    # database.disconnect()
+    database.disconnect()
 
 if __name__ == "__main__":
     main()
