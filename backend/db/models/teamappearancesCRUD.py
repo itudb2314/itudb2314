@@ -75,7 +75,7 @@ class TeamAppearanceDAO():
     @staticmethod
     def get_team_appearance_by_match_id(db, match_id: str) -> TeamAppearance:
         try:
-            query = "SELECT * FROM team_appearances WHERE match_id = %s"
+            query = "SELECT * FROM team_appearances WHERE match_id = %s AND tournament_id = %s"
             cursor = db.conn.cursor()
             cursor.execute(query, (match_id,))
             row = cursor.fetchone()
@@ -101,15 +101,14 @@ class TeamAppearanceDAO():
     @staticmethod
     def update_team_appearance(db, ta: TeamAppearance) -> None:
         try:
-            query = """UPDATE team_appearances SET
-                        tournament_id = %s, opponent_id = %s,
+            query = """UPDATE team_appearances SET opponent_id = %s,
                         home_team = %s, away_team = %s,
                         goals_for = %s, goals_against = %s,
                         goal_differential = %s, extra_time = %s,
                         penalty_shootout = %s, penalties_for = %s,
                         penalties_against = %s, result = %s, win = %s,
                         lose = %s, draw = %s
-                    WHERE match_id = %s AND team_id = %s
+                    WHERE match_id = %s AND team_id = %s AND tournament_id = %s
             """
             cursor = db.conn.cursor()
             cursor.execute(query, (
@@ -139,7 +138,7 @@ class TeamAppearanceDAO():
     @staticmethod
     def delete_team_appearance(db, match_id: str, team_id: str) -> None:
         try:
-            query = "DELETE FROM team_appearances WHERE match_id = %s AND team_id = %s"
+            query = "DELETE FROM team_appearances WHERE match_id = %s AND team_id = %s AND tournament_id = %s"
             cursor = db.conn.cursor()
             cursor.execute(query, (match_id, team_id))
             cursor.close()
