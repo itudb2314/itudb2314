@@ -67,9 +67,11 @@ class PlayerDAO():
             """
             cursor = db.conn.cursor()
             cursor.execute(query, (player_id,))
-            result = cursor.fetchall()
+            result = cursor.fetchone()
             cursor.close()
-            return result
+            if result is None:
+                return None
+            return Player(*result)
         except mysql.connector.Error as err:
             print(f"Error: {err}")
     
@@ -81,9 +83,11 @@ class PlayerDAO():
             """
             cursor = db.conn.cursor()
             cursor.execute(query)
-            result = cursor.fetchall()
+            results = cursor.fetchall()
             cursor.close()
-            return result
+            if results is None:
+                return None
+            return [Player(*result) for result in results]
         except mysql.connector.Error as err:
             print(f"Error: {err}")
     
