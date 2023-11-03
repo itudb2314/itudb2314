@@ -101,7 +101,116 @@ class MatchDAO():
                     match.away_team_win, 
                     match.draw, 
             ))
-            cursor.close()
             db.conn.commit()
         except mysql.connector.Error as error:
             print(f"Error: {error}")
+        finally: 
+            cursor.close()
+
+    @staticmethod
+    def get_match_by_id(db : db, match_id : str) -> Match:
+        try:
+            query = """
+                    SELECT * FROM matches WHERE match_id = %s
+                    """
+            cursor = db.conn.cursor()
+            cursor.execute(query, (match_id))
+            result = cursor.fetchone()
+            if result:
+                return Match(result[0], result[1], result[2], result[3],result[4], result[5], result[6], 
+                            result[7], result[8], result[9], result[10], result[11],result[12], result[13], 
+                            result[14], result[15], result[16], result[17], result[18],result[19], result[20], 
+                            result[21], result[22], result[23], result[24], result[25], result[26],result[27])
+            else:
+                return None
+        
+        except mysql.connector.Error as error:
+            print(f"Error: {error}")
+        finally:
+            cursor.close()
+
+    @staticmethod
+    def update_match(db : db, match : Match) -> None:
+        try:
+            query = """
+                    UPDATE matches SET
+                        tournament_id = %s,
+                        match_name = %s,
+                        stage_name = %s,
+                        group_name = %s,
+                        group_stage = %s,
+                        knockout_stage = %s,
+                        replayed = %s,
+                        replay = %s,
+                        match_date = %s,
+                        match_time = %s,
+                        stadium_id = %s,
+                        home_team_id = %s,
+                        away_team_id = %s,
+                        score = %s,
+                        home_team_score = %s,
+                        away_team_score = %s,
+                        home_team_score_margin = %s,
+                        away_team_score_margin = %s,
+                        extra_time = %s,
+                        penalty_shootout = %s,
+                        score_penalties = %s,
+                        home_team_score_penalties = %s,
+                        away_team_score_penalties = %s,
+                        result = %s,
+                        home_team_win = %s,
+                        away_team_win = %s,
+                        draw = %s
+                    WHERE match_id = %s
+                    """
+            cursor = db.conn.cursor()
+            cursor.execute(query, (
+                    match.tournament_id,
+                    match.match_name,
+                    match.stage_name,
+                    match.group_name,
+                    match.group_stage,
+                    match.knockout_stage,
+                    match.replayed,
+                    match.replay,
+                    match.match_date,
+                    match.match_time,
+                    match.stadium_id,
+                    match.home_team_id,
+                    match.away_team_id,
+                    match.score,
+                    match.home_team_score,
+                    match.away_team_score,
+                    match.home_team_score_margin,
+                    match.away_team_score_margin,
+                    match.extra_time,
+                    match.penalty_shootout,
+                    match.score_penalties,
+                    match.home_team_score_penalties,
+                    match.away_team_score_penalties,
+                    match.result,
+                    match.home_team_win,
+                    match.away_team_win,
+                    match.draw,
+                    match.match_id
+            ))
+            db.conn.commit()
+        except mysql.connector.Error as error:
+            print(f"Error: {error}")
+        finally:
+            cursor.close()
+    
+    @staticmethod
+    def delete_match(db : db, match_id : str) -> None:
+        try:   
+            query = """
+                    DELETE FROM matches WHERE match_id = %s
+                    """
+            cursor = db.conn.cursor()
+            cursor.execute(query, (match_id))
+            db.conn.commit()
+        except mysql.connector.Error as error:
+            print(f"Error: {error}")
+        finally:
+            cursor.close()
+        
