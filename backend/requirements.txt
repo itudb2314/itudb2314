@@ -1,3 +1,5 @@
 mysql-connector-python
 attrs
 dataclasses
+flask
+flask-cors

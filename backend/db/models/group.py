@@ -3,15 +3,17 @@ from dataclasses import dataclass
 import mysql.connector
 from db.db import db
 
+
 @dataclass
-class Group():
+class Group:
     tournament_id : str
     stage_number: int
     stage_name: str
     group_stage: int
     count_team: int
 
-class GroupDAO():
+
+class GroupDAO:
     @staticmethod
     def insert_group(db: db, group: Group) -> None:
         try:

@@ -1,10 +1,11 @@
-from attr import dataclass
+from dataclasses import dataclass
 from db.db import db
 import mysql.connector
 from mysql.connector import errorcode
 
+
 @dataclass
-class Teams():
+class Teams:
     team_id: str
     team_name: str
     team_code: str

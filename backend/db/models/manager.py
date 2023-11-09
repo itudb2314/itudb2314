@@ -5,7 +5,7 @@ from db.db import db
 
 
 @dataclass
-class Manager():
+class Manager:
     manager_id: str
     family_name: str
     given_name: str

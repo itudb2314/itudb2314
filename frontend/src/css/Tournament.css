@@ -1,0 +1,28 @@
+.tournaments {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tournament {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    margin: 10px 10px;
+}
+
+.tournament-details {
+    width: 300px;
+    border: 2px solid black;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    margin: -2px 0 1px 24px;
+    padding: 5px 0 0 10px;
+    align-content: flex-start;
+    box-shadow: 6px 5px 3px #606468;
+    background: azure;
+    align-items: flex-start;
+    justify-content: flex-start;
+    text-align: left;
+}

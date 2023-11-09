@@ -1,9 +1,10 @@
-from attr import dataclass
+from dataclasses import dataclass
 import mysql.connector
 from mysql.connector import errorcode
 
+
 @dataclass
-class TeamAppearance():
+class TeamAppearance:
     tournament_id: str
     match_id: str
     team_id: str

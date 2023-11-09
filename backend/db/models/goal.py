@@ -1,25 +1,27 @@
-from db.db import db 
-from attr import dataclass
+from db.db import db
+from dataclasses import dataclass
 import mysql.connector
 from mysql.connector import errorcode
 
+
 @dataclass
-class Goal():
+class Goal:
     goal_id: str
-    tournament_id : str
-    match_id : str
-    team_id : str
-    home_team : bool
-    away_team : bool
-    player_id : str
-    shirt_number : int
-    player_team_id : str
-    minute_label : str
-    minute_regulation : int
-    minute_stoppage : int
-    match_period : str
-    own_goal : bool
-    penalty : bool
+    tournament_id: str
+    match_id: str
+    team_id: str
+    home_team: bool
+    away_team: bool
+    player_id: str
+    shirt_number: int
+    player_team_id: str
+    minute_label: str
+    minute_regulation: int
+    minute_stoppage: int
+    match_period: str
+    own_goal: bool
+    penalty: bool
+
 
 class GoalDAO():
     @staticmethod
@@ -46,21 +48,21 @@ class GoalDAO():
             """
             cursor = db.conn.cursor()
             cursor.execute(query, (
-                    goal.goal_id,
-                    goal.tournament_id,
-                    goal.match_id,
-                    goal.team_id,
-                    goal.home_team,
-                    goal.away_team,
-                    goal.player_id,
-                    goal.shirt_number,
-                    goal.player_team_id,
-                    goal.minute_label,
-                    goal.minute_regulation,
-                    goal.minute_stoppage,
-                    goal.match_period,
-                    goal.own_goal,
-                    goal.penalty   
+                goal.goal_id,
+                goal.tournament_id,
+                goal.match_id,
+                goal.team_id,
+                goal.home_team,
+                goal.away_team,
+                goal.player_id,
+                goal.shirt_number,
+                goal.player_team_id,
+                goal.minute_label,
+                goal.minute_regulation,
+                goal.minute_stoppage,
+                goal.match_period,
+                goal.own_goal,
+                goal.penalty
             ))
             cursor.close()
             db.conn.commit()
@@ -88,7 +90,7 @@ class GoalDAO():
             cursor.close()
 
     @staticmethod
-    def update_goal(db : db, goal: Goal) -> None:
+    def update_goal(db: db, goal: Goal) -> None:
         try:
             query = """
                     UPDATE goals SET
@@ -109,21 +111,21 @@ class GoalDAO():
                     WHERE goal_id = %s"""
             cursor = db.conn.cursor()
             cursor.execute(query, (
-                    goal.tournament_id,
-                    goal.match_id,
-                    goal.team_id,
-                    goal.home_team,
-                    goal.away_team,
-                    goal.player_id,
-                    goal.shirt_number,
-                    goal.player_team_id,
-                    goal.minute_label,
-                    goal.minute_regulation,
-                    goal.minute_stoppage,
-                    goal.match_period,
-                    goal.own_goal,
-                    goal.penalty,
-                    goal.goal_id
+                goal.tournament_id,
+                goal.match_id,
+                goal.team_id,
+                goal.home_team,
+                goal.away_team,
+                goal.player_id,
+                goal.shirt_number,
+                goal.player_team_id,
+                goal.minute_label,
+                goal.minute_regulation,
+                goal.minute_stoppage,
+                goal.match_period,
+                goal.own_goal,
+                goal.penalty,
+                goal.goal_id
             ))
             db.conn.commit()
         except mysql.connector.Error as error:
@@ -132,7 +134,7 @@ class GoalDAO():
             cursor.close()
 
     @staticmethod
-    def delete_match(db : db, match_id : str) -> None:
+    def delete_match(db: db, match_id: str) -> None:
         try:
             query = """
                     DELETE FROM goals WHERE match_id = %s

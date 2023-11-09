@@ -1,12 +1,13 @@
 from datetime import date
-from attr import dataclass
+from dataclasses import dataclass
 
 import mysql.connector
 from mysql.connector import errorcode
 from db.db import db
 
+
 @dataclass
-class TournamentStage():
+class TournamentStage:
     tournament_id: str
     stage_number: int
     stage_name: str

@@ -3,8 +3,9 @@ from dataclasses import dataclass
 import mysql.connector
 from db.db import db
 
+
 @dataclass
-class GroupStanding():
+class GroupStanding:
     tournament_id: str
     stage_number: int
     stage_name: str
@@ -20,6 +21,7 @@ class GroupStanding():
     goal_difference: int
     points: int
     advanced: bool
+
 
 class GroupStandingDAO():
 

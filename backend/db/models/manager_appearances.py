@@ -3,8 +3,9 @@ from dataclasses import dataclass
 import mysql.connector
 from db.db import db
 
+
 @dataclass
-class ManagerAppearances():
+class ManagerAppearances:
     tournament_id: str
     match_id: str
     team_id: str

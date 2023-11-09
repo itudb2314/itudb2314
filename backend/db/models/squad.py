@@ -1,15 +1,17 @@
-from attr import dataclass
+from dataclasses import dataclass
 import mysql.connector
 from db.db import db
+
+
 @dataclass
-class Squad():
+class Squad:
     tournament_id: str
     team_id: str
     player_id: str
     shirt_number: int
     position_name: str
     position_code: str
-    
+
 class SquadDAO():
     @staticmethod
     def create_squad(db: db, squad: Squad) -> None:

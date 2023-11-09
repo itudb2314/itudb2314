@@ -1,10 +1,11 @@
 from db.db import db 
-from attr import dataclass
+from dataclasses import dataclass
 import mysql.connector
 from mysql.connector import errorcode
 
+
 @dataclass
-class Match():
+class Match:
     tournament_id : str
     match_id : str
     match_name : str
@@ -33,6 +34,7 @@ class Match():
     home_team_win : bool
     away_team_win : bool
     draw : bool
+
 
 class MatchDAO():
     @staticmethod

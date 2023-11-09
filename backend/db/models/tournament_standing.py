@@ -1,9 +1,10 @@
-from attr import dataclass
+from dataclasses import dataclass
 from db.db import db
 import mysql.connector
 
+
 @dataclass
-class TournamentStanding():
+class TournamentStanding:
     tournament_id: str
     position: int
     team_id: str

@@ -1,10 +1,11 @@
-from attr import dataclass
+from dataclasses import dataclass
 import mysql.connector
 from db.db import db
 from datetime import datetime
 
+
 @dataclass
-class Player():
+class Player:
     player_id: str
     family_name: str
     given_name: str
@@ -17,6 +18,7 @@ class Player():
     count_tournaments: int
     list_tournaments: str
     player_wikipedia_link: str
+
 
 class PlayerDAO():
     @staticmethod

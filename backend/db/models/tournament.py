@@ -1,12 +1,13 @@
 from datetime import datetime
-
-from attr import dataclass
+from dataclasses import asdict
+from dataclasses import dataclass
 from db.db import db
 import mysql.connector
 from mysql.connector import errorcode
 
+
 @dataclass
-class Tournament():
+class Tournament:
     tournament_id: str
     tournament_name: str
     year: int
@@ -27,10 +28,10 @@ class Tournament():
 
 
 class TournamentDAO():
-        @staticmethod
-        def create_tournament(db: db, tournament: Tournament) -> None:
-            try: 
-                query = """INSERT INTO tournaments (
+    @staticmethod
+    def create_tournament(db: db, tournament: Tournament) -> None:
+        try:
+            query = """INSERT INTO tournaments (
                         tournament_id,
                         tournament_name,
                         year,
@@ -50,61 +51,61 @@ class TournamentDAO():
                         final
                     ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """
-                cursor = db.conn.cursor()
-                cursor.execute(query, (
-                    tournament.tournament_id,
-                    tournament.tournament_name,
-                    tournament.year,
-                    tournament.start_date,
-                    tournament.end_date,
-                    tournament.host_country,
-                    tournament.winner,
-                    tournament.host_won,
-                    tournament.count_teams,
-                    tournament.group_stage,
-                    tournament.second_group_stage,
-                    tournament.final_round,
-                    tournament.round_of_16,
-                    tournament.quarter_finals,
-                    tournament.semi_finals,
-                    tournament.third_place_match,
-                    tournament.final
-                ))
-                cursor.close()
-                db.conn.commit()
-            except mysql.connector.Error as err:
-                print(f"Error: {err}")
+            cursor = db.conn.cursor()
+            cursor.execute(query, (
+                tournament.tournament_id,
+                tournament.tournament_name,
+                tournament.year,
+                tournament.start_date,
+                tournament.end_date,
+                tournament.host_country,
+                tournament.winner,
+                tournament.host_won,
+                tournament.count_teams,
+                tournament.group_stage,
+                tournament.second_group_stage,
+                tournament.final_round,
+                tournament.round_of_16,
+                tournament.quarter_finals,
+                tournament.semi_finals,
+                tournament.third_place_match,
+                tournament.final
+            ))
+            cursor.close()
+            db.conn.commit()
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
 
-        @staticmethod
-        def get_tournament_by_id(db: db, tournament_id: int) -> Tournament:
-            try:    
-                query = "SELECT * FROM tournaments WHERE tournament_id = %s"
-                cursor = db.conn.cursor()
-                cursor.execute(query, (tournament_id,))
-                rows = cursor.fetchall()
-                cursor.close()
-                if rows is None:
-                    return None
-                return [Tournament(*row) for row in rows]
-            except mysql.connector.Error as err:
-                print(f"Error: {err}")
+    @staticmethod
+    def get_tournament_by_id(db: db, tournament_id: str) -> Tournament:
+        try:
+            query = "SELECT * FROM tournaments WHERE tournament_id = %s"
+            cursor = db.conn.cursor()
+            cursor.execute(query, (tournament_id,))
+            rows = cursor.fetchone()
+            cursor.close()
+            if rows is None:
+                return None
+            return Tournament(*rows)
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
 
-        @staticmethod
-        def get_all_tournaments(db) -> list[Tournament]:
-            try:
-                query = "SELECT * FROM tournaments"
-                cursor = db.conn.cursor()
-                cursor.execute(query)
-                rows = cursor.fetchall()
-                cursor.close()
-                return [Tournament(*row) for row in rows]
-            except mysql.connector.Error as err:
-                print(f"Error: {err}")
+    @staticmethod
+    def get_all_tournaments(db) -> list[Tournament]:
+        try:
+            query = "SELECT * FROM tournaments"
+            cursor = db.conn.cursor()
+            cursor.execute(query)
+            rows = cursor.fetchall()
+            cursor.close()
+            return [Tournament(*row) for row in rows]
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
 
-        @staticmethod
-        def update_tournament(db, tournament: Tournament) -> None:
-            try:
-                query = """
+    @staticmethod
+    def update_tournament(db, tournament: Tournament) -> None:
+        try:
+            query = """
                     UPDATE tournaments SET
                         tournament_name = %s,
                         year = %s,
@@ -124,38 +125,38 @@ class TournamentDAO():
                         final = %s
                     WHERE tournament_id = %s
                 """
-                cursor = db.conn.cursor()
-                cursor.execute(query, (
-                    tournament.tournament_name,
-                    tournament.year,
-                    tournament.start_date,
-                    tournament.end_date,
-                    tournament.host_country,
-                    tournament.winner,
-                    tournament.host_won,
-                    tournament.count_teams,
-                    tournament.group_stage,
-                    tournament.second_group_stage,
-                    tournament.final_round,
-                    tournament.round_of_16,
-                    tournament.quarter_finals,
-                    tournament.semi_finals,
-                    tournament.third_place_match,
-                    tournament.final,
-                    tournament.tournament_id
-                ))
-                cursor.close()
-                db.conn.commit()
-            except mysql.connector.Error as err:
-                print(f"Error: {err}")
+            cursor = db.conn.cursor()
+            cursor.execute(query, (
+                tournament.tournament_name,
+                tournament.year,
+                tournament.start_date,
+                tournament.end_date,
+                tournament.host_country,
+                tournament.winner,
+                tournament.host_won,
+                tournament.count_teams,
+                tournament.group_stage,
+                tournament.second_group_stage,
+                tournament.final_round,
+                tournament.round_of_16,
+                tournament.quarter_finals,
+                tournament.semi_finals,
+                tournament.third_place_match,
+                tournament.final,
+                tournament.tournament_id
+            ))
+            cursor.close()
+            db.conn.commit()
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
 
-        @staticmethod
-        def delete_tournament(db, tournament_id: int) -> None:
-            try:
-                query = "DELETE FROM tournaments WHERE tournament_id = %s"
-                cursor = db.conn.cursor()
-                cursor.execute(query, (tournament_id,))
-                cursor.close()
-                db.conn.commit()
-            except mysql.connector.Error as err:
-                print(f"Error: {err}")
+    @staticmethod
+    def delete_tournament(db, tournament_id: int) -> None:
+        try:
+            query = "DELETE FROM tournaments WHERE tournament_id = %s"
+            cursor = db.conn.cursor()
+            cursor.execute(query, (tournament_id,))
+            cursor.close()
+            db.conn.commit()
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
