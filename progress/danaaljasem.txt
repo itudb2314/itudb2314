@@ -1,0 +1,9 @@
+Week 05 commit:
+Added Goals and Matches tables mapping: goal.py and matches.py
+Added basic CRUD operations for both tables (operations by id)
+
+Week 06 commit:
+Added more read operations for both Goals and Matches tables according to the initial discussion about the structure of the app with the team.
+Matches Table: get_tournemant_matches(db : db, tournament_id: str) -> List[Match], get_groupstage_matches(db : db, tournament_id: str, group_stage: bool) -> List[Match], get_knockoutstage_matches(db : db, tournament_id: str, knockout_stage: bool) -> List[Match], get_hometeam_matches(db : db, tournament_id: str,home_team_id : str) -> List[Match], get_awayteam_matches(db : db, tournament_id: str,away_team_id : str) -> List[Match]
+
+Goals Table: def get_match_goals(db: db, tournament_id: str, match_id: str) -> List[Goal], def get_team_goals(db: db, tournament_id: str, team_id: str) -> List[Goal], def get_player_goals(db: db, tournament_id: str, player_id: str) -> List[Goal]
