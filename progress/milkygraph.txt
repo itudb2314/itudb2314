@@ -1,0 +1,1 @@
+Added tournaments to the database and frontend page for the react.
