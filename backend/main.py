@@ -1,10 +1,9 @@
 from db.db import db
 from api import server
-
+from db.models.Player import *
 
 def main():
     database = db('fifa')
-    database.connect()
     app = server.create_server(database)
     app.run()
 
