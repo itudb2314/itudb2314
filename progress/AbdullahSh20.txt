@@ -1,0 +1,7 @@
+Week 5 commits:
+Added player.py and squad.py files where I mapped their respective tables and added their basic CRUD operations.
+
+Week 6 commits:
+Added Player_apperances.py where I mapped it to its table and added the basic CRUD operations.
+I also adopted the common practices expalained in week 6 regarding the cursor and its error handeling.
+Also added some improvements to my previous code where I mapped the objects at return instead of returning an array
