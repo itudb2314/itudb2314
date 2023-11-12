@@ -44,7 +44,7 @@ class ManagerDAO():
             print(f"Error: {err}")
     
     @staticmethod
-    def get_manager(db: db, manager_id: str) -> list:
+    def get_manager(db: db, manager_id: str) -> Manager:
         try:
             query = """
                 SELECT * FROM managers WHERE manager_id = %s
@@ -53,7 +53,9 @@ class ManagerDAO():
             cursor.execute(query, (manager_id))
             result = cursor.fetchall()
             cursor.close()
-            return result
+            if result is None:
+                return None
+            return Manager(*result)
         except mysql.connector.Error as err:
             print(f"Error: {err}")
     
@@ -67,7 +69,7 @@ class ManagerDAO():
             cursor.execute(query)
             result = cursor.fetchall()
             cursor.close()
-            return result
+            return [Manager(*row) for row in result]
         except mysql.connector.Error as err:
             print(f"Error: {err}")
 

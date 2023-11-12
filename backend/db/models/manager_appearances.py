@@ -43,7 +43,7 @@ class ManagerAppearancesDAO():
             print (f"Error: {err}")
 
     @staticmethod
-    def get_manager_appearances(db: db, tournament_id: str, match_id: str, team_id: str, manger_id: str) -> list:
+    def get_manager_appearances(db: db, tournament_id: str, match_id: str, team_id: str, manager_id: str) -> list:
         try:
             query="""
                 SELECT * FROM manager_appearances
@@ -54,7 +54,7 @@ class ManagerAppearancesDAO():
                 tournament_id,
                 match_id,
                 team_id,
-                manger_id
+                manager_id
                 ))
             result = cursor.fetchone()
             cursor.close()
@@ -63,7 +63,7 @@ class ManagerAppearancesDAO():
             print (f"Error: {err}")
         
     @staticmethod
-    def get_all_manager_appearances(db: db) -> list:
+    def get_all_manager_appearances(db: db) -> list[ManagerAppearances]:
         try:
             query="""
                 SELECT * FROM manager_appearances
@@ -72,7 +72,7 @@ class ManagerAppearancesDAO():
             cursor.execute(query)
             result = cursor.fetchall()
             cursor.close()
-            return result
+            return [ManagerAppearances(*row) for row in result]
         except mysql.connector.Error as err:
             print (f"Error: {err}")
     

@@ -72,7 +72,7 @@ class GroupStandingDAO():
             print (f"Error: {err}")
     
     @staticmethod
-    def get_group_standing(db: db, tournament_id: str, stage_number: int, group_name: str, position: str) -> list:
+    def get_group_standing(db: db, tournament_id: str, stage_number: int, group_name: str, position: str) -> GroupStanding:
 
         try:
             query="""
@@ -88,10 +88,49 @@ class GroupStandingDAO():
                 ))
             result = cursor.fetchone()
             cursor.close()
-            return result
+            if result is None:
+                return None
+            return GroupStanding(*result)
+        except mysql.connector.Error as err:
+            print (f"Error: {err}")
+
+    @staticmethod
+    def get_all_group_standings_on_group(db: db, tournament_id: str, stage_number: int, group_name: str) -> list[GroupStanding]:
+        try:
+            query="""
+                SELECT * FROM group_standing
+                WHERE tournament_id=%s AND stage_number=%s AND group_name=%s
+                """
+            cursor = db.conn.cursor()
+            cursor.execute(query, (
+                tournament_id,
+                stage_number,
+                group_name
+                ))
+            result = cursor.fetchall()
+            cursor.close()
+            return [GroupStanding(*row) for row in result]
         except mysql.connector.Error as err:
             print (f"Error: {err}")
     
+    @staticmethod
+    def get_all_group_standings_on_stage(db: db, tournament_id: str, stage_number: int) -> list[GroupStanding]:
+        try:
+            query="""
+                SELECT * FROM group_standing
+                WHERE tournament_id=%s AND stage_number=%s
+                """
+            cursor = db.conn.cursor()
+            cursor.execute(query, (
+                tournament_id,
+                stage_number
+                ))
+            result = cursor.fetchall()
+            cursor.close()
+            return [GroupStanding(*row) for row in result]
+        except mysql.connector.Error as err:
+            print (f"Error: {err}")
+
     @staticmethod
     def get_all_group_standings(db: db) -> list:
         try:
@@ -102,7 +141,7 @@ class GroupStandingDAO():
             cursor.execute(query)
             result = cursor.fetchall()
             cursor.close()
-            return result
+            return [GroupStanding(*row) for row in result]
         except mysql.connector.Error as err:
             print (f"Error: {err}")
     

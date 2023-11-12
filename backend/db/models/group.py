@@ -41,7 +41,7 @@ class GroupDAO:
             print(f"Error: {err}")
     
     @staticmethod
-    def get_group(db: db, tournament_id: str, stage_number: int, group_name:str) -> list:
+    def get_group(db: db, tournament_id: str, stage_number: int, group_name:str) -> Group:
         try:
             query = """
                 SELECT * FROM 'groups' WHERE tournament_id = %s AND stage_number = %s AND group_name = %s
@@ -50,21 +50,51 @@ class GroupDAO:
             cursor.execute(query, (tournament_id, stage_number, group_name))
             result = cursor.fetchall()
             cursor.close()
-            return result
+            if result is None:
+                return None
+            return Group(*result)
         except mysql.connector.Error as err:
             print(f"Error: {err}")
 
     @staticmethod
-    def get_all_groups(db: db) -> list:
+    def get_all_groups_on_tournament(db: db, tournament_id: str) -> list[Group]:
+        try:
+            query = """
+                SELECT * FROM 'groups' WHERE tournament_id = %s
+            """
+            cursor = db.conn.cursor()
+            cursor.execute(query, (tournament_id,))
+            results = cursor.fetchall()
+            cursor.close()
+            return [Group(*row) for row in results]
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+
+    @staticmethod
+    def get_all_groups_on_stage(db: db, tournament_id: str, stage_number: int) -> list[Group]:
+        try:
+            query = """
+                SELECT * FROM 'groups' WHERE tournament_id = %s AND stage_number = %s
+            """
+            cursor = db.conn.cursor()
+            cursor.execute(query, (tournament_id, stage_number))
+            results = cursor.fetchall()
+            cursor.close()
+            return [Group(*row) for row in results]
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+
+    @staticmethod
+    def get_all_groups(db: db) -> list[Group]:
         try:
             query = """
                 SELECT * FROM 'groups'
             """
             cursor = db.conn.cursor()
             cursor.execute(query)
-            result = cursor.fetchall()
+            results = cursor.fetchall()
             cursor.close()
-            return result
+            return [Group(*row) for row in results]
         except mysql.connector.Error as err:
             print(f"Error: {err}")
     
