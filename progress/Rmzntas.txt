@@ -1,0 +1,13 @@
+Week 5 commits:
+    Added group, group_standing, manager and manager_appearances tables mapping: group.py, group_standing.py, manager.py and manager_appearances.py
+    Added basic CRUD functions for all of them
+
+week 6 commits:
+    Updated select functions (return object or object list)
+    Added more read operations
+        Group:
+            added get_all_groups_on_tournament(db: db, tournament_id: str) -> list[Group]
+            added get_all_groups_on_stage(db: db, tournament_id: str, stage_number: int) -> list[Group]
+        Group_standing
+            added get_all_group_standings_on_group(db: db, tournament_id: str, stage_number: int, group_name: str) -> list[GroupStanding]
+            addedget_all_group_standings_on_stage(db: db, tournament_id: str, stage_number: int) -> list[GroupStanding]
