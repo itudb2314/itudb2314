@@ -1,0 +1,32 @@
+.squads {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.squad-group {
+    width: 60%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 10px 0;
+}
+
+.squad {
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 10px 10px;
+    border: 2px solid black;
+    border-radius: 10px;
+    box-shadow: 6px 5px 3px #606468;
+    background: azure;
+}
+
+.squad-details {
+    padding: 10px;
+    text-align: left;
+}
+
+/* Add more styles as needed */

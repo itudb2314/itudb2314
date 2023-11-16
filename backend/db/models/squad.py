@@ -70,14 +70,26 @@ class SquadDAO():
         try:
             connection = db.get_connection()
             query = """
-                SELECT * FROM squads
+                SELECT tournament_id, team_id, player_id, shirt_number, position_name, position_code
+                FROM squads
+                ORDER BY tournament_id, team_id
             """
             cursor = connection.cursor()
             cursor.execute(query)
             results = cursor.fetchall()
             if results is None:
                 return None
-            return [Squad(*result) for result in results]
+
+            grouped_squads = {}
+            for result in results:
+                tournament_id, team_id, player_id, shirt_number, position_name, position_code = result
+                key = (tournament_id, team_id)
+                if key not in grouped_squads:
+                    grouped_squads[key] = []
+                grouped_squads[key].append(Squad(tournament_id, team_id, player_id, shirt_number, position_name, position_code))
+
+            return list(grouped_squads.values())    #should be a dictionary instead of a list but couldnt figure out how to fix the flask API and react accordingly
+
         except mysql.connector.Error as err:
             print(f"Error: {err}")
             connection.rollback()
