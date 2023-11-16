@@ -11,7 +11,7 @@ class db:
         self.db_password = "root"                           #different at my own computer was root
 
     def get_connection(self):
-        try :
+        try:
             connection = mysql.connector.connect(
                 host="127.0.0.1",
                 port="3306",                                #different at my own computer was 3306
@@ -25,9 +25,7 @@ class db:
             print(f"Error: {err}")
             return None
 
+    @staticmethod
     def disconnect(connection):
         if connection:
             connection.close()
-            print("Connection closed.")
-        else:
-            print("No active connection to close.")
