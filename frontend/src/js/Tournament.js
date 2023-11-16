@@ -17,18 +17,20 @@ export default function Tournaments() {
     }
 
     return (
-        <>
-            <div className="tournaments">
-                <h1 style={style}>Tournaments</h1>
-                {tournaments.sort((a,b) => {
-                    if (a.year < b.year) {
-                        return 1
-                    }
-                }).map(tournament => (
-                    <Tournament key={tournament.id} {...tournament} />
-                ))}
-            </div>
-        </>
+        <div className="tournaments">
+            <h1 style={style}>Tournaments</h1>
+            {tournaments.sort((a,b) => {
+                if (a.year < b.year) {
+                    return 1
+                }
+                if (a.year > b.year) {
+                    return -1
+                }
+                return 0
+            }).map(tournament => (
+                <Tournament key={tournament.year} {...tournament} />
+            ))}
+        </div>
     );
 }
 

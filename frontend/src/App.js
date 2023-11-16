@@ -1,13 +1,23 @@
 import './App.css';
-import Tournaments from "./js/Tournament.js";
-import {useEffect, useState} from "react";
+import React from 'react';
+import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
+
+import Tournaments from "./js/Tournament";
 
 function App() {
-  return (
-      <div className="App">
-          <Tournaments />
-      </div>
-  );
+    return (
+        <Router>
+            <Switch>
+                <Route path="/" exact component={Tournaments}/>
+            </Switch>
+        </Router>
+    );
+}
+
+function Hello() {
+    return <div>
+        <h1>Hello World</h1>
+    </div>
 }
 
 export default App;
