@@ -28,6 +28,7 @@ class GoalDAO():
     @staticmethod
     def create_goal(db: db, goal: Goal) -> None:
         try:
+            connection = db.get_connection()
             query = """
                 INSERT INTO goals (
                     goal_id,
@@ -47,7 +48,7 @@ class GoalDAO():
                     penalty
                 ) VALUES (%s, %s, %s, %s, %s, %s %s, %s, %s, %s, %s, %s, %s, %s, %s) 
             """
-            cursor = db.conn.cursor()
+            cursor = connection.cursor()
             cursor.execute(query, (
                 goal.goal_id,
                 goal.tournament_id,
@@ -65,19 +66,21 @@ class GoalDAO():
                 goal.own_goal,
                 goal.penalty
             ))
-            db.conn.commit()
+            connection.commit()
         except mysql.connector.Error as error:
             cursor.rollback()
         finally:
             cursor.close()
+            connection.close()
 
     @staticmethod
     def get_goal_by_id(db: db, goal_id: str) -> Goal:
         try:
+            connection = db.get_connection()
             query = """
                     SELECT * FROM goals WHERE goal_id = %s
                     """
-            cursor = db.conn.cursor()
+            cursor = connection.cursor()
             cursor.execute(query, (goal_id))
             result = cursor.fetchone()
             if result:
@@ -90,15 +93,17 @@ class GoalDAO():
 
         finally:
             cursor.close()
+            connection.close()
 
     @staticmethod
     def get_match_goals(db: db, tournament_id: str, match_id: str) -> List[Goal]:
         goals = []
         try:
+            connection = db.get_connection()
             query = """
                     SELECT * FROM goals WHERE tournament_id = %s AND match_id = %s 
                     """
-            cursor = db.conn.cursor()
+            cursor = connection.cursor()
             cursor.execute(query, (tournament_id, match_id))
             results = cursor.fetchall()
             if results:
@@ -114,15 +119,17 @@ class GoalDAO():
 
         finally:
             cursor.close()
+            connection.close()
 
     @staticmethod
     def get_team_goals(db: db, tournament_id: str, team_id: str) -> List[Goal]:
         goals = []
         try:
+            connection = db.get_connection()
             query = """
                     SELECT * FROM goals WHERE tournament_id = %s AND team_id = %s 
                     """
-            cursor = db.conn.cursor()
+            cursor = connection.cursor()
             cursor.execute(query, (tournament_id, team_id))
             results = cursor.fetchall()
             if results:
@@ -137,15 +144,17 @@ class GoalDAO():
             cursor.rollback()   
         finally:
             cursor.close()
+            connection.close()
 
     @staticmethod
     def get_player_goals(db: db, tournament_id: str, player_id: str) -> List[Goal]:
         goals = []
         try:
+            connection = db.get_connection()
             query = """
                     SELECT * FROM goals WHERE tournament_id = %s AND player_id = %s 
                     """
-            cursor = db.conn.cursor()
+            cursor = connection.cursor()
             cursor.execute(query, (tournament_id, player_id))
             results = cursor.fetchall()
             if results:
@@ -160,10 +169,12 @@ class GoalDAO():
             cursor.rollback()
         finally:
             cursor.close()
+            connection.close()
 
     @staticmethod
     def update_goal(db: db, goal: Goal) -> None:
         try:
+            connection = db.get_connection()
             query = """
                     UPDATE goals SET
                         tournament_id = %s,
@@ -181,7 +192,7 @@ class GoalDAO():
                         own_goal = %s,
                         penalty = %s
                     WHERE goal_id = %s"""
-            cursor = db.conn.cursor()
+            cursor = connection.cursor()
             cursor.execute(query, (
                 goal.tournament_id,
                 goal.match_id,
@@ -199,22 +210,25 @@ class GoalDAO():
                 goal.penalty,
                 goal.goal_id
             ))
-            db.conn.commit()
+            connection.commit()
         except mysql.connector.Error as error:
             cursor.rollback()
         finally:
             cursor.close()
+            connection.close()
 
     @staticmethod
     def delete_match(db: db, match_id: str) -> None:
         try:
+            connection = db.get_connection()
             query = """
                     DELETE FROM goals WHERE match_id = %s
                     """
-            cursor = db.conn.cursor()
+            cursor = connection.cursor()
             cursor.execute(query, (match_id))
-            db.conn.commit()
+            connection.commit()
         except mysql.connector.Error as error:
             cursor.rollback()
         finally:
             cursor.close()
+            connection.close()
