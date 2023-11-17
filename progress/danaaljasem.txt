@@ -7,3 +7,6 @@ Added more read operations for both Goals and Matches tables according to the in
 Matches Table: get_tournemant_matches(db : db, tournament_id: str) -> List[Match], get_groupstage_matches(db : db, tournament_id: str, group_stage: bool) -> List[Match], get_knockoutstage_matches(db : db, tournament_id: str, knockout_stage: bool) -> List[Match], get_hometeam_matches(db : db, tournament_id: str,home_team_id : str) -> List[Match], get_awayteam_matches(db : db, tournament_id: str,away_team_id : str) -> List[Match]
 
 Goals Table: def get_match_goals(db: db, tournament_id: str, match_id: str) -> List[Goal], def get_team_goals(db: db, tournament_id: str, team_id: str) -> List[Goal], def get_player_goals(db: db, tournament_id: str, player_id: str) -> List[Goal]
+
+Week 07 commit: 
+added api to fetch the data and some frontend to display matches information like match date, match time, home team, away team, and their scores.
