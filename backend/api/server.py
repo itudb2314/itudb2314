@@ -3,6 +3,7 @@ from flask_cors import CORS
 import dataclasses, json
 from db.models.tournament import TournamentDAO
 from db.models.squad import SquadDAO
+from db.models.match import MatchDAO
 
 def create_server(db):
     app = flask.Flask(__name__)
@@ -23,5 +24,10 @@ def create_server(db):
     def api_all_squads():
         squads = SquadDAO.get_all_squads(db)
         return flask.jsonify(squads)
+    
+    @app.route('/api/v1/resources/matches/all', methods=['GET'])
+    def api_all_matches():
+        matches = MatchDAO.get_all_matches(db)
+        return flask.jsonify(matches)
 
     return app

@@ -113,6 +113,34 @@ class MatchDAO():
             connection.close()
 
     @staticmethod
+    def get_all_matches(db : db) -> List[Match]:
+        try:
+            matches = []
+            connection = db.get_connection()
+            query = """
+                    SELECT * FROM matches
+                    """
+            cursor = connection.cursor()
+            cursor.execute(query)
+            results = cursor.fetchall()
+            if results:
+                for result in results:
+                    match = Match(result[0], result[1], result[2], result[3],result[4], result[5], result[6], 
+                            result[7], result[8], result[9], result[10], result[11],result[12], result[13], 
+                            result[14], result[15], result[16], result[17], result[18],result[19], result[20], 
+                            result[21], result[22], result[23], result[24], result[25], result[26],result[27])
+                    matches.append(match)
+                return matches
+            else:
+                return None
+        
+        except mysql.connector.Error as error:
+            cursor.rollback()
+        finally:
+            cursor.close()
+            connection.close()
+
+    @staticmethod
     def get_match_by_id(db : db, match_id : str) -> Match:
         try:
             connection = db.get_connection()
@@ -138,7 +166,7 @@ class MatchDAO():
 
     @staticmethod
     def get_tournemant_matches(db : db, tournament_id: str) -> List[Match]:
-        results = []
+        matches = []
         try:
             connection = db.get_connection()
             query = """
@@ -153,7 +181,8 @@ class MatchDAO():
                             result[7], result[8], result[9], result[10], result[11],result[12], result[13], 
                             result[14], result[15], result[16], result[17], result[18],result[19], result[20], 
                             result[21], result[22], result[23], result[24], result[25], result[26],result[27])
-                    results.append(match)
+                    matches.append(match)
+                return matches
             else:
                 return None
         
@@ -165,7 +194,7 @@ class MatchDAO():
 
     @staticmethod
     def get_groupstage_matches(db : db, tournament_id: str, group_stage: bool) -> List[Match]:
-        results = []
+        matches = []
         try:
             connection = db.get_connection()
             query = """
@@ -180,7 +209,8 @@ class MatchDAO():
                             result[7], result[8], result[9], result[10], result[11],result[12], result[13], 
                             result[14], result[15], result[16], result[17], result[18],result[19], result[20], 
                             result[21], result[22], result[23], result[24], result[25], result[26],result[27])
-                    results.append(match)
+                    matches.append(match)
+                return matches
             else:
                 return None
         
@@ -192,7 +222,7 @@ class MatchDAO():
     
     @staticmethod
     def get_knockoutstage_matches(db : db, tournament_id: str, knockout_stage: bool) -> List[Match]:
-        results = []
+        matches = []
         try:
             connection = db.get_connection()
             query = """
@@ -207,7 +237,8 @@ class MatchDAO():
                             result[7], result[8], result[9], result[10], result[11],result[12], result[13], 
                             result[14], result[15], result[16], result[17], result[18],result[19], result[20], 
                             result[21], result[22], result[23], result[24], result[25], result[26],result[27])
-                    results.append(match)
+                    matches.append(match)
+                return matches
             else:
                 return None
         
@@ -219,7 +250,7 @@ class MatchDAO():
 
     @staticmethod
     def get_hometeam_matches(db : db, tournament_id: str,home_team_id : str) -> List[Match]:
-        results = []
+        matches = []
         try:
             connection = db.get_connection()
             query = """
@@ -234,7 +265,8 @@ class MatchDAO():
                             result[7], result[8], result[9], result[10], result[11],result[12], result[13], 
                             result[14], result[15], result[16], result[17], result[18],result[19], result[20], 
                             result[21], result[22], result[23], result[24], result[25], result[26],result[27])
-                    results.append(match)
+                    matches.append(match)
+                return matches
             else:
                 return None
         
@@ -246,7 +278,7 @@ class MatchDAO():
 
     @staticmethod
     def get_awayteam_matches(db : db, tournament_id: str, away_team_id : str) -> List[Match]:
-        results = []
+        matches = []
         try:
             connection = db.get_connection()
             query = """
@@ -261,7 +293,8 @@ class MatchDAO():
                             result[7], result[8], result[9], result[10], result[11],result[12], result[13], 
                             result[14], result[15], result[16], result[17], result[18],result[19], result[20], 
                             result[21], result[22], result[23], result[24], result[25], result[26],result[27])
-                    results.append(match)
+                    matches.append(match)
+                return matches
             else:
                 return None
         
