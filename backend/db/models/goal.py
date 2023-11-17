@@ -65,10 +65,11 @@ class GoalDAO():
                 goal.own_goal,
                 goal.penalty
             ))
-            cursor.close()
             db.conn.commit()
         except mysql.connector.Error as error:
-            print(f"Error: {error}")
+            cursor.rollback()
+        finally:
+            cursor.close()
 
     @staticmethod
     def get_goal_by_id(db: db, goal_id: str) -> Goal:
@@ -85,7 +86,7 @@ class GoalDAO():
             else:
                 return None
         except mysql.connector.Error as error:
-            print(f"Error: {error}")
+            cursor.rollback()
 
         finally:
             cursor.close()
@@ -109,7 +110,7 @@ class GoalDAO():
             else:
                 return None
         except mysql.connector.Error as error:
-            print(f"Error: {error}")
+            cursor.rollback()
 
         finally:
             cursor.close()
@@ -133,8 +134,7 @@ class GoalDAO():
             else:
                 return None
         except mysql.connector.Error as error:
-            print(f"Error: {error}")
-
+            cursor.rollback()   
         finally:
             cursor.close()
 
@@ -157,8 +157,7 @@ class GoalDAO():
             else:
                 return None
         except mysql.connector.Error as error:
-            print(f"Error: {error}")
-
+            cursor.rollback()
         finally:
             cursor.close()
 
@@ -202,7 +201,7 @@ class GoalDAO():
             ))
             db.conn.commit()
         except mysql.connector.Error as error:
-            print(f"Error: {error}")
+            cursor.rollback()
         finally:
             cursor.close()
 
@@ -216,6 +215,6 @@ class GoalDAO():
             cursor.execute(query, (match_id))
             db.conn.commit()
         except mysql.connector.Error as error:
-            print(f"Error: {error}")
+            cursor.rollback()
         finally:
             cursor.close()

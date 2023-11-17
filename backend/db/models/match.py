@@ -106,7 +106,7 @@ class MatchDAO():
             ))
             db.conn.commit()
         except mysql.connector.Error as error:
-            print(f"Error: {error}")
+            cursor.rollback()
         finally: 
             cursor.close()
 
@@ -128,7 +128,7 @@ class MatchDAO():
                 return None
         
         except mysql.connector.Error as error:
-            print(f"Error: {error}")
+            cursor.rollback()
         finally:
             cursor.close()
 
@@ -153,7 +153,7 @@ class MatchDAO():
                 return None
         
         except mysql.connector.Error as error:
-            print(f"Error: {error}")
+            cursor.rollback()
         finally:
             cursor.close()
 
@@ -178,7 +178,7 @@ class MatchDAO():
                 return None
         
         except mysql.connector.Error as error:
-            print(f"Error: {error}")
+            cursor.rollback()
         finally:
             cursor.close()
     
@@ -203,7 +203,7 @@ class MatchDAO():
                 return None
         
         except mysql.connector.Error as error:
-            print(f"Error: {error}")
+            cursor.rollback()
         finally:
             cursor.close()
 
@@ -228,7 +228,7 @@ class MatchDAO():
                 return None
         
         except mysql.connector.Error as error:
-            print(f"Error: {error}")
+            cursor.rollback()
         finally:
             cursor.close()
 
@@ -253,7 +253,7 @@ class MatchDAO():
                 return None
         
         except mysql.connector.Error as error:
-            print(f"Error: {error}")
+            cursor.rollback()
         finally:
             cursor.close()
 
@@ -324,7 +324,7 @@ class MatchDAO():
             ))
             db.conn.commit()
         except mysql.connector.Error as error:
-            print(f"Error: {error}")
+            cursor.rollback()
         finally:
             cursor.close()
     
@@ -338,7 +338,7 @@ class MatchDAO():
             cursor.execute(query, (match_id))
             db.conn.commit()
         except mysql.connector.Error as error:
-            print(f"Error: {error}")
+            cursor.rollback()
         finally:
             cursor.close()
         
