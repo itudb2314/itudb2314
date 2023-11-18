@@ -23,6 +23,14 @@ def create_server(db):
         tournament = TournamentDAO.update_tournament(db, tournament)
         return flask.jsonify(tournament)
 
+    @app.route('/tournaments', methods=['DELETE'])
+    def delete_tournament():
+        # print body
+        tournament_id = flask.request.get_json()
+        print(tournament_id)
+        TournamentDAO.delete_tournament(db, tournament_id)
+        return flask.jsonify({})
+
     @app.route('/squads', methods=['GET'])
     def api_all_squads():
         squads = SquadDAO.get_all_squads(db)

@@ -1,0 +1,53 @@
+.edit-button {
+    margin-bottom: 10;
+    width: 100px;
+    color: white;
+    font-size: 20px;
+    border-radius: 18px;
+    background: green;
+    transition-duration: 0.3s;
+    border: solid 1px transparent;
+    cursor: pointer;
+    &:hover {
+        color: black;
+        background: white;
+        border-color: black;
+    }
+}
+
+.save-button {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 100px;
+    border-radius: 18px;
+    background-color: #1c89ff;
+    border: solid 1px transparent;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    &:hover {
+        color: black;
+        background-color: white;
+        border-color: #282c34;
+        transition: all .1s ease-in-out;
+    }
+}
+
+.delete-button {
+    margin-bottom: 10px;
+    margin-left: 10px;
+    width: 100px;
+    color: white;
+    font-size: 20px;
+    border-radius: 18px;
+    background: darkred;
+    transition-duration: 0.3s;
+    border: solid 1px transparent;
+    cursor: pointer;
+    &:hover {
+        color: black;
+        background: white;
+        border-color: black;
+    }
+}
