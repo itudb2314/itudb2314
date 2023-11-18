@@ -5,7 +5,7 @@ export default function Squads() {
     const [squads, setSquads] = useState([]);
 
     useEffect(() => {
-        fetch('http://localhost:5000/api/v1/resources/squads/all')
+        fetch('http://localhost:5000/squads')
             .then((response) => response.json())
             .then((data) => {
                 setSquads(data);

@@ -86,7 +86,7 @@ class TournamentDAO():
             cursor.execute(query, (tournament_id,))
             rows = cursor.fetchone()
             cursor.close()
-            db.disconnect(conn)
+            conn.close()
             if rows is None:
                 return None
             return Tournament(*rows)
@@ -108,7 +108,7 @@ class TournamentDAO():
             print(f"Error: {err}")
 
     @staticmethod
-    def update_tournament(db, tournament: Tournament) -> None:
+    def update_tournament(db, tournament: Tournament) -> Tournament:
         try:
             conn = db.get_connection()
             query = """
@@ -135,8 +135,8 @@ class TournamentDAO():
             cursor.execute(query, (
                 tournament.tournament_name,
                 tournament.year,
-                tournament.start_date,
-                tournament.end_date,
+                datetime.strptime(tournament.start_date, "%a, %d %b %Y %H:%M:%S %Z").strftime("%Y-%m-%d"),
+                datetime.strptime(tournament.end_date, "%a, %d %b %Y %H:%M:%S %Z").strftime("%Y-%m-%d"),
                 tournament.host_country,
                 tournament.winner,
                 tournament.host_won,
@@ -153,7 +153,8 @@ class TournamentDAO():
             ))
             cursor.close()
             conn.commit()
-            db.disconnect(conn)
+            conn.close()
+            return TournamentDAO.get_tournament_by_id(db, tournament.tournament_id)
         except mysql.connector.Error as err:
             print(f"Error: {err}")
 
@@ -162,10 +163,10 @@ class TournamentDAO():
         try:
             conn = db.get_connection()
             query = "DELETE FROM tournaments WHERE tournament_id = %s"
-            cursor = db.conn.cursor()
+            cursor = conn.cursor()
             cursor.execute(query, (tournament_id,))
             cursor.close()
             conn.commit()
-            db.disconnect(conn)
+            conn.close()
         except mysql.connector.Error as err:
             print(f"Error: {err}")

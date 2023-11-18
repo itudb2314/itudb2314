@@ -1,0 +1,30 @@
+header {
+    color: white;
+    background-color: #282c34;
+    min-height: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    font-size: calc(2vmin);
+}
+
+header ul {
+    display: flex;
+    flex-direction: row;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #282c34;
+}
+
+header ul li {
+    float: left;
+    margin: 10px;
+}
+
+.menu_item {
+    color: white;
+    text-decoration: none;
+}
