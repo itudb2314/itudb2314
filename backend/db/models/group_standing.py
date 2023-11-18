@@ -28,6 +28,7 @@ class GroupStandingDAO():
     @staticmethod
     def insert_group_standing(db: db, group_standing: GroupStanding) -> None:
         try:
+            conn = db.get_connection()
             query="""
                 INSERT INTO group_standing (
                     tournament_id,
@@ -47,7 +48,7 @@ class GroupStandingDAO():
                     advanced
                 ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
             
-            cursor = db.conn.cursor()
+            cursor = conn.cursor()
             cursor.execute(query, (
                 group_standing.tournament_id,
                 group_standing.stage_number,
@@ -65,21 +66,24 @@ class GroupStandingDAO():
                 group_standing.points,
                 group_standing.advanced
                 ))
-            db.conn.commit()
-            cursor.close()
+            conn.commit()
 
         except mysql.connector.Error as err:
-            print (f"Error: {err}")
+            conn.rollback()
+        finally:
+            cursor.close()
+            conn.close()
     
     @staticmethod
     def get_group_standing(db: db, tournament_id: str, stage_number: int, group_name: str, position: str) -> GroupStanding:
 
         try:
+            conn = db.get_connection()
             query="""
                 SELECT * FROM group_standing
                 WHERE tournament_id=%s AND stage_number=%s AND group_name=%s AND position=%s
                 """
-            cursor = db.conn.cursor()
+            cursor = conn.cursor()
             cursor.execute(query, (
                 tournament_id,
                 stage_number,
@@ -87,67 +91,79 @@ class GroupStandingDAO():
                 position
                 ))
             result = cursor.fetchone()
-            cursor.close()
             if result is None:
                 return None
             return GroupStanding(*result)
         except mysql.connector.Error as err:
-            print (f"Error: {err}")
+            conn.rollback()
+        finally:
+            cursor.close()
+            conn.close()
 
     @staticmethod
     def get_all_group_standings_on_group(db: db, tournament_id: str, stage_number: int, group_name: str) -> list[GroupStanding]:
         try:
+            conn = db.get_connection()
             query="""
                 SELECT * FROM group_standing
                 WHERE tournament_id=%s AND stage_number=%s AND group_name=%s
                 """
-            cursor = db.conn.cursor()
+            cursor = conn.cursor()
             cursor.execute(query, (
                 tournament_id,
                 stage_number,
                 group_name
                 ))
             result = cursor.fetchall()
-            cursor.close()
             return [GroupStanding(*row) for row in result]
         except mysql.connector.Error as err:
-            print (f"Error: {err}")
+            conn.rollback()
+        finally:
+            cursor.close()
+            conn.close()
     
     @staticmethod
     def get_all_group_standings_on_stage(db: db, tournament_id: str, stage_number: int) -> list[GroupStanding]:
         try:
+            conn = db.get_connection()
             query="""
                 SELECT * FROM group_standing
                 WHERE tournament_id=%s AND stage_number=%s
                 """
-            cursor = db.conn.cursor()
+            cursor = conn.cursor()
             cursor.execute(query, (
                 tournament_id,
                 stage_number
                 ))
             result = cursor.fetchall()
-            cursor.close()
             return [GroupStanding(*row) for row in result]
         except mysql.connector.Error as err:
-            print (f"Error: {err}")
+            conn.rollback()
+        finally:
+            cursor.close()
+            conn.close()
 
     @staticmethod
     def get_all_group_standings(db: db) -> list:
         try:
+            conn = db.get_connection()
             query="""
                 SELECT * FROM group_standing
             """
-            cursor = db.conn.cursor()
+            cursor = conn.cursor()
             cursor.execute(query)
             result = cursor.fetchall()
-            cursor.close()
             return [GroupStanding(*row) for row in result]
         except mysql.connector.Error as err:
-            print (f"Error: {err}")
+            conn.rollback()
+        finally:
+            cursor.close()
+            conn.close()
     
     @staticmethod
     def update_group_standing(db: db, group_standing: GroupStanding) -> None:
         try:
+            conn = db.get_connection()
             query="""
                 UPDATE group_standing SET
                     played=%s,
@@ -161,7 +177,7 @@ class GroupStandingDAO():
                     advanced=%s
                     WHERE tournament_id=%s AND stage_number=%s AND group_name=%s AND position=%s
                     """
-            cursor = db.conn.cursor()
+            cursor = conn.cursor()
             cursor.execute(query, (
                 group_standing.played,
                 group_standing.wins,
@@ -177,29 +193,34 @@ class GroupStandingDAO():
                 group_standing.group_name,
                 group_standing.position
                 ))
-            db.conn.commit()
-            cursor.close()
+            conn.commit()
             print("Group_standing updated")
         except mysql.connector.Error as err:
-            print (f"Error: {err}")
+            conn.rollback()
+        finally:
+            cursor.close()
+            conn.close()
     
     @staticmethod
     def delete_group_standing(db: db, tournament_id: str, stage_number: int, group_name: str, position: str) -> None:
         try:
+            conn = db.get_connection()
             query="""
                 DELETE FROM group_standing
                 WHERE tournament_id=%s AND stage_number=%s AND group_name=%s AND position=%s
                 """
-            cursor = db.conn.cursor()
+            cursor = conn.cursor()
             cursor.execute(query, (
                 tournament_id,
                 stage_number,
                 group_name,
                 position
                 ))
-            db.conn.commit()
-            cursor.close()
+            conn.commit()
             print("Group_standing deleted")
         except mysql.connector.Error as err:
-            print (f"Error: {err}")
+            conn.rollback()
+        finally:
+            cursor.close()
+            conn.close()
     

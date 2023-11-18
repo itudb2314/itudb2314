@@ -17,6 +17,7 @@ class GroupDAO:
     @staticmethod
     def insert_group(db: db, group: Group) -> None:
         try:
+            conn = db.get_connection()
             query = """
                 INSERT INTO 'groups' (
                     tournament_id,
@@ -26,7 +27,7 @@ class GroupDAO:
                     count_team
                 ) VALUES (%s, %s, %s, %s, %s)
             """
-            cursor = db.conn.cursor()
+            cursor = conn.cursor()
             cursor.execute(query, (
                 group.tournament_id,
                 group.stage_number,
@@ -34,80 +35,96 @@ class GroupDAO:
                 group.group_stage,
                 group.count_team
             ))
-            cursor.close()
-            db.conn.commit()
+            conn.commit()
             print("Group created successfully.")
         except mysql.connector.Error as err:
-            print(f"Error: {err}")
+            conn.rollback()
+        finally:
+            cursor.close()
+            conn.close()
     
     @staticmethod
     def get_group(db: db, tournament_id: str, stage_number: int, group_name:str) -> Group:
         try:
+            conn = db.get_connection()
             query = """
                 SELECT * FROM 'groups' WHERE tournament_id = %s AND stage_number = %s AND group_name = %s
             """
-            cursor = db.conn.cursor()
+            cursor = conn.cursor()
             cursor.execute(query, (tournament_id, stage_number, group_name))
             result = cursor.fetchall()
-            cursor.close()
             if result is None:
                 return None
             return Group(*result)
         except mysql.connector.Error as err:
-            print(f"Error: {err}")
+            conn.rollback()
+        finally:
+            cursor.close()
+            conn.close()
 
     @staticmethod
     def get_all_groups_on_tournament(db: db, tournament_id: str) -> list[Group]:
         try:
+            conn = db.get_connection()
             query = """
                 SELECT * FROM 'groups' WHERE tournament_id = %s
             """
-            cursor = db.conn.cursor()
+            cursor = conn.cursor()
             cursor.execute(query, (tournament_id,))
             results = cursor.fetchall()
-            cursor.close()
             return [Group(*row) for row in results]
         except mysql.connector.Error as err:
-            print(f"Error: {err}")
+            conn.rollback()
+        finally:
+            cursor.close()
+            conn.close()
 
     @staticmethod
     def get_all_groups_on_stage(db: db, tournament_id: str, stage_number: int) -> list[Group]:
         try:
+            conn = db.get_connection()
             query = """
                 SELECT * FROM 'groups' WHERE tournament_id = %s AND stage_number = %s
             """
-            cursor = db.conn.cursor()
+            cursor = conn.cursor()
             cursor.execute(query, (tournament_id, stage_number))
             results = cursor.fetchall()
-            cursor.close()
             return [Group(*row) for row in results]
         except mysql.connector.Error as err:
-            print(f"Error: {err}")
+            conn.rollback()
+        finally:
+            cursor.close()
+            conn.close()
 
     @staticmethod
     def get_all_groups(db: db) -> list[Group]:
         try:
+            conn = db.get_connection()
             query = """
                 SELECT * FROM 'groups'
             """
-            cursor = db.conn.cursor()
+            cursor = conn.cursor()
             cursor.execute(query)
             results = cursor.fetchall()
-            cursor.close()
+            
             return [Group(*row) for row in results]
         except mysql.connector.Error as err:
-            print(f"Error: {err}")
+            conn.rollback()
+        finally:
+            cursor.close()
+            conn.close()
     
     @staticmethod
     def update_group(db: db, group: Group) -> None:
         try:
+            conn = db.get_connection()
             query = """
                 UPDATE 'groups' SET
                     group_stage = %s,
                     count_team = %s
                 WHERE tournament_id = %s AND stage_number = %s AND group_name = %s
             """
-            cursor = db.conn.cursor()
+            cursor = conn.cursor()
             cursor.execute(query, (
                 group.group_stage,
                 group.count_team,
@@ -115,23 +132,28 @@ class GroupDAO:
                 group.stage_number,
                 group.group_name
             ))
-            cursor.close()
-            db.conn.commit()
+            conn.commit()
             print("Group updated successfully.")
         except mysql.connector.Error as err:
-            print(f"Error: {err}")
+            conn.rollback()
+        finally:
+            cursor.close()
+            conn.close()
     
     @staticmethod
     def delete_group(db: db, tournament_id: str, stage_number: int, group_name:str) -> None:
         try:
+            conn = db.get_connection()
             query = """
                 DELETE FROM 'groups' WHERE tournament_id = %s AND stage_number = %s AND group_name = %s
             """
-            cursor = db.conn.cursor()
+            cursor = conn.cursor()
             cursor.execute(query, (tournament_id, stage_number, group_name))
-            cursor.close()
-            db.conn.commit()
+            conn.commit()
             print("Group deleted successfully.")
         except mysql.connector.Error as err:
-            print(f"Error: {err}")
+            conn.rollback()
+        finally:
+            cursor.close()
+            conn.close()
     
