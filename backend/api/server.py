@@ -4,6 +4,7 @@ from dataclasses import make_dataclass
 from db.models.tournament import TournamentDAO
 from db.models.tournament_stage import TournamentStageDAO
 from db.models.squad import SquadDAO
+from db.models.match import MatchDAO
 
 
 def create_server(db):
@@ -35,5 +36,10 @@ def create_server(db):
     def api_all_squads():
         squads = SquadDAO.get_all_squads(db)
         return flask.jsonify(squads)
+    
+    @app.route('/api/v1/resources/matches/all', methods=['GET'])
+    def api_all_matches():
+        matches = MatchDAO.get_all_matches(db)
+        return flask.jsonify(matches)
 
     return app

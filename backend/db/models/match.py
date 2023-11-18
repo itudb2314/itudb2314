@@ -41,6 +41,7 @@ class MatchDAO():
     @staticmethod
     def create_match(db: db, match: Match) -> None:
         try:
+            connection = db.get_connection()
             query = """ 
                 INSERT INTO goals(
                     tournament_id, 
@@ -73,7 +74,7 @@ class MatchDAO():
                     draw, 
                 ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
-            cursor = db.conn.cursor()
+            cursor = connection.cursor()
             cursor.execute(query, (
                     match.tournament_id, 
                     match.match_id,
@@ -104,19 +105,49 @@ class MatchDAO():
                     match.away_team_win, 
                     match.draw, 
             ))
-            db.conn.commit()
+            connection.commit()
         except mysql.connector.Error as error:
-            print(f"Error: {error}")
+            cursor.rollback()
         finally: 
             cursor.close()
+            connection.close()
+
+    @staticmethod
+    def get_all_matches(db : db) -> List[Match]:
+        try:
+            matches = []
+            connection = db.get_connection()
+            query = """
+                    SELECT * FROM matches
+                    """
+            cursor = connection.cursor()
+            cursor.execute(query)
+            results = cursor.fetchall()
+            if results:
+                for result in results:
+                    match = Match(result[0], result[1], result[2], result[3],result[4], result[5], result[6], 
+                            result[7], result[8], result[9], result[10], result[11],result[12], result[13], 
+                            result[14], result[15], result[16], result[17], result[18],result[19], result[20], 
+                            result[21], result[22], result[23], result[24], result[25], result[26],result[27])
+                    matches.append(match)
+                return matches
+            else:
+                return None
+        
+        except mysql.connector.Error as error:
+            cursor.rollback()
+        finally:
+            cursor.close()
+            connection.close()
 
     @staticmethod
     def get_match_by_id(db : db, match_id : str) -> Match:
         try:
+            connection = db.get_connection()
             query = """
                     SELECT * FROM matches WHERE match_id = %s
                     """
-            cursor = db.conn.cursor()
+            cursor = connection.cursor()
             cursor.execute(query, (match_id))
             result = cursor.fetchone()
             if result:
@@ -128,18 +159,20 @@ class MatchDAO():
                 return None
         
         except mysql.connector.Error as error:
-            print(f"Error: {error}")
+            cursor.rollback()
         finally:
             cursor.close()
+            connection.close()
 
     @staticmethod
     def get_tournemant_matches(db : db, tournament_id: str) -> List[Match]:
-        results = []
+        matches = []
         try:
+            connection = db.get_connection()
             query = """
                     SELECT * FROM matches WHERE tournament_id = %s
                     """
-            cursor = db.conn.cursor()
+            cursor = connection.cursor()
             cursor.execute(query, (tournament_id))
             results = cursor.fetchall()
             if results:
@@ -148,23 +181,26 @@ class MatchDAO():
                             result[7], result[8], result[9], result[10], result[11],result[12], result[13], 
                             result[14], result[15], result[16], result[17], result[18],result[19], result[20], 
                             result[21], result[22], result[23], result[24], result[25], result[26],result[27])
-                    results.append(match)
+                    matches.append(match)
+                return matches
             else:
                 return None
         
         except mysql.connector.Error as error:
-            print(f"Error: {error}")
+            cursor.rollback()
         finally:
             cursor.close()
+            connection.close()
 
     @staticmethod
     def get_groupstage_matches(db : db, tournament_id: str, group_stage: bool) -> List[Match]:
-        results = []
+        matches = []
         try:
+            connection = db.get_connection()
             query = """
                     SELECT * FROM matches WHERE tournament_id = %s AND group_stage = %s
                     """
-            cursor = db.conn.cursor()
+            cursor = connection.cursor()
             cursor.execute(query, (tournament_id, group_stage))
             results = cursor.fetchall()
             if results:
@@ -173,23 +209,26 @@ class MatchDAO():
                             result[7], result[8], result[9], result[10], result[11],result[12], result[13], 
                             result[14], result[15], result[16], result[17], result[18],result[19], result[20], 
                             result[21], result[22], result[23], result[24], result[25], result[26],result[27])
-                    results.append(match)
+                    matches.append(match)
+                return matches
             else:
                 return None
         
         except mysql.connector.Error as error:
-            print(f"Error: {error}")
+            cursor.rollback()
         finally:
             cursor.close()
+            connection.close()
     
     @staticmethod
     def get_knockoutstage_matches(db : db, tournament_id: str, knockout_stage: bool) -> List[Match]:
-        results = []
+        matches = []
         try:
+            connection = db.get_connection()
             query = """
                     SELECT * FROM matches WHERE tournament_id = %s AND knockout_stage = %s
                     """
-            cursor = db.conn.cursor()
+            cursor = connection.cursor()
             cursor.execute(query, (tournament_id, knockout_stage))
             results = cursor.fetchall()
             if results:
@@ -198,23 +237,26 @@ class MatchDAO():
                             result[7], result[8], result[9], result[10], result[11],result[12], result[13], 
                             result[14], result[15], result[16], result[17], result[18],result[19], result[20], 
                             result[21], result[22], result[23], result[24], result[25], result[26],result[27])
-                    results.append(match)
+                    matches.append(match)
+                return matches
             else:
                 return None
         
         except mysql.connector.Error as error:
-            print(f"Error: {error}")
+            cursor.rollback()
         finally:
             cursor.close()
+            connection.close()
 
     @staticmethod
     def get_hometeam_matches(db : db, tournament_id: str,home_team_id : str) -> List[Match]:
-        results = []
+        matches = []
         try:
+            connection = db.get_connection()
             query = """
                     SELECT * FROM matches WHERE tournament_id = %s AND home_team_id = %s
                     """
-            cursor = db.conn.cursor()
+            cursor = connection.cursor()
             cursor.execute(query, (tournament_id, home_team_id))
             results = cursor.fetchall()
             if results:
@@ -223,23 +265,26 @@ class MatchDAO():
                             result[7], result[8], result[9], result[10], result[11],result[12], result[13], 
                             result[14], result[15], result[16], result[17], result[18],result[19], result[20], 
                             result[21], result[22], result[23], result[24], result[25], result[26],result[27])
-                    results.append(match)
+                    matches.append(match)
+                return matches
             else:
                 return None
         
         except mysql.connector.Error as error:
-            print(f"Error: {error}")
+            cursor.rollback()
         finally:
             cursor.close()
+            connection.close()
 
     @staticmethod
     def get_awayteam_matches(db : db, tournament_id: str, away_team_id : str) -> List[Match]:
-        results = []
+        matches = []
         try:
+            connection = db.get_connection()
             query = """
                     SELECT * FROM matches WHERE tournament_id = %s AND away_team_id = %s
                     """
-            cursor = db.conn.cursor()
+            cursor = connection.cursor()
             cursor.execute(query, (tournament_id, away_team_id))
             results = cursor.fetchall()
             if results:
@@ -248,18 +293,21 @@ class MatchDAO():
                             result[7], result[8], result[9], result[10], result[11],result[12], result[13], 
                             result[14], result[15], result[16], result[17], result[18],result[19], result[20], 
                             result[21], result[22], result[23], result[24], result[25], result[26],result[27])
-                    results.append(match)
+                    matches.append(match)
+                return matches
             else:
                 return None
         
         except mysql.connector.Error as error:
-            print(f"Error: {error}")
+            cursor.rollback()
         finally:
             cursor.close()
+            connection.close()
 
     @staticmethod
     def update_match(db : db, match : Match) -> None:
         try:
+            connection = db.get_connection()
             query = """
                     UPDATE matches SET
                         tournament_id = %s,
@@ -291,7 +339,7 @@ class MatchDAO():
                         draw = %s
                     WHERE match_id = %s
                     """
-            cursor = db.conn.cursor()
+            cursor = connection.cursor()
             cursor.execute(query, (
                     match.tournament_id,
                     match.match_name,
@@ -322,23 +370,26 @@ class MatchDAO():
                     match.draw,
                     match.match_id
             ))
-            db.conn.commit()
+            connection.commit()
         except mysql.connector.Error as error:
-            print(f"Error: {error}")
+            cursor.rollback()
         finally:
             cursor.close()
+            connection.close()
     
     @staticmethod
     def delete_match(db : db, match_id : str) -> None:
         try:   
+            connection = db.get_connection()
             query = """
                     DELETE FROM matches WHERE match_id = %s
                     """
-            cursor = db.conn.cursor()
+            cursor = connection.cursor()
             cursor.execute(query, (match_id))
-            db.conn.commit()
+            connection.commit()
         except mysql.connector.Error as error:
-            print(f"Error: {error}")
+            cursor.rollback()
         finally:
             cursor.close()
+            connection.close()
         

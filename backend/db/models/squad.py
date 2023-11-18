@@ -1,7 +1,7 @@
 from dataclasses import dataclass
+from typing import List
 import mysql.connector
 from db.db import db
-
 
 @dataclass
 class Squad:
@@ -11,6 +11,12 @@ class Squad:
     shirt_number: int
     position_name: str
     position_code: str
+
+@dataclass
+class actual_squad:
+    tournament_id: str
+    team_id: str
+    squad: List[Squad]
 
 class SquadDAO():
     @staticmethod
@@ -72,7 +78,7 @@ class SquadDAO():
             query = """
                 SELECT tournament_id, team_id, player_id, shirt_number, position_name, position_code
                 FROM squads
-                ORDER BY tournament_id, team_id
+                ORDER BY tournament_id DESC, team_id
             """
             cursor = connection.cursor()
             cursor.execute(query)
@@ -85,11 +91,10 @@ class SquadDAO():
                 tournament_id, team_id, player_id, shirt_number, position_name, position_code = result
                 key = (tournament_id, team_id)
                 if key not in grouped_squads:
-                    grouped_squads[key] = []
-                grouped_squads[key].append(Squad(tournament_id, team_id, player_id, shirt_number, position_name, position_code))
+                    grouped_squads[key] = actual_squad(tournament_id, team_id, [])
+                grouped_squads[key].squad.append(Squad(tournament_id, team_id, player_id, shirt_number, position_name, position_code))
 
-            return list(grouped_squads.values())    #should be a dictionary instead of a list but couldnt figure out how to fix the flask API and react accordingly
-
+            return list(grouped_squads.values())
         except mysql.connector.Error as err:
             print(f"Error: {err}")
             connection.rollback()
