@@ -70,14 +70,32 @@ class TournamentStageDAO():
     @staticmethod
     def get_tournament_stage_by_id(db: db, tournament_id: str, stage_number: int) -> TournamentStage:
         try:
+            conn = db.get_connection()
             query = "SELECT * FROM tournament_stages WHERE tournament_id = %s AND stage_number = %s"
-            cursor = db.conn.cursor()
+            cursor = conn.cursor()
             cursor.execute(query, (tournament_id, stage_number))
             row = cursor.fetchone()
             cursor.close()
+            conn.close()
             if row is None:
                 return None
             return TournamentStage(*row)
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+
+    @staticmethod
+    def get_all_stages(db: db, tournament_id: str) -> list[TournamentStage]:
+        try:
+            conn = db.get_connection()
+            query = "SELECT * FROM tournament_stages WHERE tournament_id = %s"
+            cursor = conn.cursor()
+            cursor.execute(query, (tournament_id,))
+            rows = cursor.fetchall()
+            cursor.close()
+            conn.close()
+            if rows is None:
+                return None
+            return [TournamentStage(*row) for row in rows]
         except mysql.connector.Error as err:
             print(f"Error: {err}")
 
