@@ -1,0 +1,2 @@
+Week 6 and Previous weeks' commits:
+    Added teamsCRUD file and teamappearancesCRUD file
