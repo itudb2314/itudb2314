@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 import mysql.connector
 from mysql.connector import errorcode
+from db.db import db
 
 
 @dataclass
@@ -26,8 +27,9 @@ class TeamAppearance:
 
 class TeamAppearanceDAO():
     @staticmethod
-    def create_team_appearance(db, ta: TeamAppearance) -> None:
+    def create_team_appearance(db:db, ta: TeamAppearance) -> None:
         try:
+            conn = db.get_connection()
             query = """INSERT INTO team_appearances (
                     tournament_id, 
                     match_id,
@@ -48,7 +50,7 @@ class TeamAppearanceDAO():
                     draw
                 ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
-            cursor = db.conn.cursor()
+            cursor = conn.cursor()
             cursor.execute(query, (
                 ta.tournament_id, 
                 ta.match_id, 
@@ -69,15 +71,18 @@ class TeamAppearanceDAO():
                 ta.draw
             ))
             cursor.close()
-            db.conn.commit()
+            conn.commit()
         except mysql.connector.Error as err:
             print(f"Error: {err}")
+        finally:
+            db.disconnect(conn)
 
     @staticmethod
-    def get_team_appearance_by_match_id(db, match_id: str) -> TeamAppearance:
+    def get_team_appearance_by_match_id(db:db, match_id: str) -> TeamAppearance:
         try:
+            conn = db.get_connection()
             query = "SELECT * FROM team_appearances WHERE match_id = %s AND tournament_id = %s"
-            cursor = db.conn.cursor()
+            cursor = conn.cursor()
             cursor.execute(query, (match_id,))
             row = cursor.fetchone()
             cursor.close()
@@ -86,22 +91,28 @@ class TeamAppearanceDAO():
             return TeamAppearance(*row)
         except mysql.connector.Error as err:
             print(f"Error: {err}")
+        finally:
+            db.disconnect(conn)
 
     @staticmethod
-    def get_all_team_appearances(db) -> list[TeamAppearance]:
+    def get_all_team_appearances(db:db) -> list[TeamAppearance]:
         try:
+            conn = db.get_connection()
             query = "SELECT * FROM team_appearances"
-            cursor = db.conn.cursor()
+            cursor = conn.cursor()
             cursor.execute(query)
             rows = cursor.fetchall()
             cursor.close()
             return [TeamAppearance(*row) for row in rows]
         except mysql.connector.Error as err:
             print(f"Error: {err}")
+        finally:
+            db.disconnect(conn)
 
     @staticmethod
-    def update_team_appearance(db, ta: TeamAppearance) -> None:
+    def update_team_appearance(db:db, ta: TeamAppearance) -> None:
         try:
+            conn = db.get_connection()
             query = """UPDATE team_appearances SET opponent_id = %s,
                         home_team = %s, away_team = %s,
                         goals_for = %s, goals_against = %s,
@@ -111,7 +122,7 @@ class TeamAppearanceDAO():
                         lose = %s, draw = %s
                     WHERE match_id = %s AND team_id = %s AND tournament_id = %s
             """
-            cursor = db.conn.cursor()
+            cursor = conn.cursor()
             cursor.execute(query, (
                 ta.tournament_id, 
                 ta.opponent_id, 
@@ -132,19 +143,24 @@ class TeamAppearanceDAO():
                 ta.team_id
             ))
             cursor.close()
-            db.conn.commit()
+            conn.commit()
         except mysql.connector.Error as err:
             print(f"Error: {err}")
+        finally:
+            db.disconnect(conn)
 
     @staticmethod
-    def delete_team_appearance(db, match_id: str, team_id: str) -> None:
+    def delete_team_appearance(db:db, match_id: str, team_id: str) -> None:
         try:
+            conn = db.get_connection()
             query = "DELETE FROM team_appearances WHERE match_id = %s AND team_id = %s AND tournament_id = %s"
-            cursor = db.conn.cursor()
+            cursor = conn.cursor()
             cursor.execute(query, (match_id, team_id))
             cursor.close()
-            db.conn.commit()
+            conn.commit()
         except mysql.connector.Error as err:
             print(f"Error: {err}")
+        finally:
+            db.disconnect(conn)
 
 
