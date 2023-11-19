@@ -1,2 +1,4 @@
 Week 6 and Previous weeks' commits:
     Added teamsCRUD file and teamappearancesCRUD file
+Week 7: 
+    Updated connection and cursor management
