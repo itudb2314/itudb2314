@@ -37,7 +37,7 @@ def create_server(db):
         squads = SquadDAO.get_all_squads(db)
         return flask.jsonify(squads)
     
-    @app.route('/api/v1/resources/matches/all', methods=['GET'])
+    @app.route('/matches', methods=['GET'])
     def api_all_matches():
         matches = MatchDAO.get_all_matches(db)
         return flask.jsonify(matches)

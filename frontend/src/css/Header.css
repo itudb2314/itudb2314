@@ -20,6 +20,7 @@ header ul {
 }
 
 header ul li {
+    font-size: calc(8px + 2vmin);
     float: left;
     margin: 10px;
 }

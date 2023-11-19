@@ -5,7 +5,7 @@ export default function Matches() {
     const [matches, setMatches] = useState([]);
 
     useEffect(() => {
-        fetch('http://localhost:5000/api/v1/resources/matches/all')
+        fetch('http://localhost:5000/matches')
             .then((response) => response.json())
             .then((data) => {
                 setMatches(data);
@@ -30,7 +30,7 @@ export default function Matches() {
     );
 }
 
-function Match({match}) {
+function Match(match) {
     return (
         <div>
             <h2>
