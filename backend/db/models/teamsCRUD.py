@@ -22,8 +22,9 @@ class Teams:
 
 class TeamsDAO():
     @staticmethod
-    def create_team(db, team: Teams) -> None:
+    def create_team(db: db, team: Teams) -> None:
         try:
+            conn = db.get_connection
             query = """INSERT INTO teams (
                         team_id,
                         team_name,
@@ -38,7 +39,7 @@ class TeamsDAO():
                         federation_wikipedia_link
                     ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
-            cursor = db.conn.cursor()
+            cursor = conn.cursor()
             cursor.execute(query, (
                 team.team_id,
                 team.team_name,
@@ -53,16 +54,19 @@ class TeamsDAO():
                 team.federation_wikipedia_link
             ))
             cursor.close()
-            db.conn.commit()
+            conn.commit()
         except mysql.connector.Error as err:
             print(f"Error: {err}")
+        finally:
+            db.disconnect(conn)
 
 
     @staticmethod
-    def get_team_by_id(db, team_id: str) -> Teams:
+    def get_team_by_id(db:db, team_id: str) -> Teams:
         try:
+            conn  = db.get_connection()
             query = "SELECT * FROM teams WHERE team_id = %s"
-            cursor = db.conn.cursor()
+            cursor = conn.cursor()
             cursor.execute(query, (team_id,))
             row = cursor.fetchone()
             cursor.close()
@@ -71,25 +75,31 @@ class TeamsDAO():
             return Teams(*row)
         except mysql.connector.Error as err:
             print(f"Error: {err}")
+        finally:
+            db.disconnect(conn)
 
 
     @staticmethod
-    def get_all_teams(db) -> list[Teams]:
+    def get_all_teams(db:db) -> list[Teams]:
         try:
+            conn = db.get_connection()
             query = "SELECT * FROM teams"
-            cursor = db.conn.cursor()
+            cursor = conn.cursor()
             cursor.execute(query)
             rows = cursor.fetchall()
             cursor.close()
             return [Teams(*row) for row in rows]
         except mysql.connector.Error as err:
             print(f"Error: {err}")
+        finally:
+            db.disconnect(conn)
 
 
 
     @staticmethod
-    def update_team(db, team: Teams) -> None:
+    def update_team(db:db, team: Teams) -> None:
         try:
+            conn = db.get_connection()
             query = """
                 UPDATE teams SET
                     team_name = %s,
@@ -104,7 +114,7 @@ class TeamsDAO():
                     federation_wikipedia_link = %s
                 WHERE team_id = %s
             """
-            cursor = db.conn.cursor()
+            cursor = conn.cursor()
             cursor.execute(query, (
                 team.team_name,
                 team.team_code,
@@ -119,18 +129,23 @@ class TeamsDAO():
                 team.team_id
             ))
             cursor.close()
-            db.conn.commit()
+            conn.commit()
         except mysql.connector.Error as err:
             print(f"Error: {err}")
+        finally:
+            db.disconnect(conn)
 
 
     @staticmethod
-    def delete_team(db, team_id: str) -> None:
+    def delete_team(db:db, team_id: str) -> None:
         try:
+            conn = db.get_connection()
             query = "DELETE FROM teams WHERE team_id = %s"
-            cursor = db.conn.cursor()
+            cursor = conn.cursor()
             cursor.execute(query, (team_id,))
             cursor.close()
-            db.conn.commit()
+            conn.commit()
         except mysql.connector.Error as err:
             print(f"Error: {err}")
+        finally:
+            db.disconnect(conn)
