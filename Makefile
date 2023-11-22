@@ -1,5 +1,6 @@
 pwd := $(shell pwd)
 
+#different at my own computer
 mysql:
 	docker run --name fifa-mysql -e MYSQL_ROOT_PASSWORD=root -d -p 3306:3306 mysql:8.1
 
@@ -19,9 +20,10 @@ createdb:
 removedb:
 	docker exec -it fifa-mysql mysql -u root --password=root -e "DROP DATABASE fifa;"
 
+#different at my own computer
 server:
 	cd backend/ && \
-	python3 main.py
+	C:/Python312/python.exe c:/Users/abdul/Desktop/BLG317E-Project/backend/main.py
 
 frontend-build:
 	cd ./frontend && \
