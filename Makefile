@@ -23,7 +23,7 @@ removedb:
 #different at my own computer
 server:
 	cd backend/ && \
-	C:/Python312/python.exe c:/Users/abdul/Desktop/BLG317E-Project/backend/main.py
+	python3 main.py
 
 frontend-build:
 	cd ./frontend && \
