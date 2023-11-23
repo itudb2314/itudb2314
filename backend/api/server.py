@@ -5,7 +5,7 @@ from db.models.tournament import TournamentDAO
 from db.models.tournament_stage import TournamentStageDAO
 from db.models.squad import SquadDAO
 from db.models.match import MatchDAO
-from db.models.teamsCRUD import TeamsDAO
+from db.models.teams import TeamsDAO
 
 
 def create_server(db):
