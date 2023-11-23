@@ -5,6 +5,7 @@ from db.models.tournament import TournamentDAO
 from db.models.tournament_stage import TournamentStageDAO
 from db.models.squad import SquadDAO
 from db.models.match import MatchDAO
+from db.models.teamsCRUD import TeamsDAO
 
 
 def create_server(db):
@@ -41,5 +42,10 @@ def create_server(db):
     def api_all_matches():
         matches = MatchDAO.get_all_matches(db)
         return flask.jsonify(matches)
+    
+    @app.route('/tournaments/teams', methods=['GET'])
+    def api_all_teams():
+        teams =  TeamsDAO.get_all_teams(db)
+        return flask.jsonify(teams)
 
     return app
