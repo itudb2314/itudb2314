@@ -55,5 +55,18 @@ def create_server(db):
     def api_all_teams():
         teams =  TeamsDAO.get_all_teams(db)
         return flask.jsonify(teams)
+    
+    @app.route('/tournaments/teams', methods=['POST'])
+    def update_teams():
+        teams = flask.request.get_json()["newTeam"]
+        teams = make_dataclass('Team', teams.keys())(**teams)
+        teams = TeamsDAO.update_team(db, teams)
+        return flask.jsonify(teams)
+
+    @app.route('/tournaments/teams', methods=['DELETE'])
+    def delete_teams():
+        team_id = flask.request.get_json()
+        TeamsDAO.delete_teams(db, team_id)
+        return flask.jsonify({})
 
     return app
