@@ -13,12 +13,20 @@ def create_server(db):
     CORS(app)
     app.config["DEBUG"] = True
 
+    @app.route('/tournaments', methods=['POST'])
+    def create_tournament():
+        tournament = flask.request.get_json()["newTournament"]
+        tournament = make_dataclass('Tournament', tournament.keys())(**tournament)
+        TournamentDAO.create_tournament(db, tournament)
+        return flask.jsonify({})
+
+
     @app.route('/tournaments', methods=['GET'])
     def get_all_tournaments():
         tournaments = TournamentDAO.get_all_tournaments(db)
         return flask.jsonify(tournaments)
 
-    @app.route('/tournaments', methods=['POST'])
+    @app.route('/tournaments', methods=['PUT'])
     def update_tournament():
         tournament = flask.request.get_json()["newTournament"]
         tournament = make_dataclass('Tournament', tournament.keys())(**tournament)

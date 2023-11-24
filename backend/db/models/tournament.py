@@ -73,7 +73,8 @@ class TournamentDAO():
                 tournament.final
             ))
             cursor.close()
-            db.conn.commit()
+            conn.commit()
+            db.disconnect(conn)
         except mysql.connector.Error as err:
             print(f"Error: {err}")
 
