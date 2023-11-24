@@ -5,3 +5,5 @@ Week 7:
     Added a new page for the tournaments and added a new page for the tournaments.
     Change appearances for the tournaments page.
     Added additional functionalities such as update and delete.
+Week 8:
+    Complete all operations on Touranemnts page.
