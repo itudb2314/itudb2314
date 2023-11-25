@@ -1,0 +1,55 @@
+.table {
+    width: 30%;
+    margin: 0 auto;
+    border-collapse: collapse;
+    border-radius: 10px; /* Rounded edges */
+}
+
+.table th,
+.table td {
+    padding: 4px; /* Smaller padding */
+    text-align: center;
+    border-bottom: 1px solid #dddddd;
+}
+
+.table th {
+    background-color: lightblue;
+    color: #333;
+}
+
+.table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.table tr:hover {
+    background-color: #f5f5f5;
+}
+
+.table th:first-child {
+    border-top-left-radius: 10px;
+}
+
+.table th:last-child {
+    border-top-right-radius: 10px;
+}
+
+.table td:first-child {
+    border-bottom-left-radius: 10px;
+}
+
+.table td:last-child {
+    border-bottom-right-radius: 10px;
+}
+
+/* table-div in için h2 başlığı ve table ları yan yana getirmek için */
+.group-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.table-div {
+    margin-right: 20px; /* İstediğiniz boşluk değerini ayarlayabilirsiniz */
+    flex :1;
+}
+
+/* Diğer stillendirme özelliklerini ekleyebilirsiniz */

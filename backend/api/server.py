@@ -6,6 +6,7 @@ from db.models.tournament_stage import TournamentStageDAO
 from db.models.squad import SquadDAO
 from db.models.match import MatchDAO
 from db.models.teams import TeamsDAO
+from db.models.group_standing import GroupStandingDAO
 
 
 def create_server(db):
@@ -40,6 +41,11 @@ def create_server(db):
         print(tournament_id)
         TournamentDAO.delete_tournament(db, tournament_id)
         return flask.jsonify({})
+
+    @app.route('/groupstandings', methods=['GET'])
+    def api_all_group_standings():
+        group_standings = GroupStandingDAO.get_all_group_standings(db)
+        return flask.jsonify(group_standings)
 
     @app.route('/squads', methods=['GET'])
     def api_all_squads():
