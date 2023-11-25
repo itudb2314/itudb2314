@@ -1,0 +1,52 @@
+.matches {
+    text-align: center;
+}
+.match_header {
+    background-color: cadetblue;
+    color: black;
+    text-align: center;
+    margin: 0px;
+    border-top-left-radius: 50px;
+    border-top-right-radius: 50px;
+    height: 45px;
+}
+
+.match_details {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.team_score {
+    font-size: x-large;
+    font-weight: bold;
+    text-align: center;
+}
+
+.team_names {
+    font-size: xx-large;
+    font-weight: bold;
+    flex: 1;
+    text-align: center;
+}
+
+.match_time {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-size: large;
+}
+
+.match_time_item {
+    padding: 0px;
+    margin: 2px;
+}
+
+.center_div{
+    position: relative;
+    left: 50%;
+    top: 100px;
+    transform: translate(-50%, -50%);
+}
