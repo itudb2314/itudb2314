@@ -10,3 +10,12 @@ Goals Table: def get_match_goals(db: db, tournament_id: str, match_id: str) -> L
 
 Week 07 commit: 
 added api to fetch the data and some frontend to display matches information like match date, match time, home team, away team, and their scores.
+
+Week 08 commit:
+added css file for matches, grouped matches by tournament and styled it in a way where each match is displayed in a rounded field with a header displaying the match stage and a body displaying the details of the match in the following format
+HOME_TEAM home_team_score - away_team_score AWAY_TEAM
+		     Match Time
+	               Stadium
+                         City
+also added necessary join operations as the match table had home_team_id, away_team_id, and stadium_id which i needed to obtain the names of using join operations with the stadiums table and teams table.
+		
