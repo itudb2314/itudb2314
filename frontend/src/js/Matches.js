@@ -62,6 +62,9 @@ function Match(match) {
                 <p className='team_names'>{match.away_team_name}</p>
             </div>
             <div className='match_time'>
+                {match.penalty_shootout ?  (
+                    <p className='match_time_item'>({match.home_team_score_penalties} - {match.away_team_score_penalties})</p>
+                ) : null}
                 <p className='match_time_item'>{match.match_time}</p>
                 <p className='match_time_item'>{match.stadium_name}</p>
                 <p className='match_time_item'>{match.city_name}</p>
