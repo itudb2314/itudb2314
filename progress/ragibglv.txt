@@ -1,4 +1,6 @@
 Week 6 and Previous weeks' commits:
-    Added teamsCRUD file and teamappearancesCRUD file
+    Added teams.py file and teamappearances.py file
 Week 7: 
     Updated connection and cursor management
+Week 8:
+    Added frontend for teams  
