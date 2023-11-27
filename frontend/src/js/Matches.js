@@ -34,7 +34,7 @@ export default function Matches() {
             <h1>Matches</h1> 
             {matches.map((tournament_matches, i) => (
                 <div key={i}>
-                    <h2 style={style}>{tournament_matches[0].tournament_id}</h2>
+                    <h2 style={style}>{tournament_matches[0].tournament_name}</h2>
                     {tournament_matches.map((match) => (
                         <Match key={match.match_id} {...match} />
                     ))}
@@ -54,7 +54,7 @@ function Match(match) {
     return (
         <div style={match_style} className='center_div'>
             <h2 className = "match_header">
-                {match.tournament_id} / {match.stage_name}
+                {match.stage_name}
             </h2>
             <div className='match_details'>
                 <p className='team_names'>{match.home_team_name}</p>
