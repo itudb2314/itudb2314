@@ -47,10 +47,32 @@ def create_server(db):
         group_standings = GroupStandingDAO.get_all_group_standings(db)
         return flask.jsonify(group_standings)
 
+    @app.route('/squads', methods=['POST'])
+    def create_squad():
+        new_squad = flask.request.get_json()['newSquad']  # Fix the brackets here
+        new_squad = make_dataclass('Squad', new_squad.keys())(**new_squad)
+        SquadDAO.create_squad_member(db, new_squad)
+        return flask.jsonify({})
+
     @app.route('/squads', methods=['GET'])
-    def api_all_squads():
+    def get_all_squads():
         squads = SquadDAO.get_all_squads(db)
         return flask.jsonify(squads)
+        
+    @app.route('/squads', methods=['PUT'])
+    def update_squad():
+        squad_data = flask.request.get_json().get('squadData')  # Use square brackets here
+        squad_data = make_dataclass('Squad', squad_data.keys())(**squad_data)
+        SquadDAO.update_squad_member(db, squad_data)
+        return flask.jsonify({'message': 'Squad updated successfully'})
+
+    @app.route('/squads', methods=['DELETE'])
+    def delete_squad_member():
+        tournament_id = flask.request.get_json()['tournament_id']
+        team_id = flask.request.get_json()['team_id']
+        player_id = flask.request.get_json()['player_id']
+        SquadDAO.delete_squad_member(db, tournament_id, team_id, player_id)
+        return flask.jsonify({})
     
     @app.route('/matches', methods=['GET'])
     def api_all_matches():
