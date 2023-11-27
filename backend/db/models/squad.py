@@ -78,7 +78,8 @@ class SquadDAO():
             query = """
                 SELECT tournament_id, team_id, player_id, shirt_number, position_name, position_code
                 FROM squads
-                ORDER BY tournament_id DESC, team_id
+                ORDER BY tournament_id DESC, team_id ASC
+                LIMIT 100
             """
             cursor = connection.cursor()
             cursor.execute(query)

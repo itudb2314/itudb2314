@@ -5,7 +5,7 @@
     background-color: cadetblue;
     color: black;
     text-align: center;
-    margin: 0px;
+    margin: 0;
     border-top-left-radius: 50px;
     border-top-right-radius: 50px;
     height: 45px;
@@ -40,7 +40,7 @@
 }
 
 .match_time_item {
-    padding: 0px;
+    padding: 0;
     margin: 2px;
 }
 

@@ -130,11 +130,11 @@ export default function Squads() {
                                 <p>Player: {squad.player_id}</p>
                                 <p>Shirt Number: {squad.shirt_number}</p>
                                 <p>Position: {squad.position_name}</p>
-                                <button className="delete-button" onClick={() => deleteSquad(actualSquad.tournament_id, actualSquad.team_id, squad.player_id)}>
-                                    Delete
-                                </button>
                                 <button className="edit-button" onClick={() => updateSquad(squad)}>
                                     Edit
+                                </button>
+                                <button className="delete-button" onClick={() => deleteSquad(actualSquad.tournament_id, actualSquad.team_id, squad.player_id)}>
+                                    Delete
                                 </button>
                             </div>
                         </div>

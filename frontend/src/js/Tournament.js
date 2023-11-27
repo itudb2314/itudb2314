@@ -131,9 +131,7 @@ export default function Tournaments() {
                             <input
                                 type="text"
                                 id="start_date"
-                                required
-                            />
-                            <label htmlFor="end_date">End Date</label>
+                                required /> <label htmlFor="end_date">End Date</label>
                             <input
                                 type="text"
                                 id="end_date"
