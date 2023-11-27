@@ -20,7 +20,7 @@ class actual_squad:
 
 class SquadDAO():
     @staticmethod
-    def create_squad(db: db, squad: Squad) -> None:
+    def create_squad_member(db: db, squad: Squad) -> None:
         try:
             connection = db.get_connection()
             query = """
@@ -103,7 +103,7 @@ class SquadDAO():
             connection.close()
     
     @staticmethod
-    def update_squad(db: db, squad: Squad) -> None:
+    def update_squad_member(db: db, squad: Squad) -> None:
         try:
             connection = db.get_connection()
             query = """
@@ -130,7 +130,7 @@ class SquadDAO():
         finally:
             cursor.close()
             connection.close()
-
+                
     @staticmethod
     def delete_squad(db: db, tournament_id: str, team_id: str) -> None:
         try:
@@ -138,10 +138,28 @@ class SquadDAO():
             query = """
                 DELETE FROM squads WHERE tournament_id = %s AND team_id = %s
             """
-            cursor = db.conn.cursor()
+            cursor = connection.cursor()
             cursor.execute(query, (tournament_id, team_id))
             connection.commit()
             print("Squad deleted successfully.")
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+            connection.rollback()
+        finally:
+            cursor.close()
+            connection.close()
+
+    @staticmethod
+    def delete_squad_member(db: db, tournament_id: str, team_id: str, player_id: str) -> None:
+        try:
+            connection = db.get_connection()
+            query = """
+                DELETE FROM squads WHERE tournament_id = %s AND team_id = %s AND player_id = %s
+            """
+            cursor = connection.cursor()
+            cursor.execute(query, (tournament_id, team_id, player_id))
+            connection.commit()
+            print("Squad member deleted successfully.")
         except mysql.connector.Error as err:
             print(f"Error: {err}")
             connection.rollback()
