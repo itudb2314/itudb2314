@@ -8,6 +8,7 @@ import Squads from './js/Squads'; // Assuming you have a Squads component
 import Matches from './js/Matches'; 
 import Teams from './js/Teams';
 import Groupstandings from './js/Groupstanding';
+import Managers from './js/Managers';
 
 function App() {
     return (
@@ -19,6 +20,7 @@ function App() {
                 <Route path="/matches" exact component={Matches} />
                 <Route path="/teams" exact component={Teams} />
                 <Route path="/groupstandings" exact component={Groupstandings} />
+                <Route path="/managers" exact component={Managers} />
             </Switch>
         </Router>
     );

@@ -7,6 +7,7 @@ from db.models.squad import SquadDAO
 from db.models.match import MatchDAO
 from db.models.teams import TeamsDAO
 from db.models.group_standing import GroupStandingDAO
+from db.models.manager import ManagerDAO
 
 
 def create_server(db):
@@ -96,5 +97,11 @@ def create_server(db):
         team_id = flask.request.get_json()
         TeamsDAO.delete_teams(db, team_id)
         return flask.jsonify({})
+    
+
+    @app.route('/managers', methods=['GET'])
+    def api_all_managers():
+        managers = ManagerDAO.get_all_managers(db)
+        return flask.jsonify(managers)
 
     return app
