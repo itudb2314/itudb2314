@@ -2,12 +2,12 @@ import flask
 from flask_cors import CORS
 from dataclasses import make_dataclass
 from db.models.tournament import TournamentDAO
-from db.models.tournament_stage import TournamentStageDAO
 from db.models.squad import SquadDAO
 from db.models.match import MatchDAO
 from db.models.teams import TeamsDAO
 from db.models.group_standing import GroupStandingDAO
 from db.models.manager import ManagerDAO
+from db.models.tournament_details import TournamentDetailsDAO
 
 
 def create_server(db):
@@ -46,8 +46,8 @@ def create_server(db):
 
     @app.route('/tournaments/<tournament_id>/', methods=['GET'])
     def get_tournament(tournament_id):
-        tournament = TournamentDAO.get_tournament_by_id(db, tournament_id)
-        return flask.jsonify(tournament)
+        details = TournamentDetailsDAO.get_tournament_details(db, tournament_id)
+        return flask.jsonify(details)
 
     @app.route('/groupstandings', methods=['GET'])
     def api_all_group_standings():
@@ -88,7 +88,7 @@ def create_server(db):
     
     @app.route('/tournaments/teams', methods=['GET'])
     def api_all_teams():
-        teams =  TeamsDAO.get_all_teams(db)
+        teams = TeamsDAO.get_all_teams(db)
         return flask.jsonify(teams)
     
     @app.route('/tournaments/teams', methods=['POST'])

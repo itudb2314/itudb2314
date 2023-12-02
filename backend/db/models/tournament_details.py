@@ -11,10 +11,7 @@ class TournamentDetailsDAO:
     def get_tournament_details(db: db, tournament_id: str):
         try:
             conn = db.get_connection()
-            query =
-            """
-                SELECT 
-            """
+            query = "Call GetKnockoutMatches(%s);"
             cursor = conn.cursor()
             cursor.execute(query, (tournament_id,))
             result = cursor.fetchall()
