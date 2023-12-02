@@ -5,6 +5,8 @@ import {useEffect, useState} from "react";
 export default function Teams() {
     const [teams, setTeams] = useState([])
     const [deleteTrigger, setDeleteTrigger] = useState(false)
+    const [addTrigger, setAddTrigger] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
 
     useEffect(() => {
         fetch('http://localhost:5000/tournaments/teams')
@@ -13,8 +15,44 @@ export default function Teams() {
                 setTeams(data)
                 console.log(teams)
             })
-    }, [deleteTrigger])
+    }, [deleteTrigger, addTrigger])
 
+    const toggleModal = () => {
+        setModalVisible(!modalVisible);
+    };
+
+    function addTeam(e) {
+        e.preventDefault();
+        const newTeam = {
+            team_id: e.target.team_id.value,
+            team_name: e.target.team_name.value,
+            team_code: e.target.team_code.value,
+            confederation_id: e.target.confederation_id.value,
+            federation_wikipedia_link: e.target.federation_wikipedia_link.value,
+            mens_team_wikipedia_link: e.target.mens_team_wikipedia_link.value,
+            womens_team_wikipedia_link: e.target.womens_team_wikipedia_link.value,
+            womens_team: e.target.womens_team.checked,
+            mens_team: e.target.mens_team.checked,
+            federation_name: e.target.federation_name.value,
+            region_name: e.target.region_name.value,
+        }
+
+        fetch('http://localhost:5000/tournaments/teams', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({newTeam}),
+        }).then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                setAddTrigger(!addTrigger)
+                toggleModal()
+            })
+            .catch((error) => {
+                console.log('Error:', error);
+            });
+    }
 
 
     function deleteTeam(team) {
@@ -23,35 +61,76 @@ export default function Teams() {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(team.team_id),
-        }).then(response => response.json())
-            .then(data => {
-                console.log('Success:', data);
-                setDeleteTrigger(!deleteTrigger)
-            })
-            .catch((error) => {
-                console.log('Error:', error);
-            });
+            body: JSON.stringify({ team_id: team.team_id }),  // Correctly format the data as JSON
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Delete successful:', data);
+            setDeleteTrigger(!deleteTrigger); // Trigger to re-fetch teams
+        })
+        .catch((error) => {
+            console.log('Error:', error);
+        });
     }
+    
 
 
     return (
     <div className='teams'>
+        <button className="add-button" onClick={toggleModal}>+ Add Team</button>
+        {modalVisible && (
+            <div className="modal">
+                <div className="modal-content">
+                    <span className="close" onClick={toggleModal}>&times;</span>
+                    <form onSubmit={addTeam}>
+                        <label htmlFor="team_id">Team ID</label>
+                        <input id='team_id' type="text"/>
+                        <label htmlFor="team_name">Team Name</label>
+                        <input id='team_name' type="text"/>
+                        <label htmlFor="team_code">Team Code</label>
+                        <input id='team_code'type="text"/>
+                        <div className="checkbox">
+                            <label htmlFor="mens_team">Mens Team</label>
+                            <input id='mens_team' type="checkbox"/>
+                        </div>
+                        <div className="checkbox">
+                            <label htmlFor="womens_team">Womens Team</label>
+                            <input id='womens_team' type="checkbox"/>
+                        </div>
+                        <label htmlFor="federation_name">Federation Name</label>
+                        <input id='federation_name'type="text"/>
+                        <label htmlFor="region_name">Region Name</label>
+                        <input id='region_name'type="text"/>
+                        <label htmlFor="confederation_id">Confederation ID</label>
+                        <input id='confederation_id'type="text"/>
+                        <label htmlFor="mens_team_wikipedia_link">Mens Team Wikipedia Link</label>
+                        <input id='mens_team_wikipedia_link'type="text"/>
+                        <label htmlFor="womens_team_wikipedia_link">Women Team Wikipedia Link</label>
+                        <input id='womens_team_wikipedia_link'type="text"/>
+                        <label htmlFor="federation_wikipedia_link">Federation Wikipedia Link</label>
+                        <input id='federation_wikipedia_link'type="text"/>
+                        <button className="save-button" type='submit'>Save</button>
+                    </form>
+                </div>
+            </div>
+        )}
         {teams.map(team => (
-            <Team key={team.team_id} t={team}/>
+            <Team key={team.team_id} t={team} handleDeleteTeam={deleteTeam}/>
         ))}
     </div>
 );
 }
 
 
-function Team({t}){
+function Team({t, handleDeleteTeam}){
     const [team, setTeam] = useState(t);
     const [isEditing, setIsEditing] = useState(false);
 
     function editTeam() { setIsEditing(true)}
     
-    function deleteTeam() {}
+    function deleteTeam() {
+        handleDeleteTeam(team)
+    }
     
     function submitTeam(e) {
         e.preventDefault();
@@ -63,7 +142,7 @@ function Team({t}){
         newTeam.federation_wikipedia_link = e.target.federation_wikipedia_link.value;
 
         fetch('http://localhost:5000/tournaments/teams', {
-            method: 'POST',
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },

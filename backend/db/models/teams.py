@@ -24,7 +24,7 @@ class TeamsDAO():
     @staticmethod
     def create_team(db: db, team: Teams) -> None:
         try:
-            conn = db.get_connection
+            conn = db.get_connection()
             query = """INSERT INTO teams (
                         team_id,
                         team_name,
