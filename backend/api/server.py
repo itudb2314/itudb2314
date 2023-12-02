@@ -43,9 +43,14 @@ def create_server(db):
         TournamentDAO.delete_tournament(db, tournament_id)
         return flask.jsonify({})
 
+    # @app.route('/groupstandings', methods=['GET'])
+    # def api_all_group_standings():
+    #     group_standings = GroupStandingDAO.get_all_group_standings(db)
+    #     return flask.jsonify(group_standings)
+    
     @app.route('/groupstandings', methods=['GET'])
     def api_all_group_standings():
-        group_standings = GroupStandingDAO.get_all_group_standings(db)
+        group_standings = GroupStandingDAO.get_all_group_standings_joined(db)
         return flask.jsonify(group_standings)
 
     @app.route('/squads', methods=['POST'])

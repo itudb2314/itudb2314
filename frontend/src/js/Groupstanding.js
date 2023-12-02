@@ -22,27 +22,24 @@ export default function Groupstandings() {
             <h1 style={{ textAlign: "center" }}>Group Standings</h1>
             {allgroups.map(alls => (
                 <div key={alls.tournament_id} className="tournament-group">
-                    <h2 style={{textAlign:'center'}}>
+                    <h2 style={{ textAlign: 'center' }}>
                         {alls.tournament_id}
                     </h2>
                     {alls.stagedlist.map(staged => (
                         <div style={{ textAlign: 'center' }} key={alls.tournament_id / staged.stage_number} className="stage-group">
-                            <h3 style={{textAlign:'center'}}>
-                                {staged.stage_name}
-                            </h3>
                             {staged.grouplist.map(grouped => (
                                 <div key={alls.tournament_id / staged.stage_number / grouped.group_name} className="group-group">
                                     <div className="table-div">
-                                        <h4 style={{textAlign :'center'}}>
+                                        <h4 style={{ textAlign: 'center' }}>
                                             {grouped.group_name}
                                         </h4>
-                                    
+
                                         <div className="table-container">
                                             <table className="table">
                                                 <thead>
                                                     <tr>
                                                         <th>Position</th>
-                                                        <th>Team ID</th>
+                                                        <th>Team</th>
                                                         <th>P</th>
                                                         <th>W</th>
                                                         <th>D</th>
@@ -73,7 +70,7 @@ export default function Groupstandings() {
 
 function Groupstanding({
     position,
-    team_id,
+    team_name,
     played,
     wins,
     draws,
@@ -87,7 +84,7 @@ function Groupstanding({
     return (
         <tr>
             <td>{position}</td>
-            <td>{team_id}</td>
+            <td>{team_name}</td>
             <td>{played}</td>
             <td>{wins}</td>
             <td>{draws}</td>
