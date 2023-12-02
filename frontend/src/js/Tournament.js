@@ -1,6 +1,7 @@
 import '../css/Tournament.css';
 import '../css/Buttons.css';
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
+import {useHistory} from "react-router-dom";
 
 export default function Tournaments() {
     const [tournaments, setTournaments] = useState([])
@@ -12,7 +13,6 @@ export default function Tournaments() {
         fetch('http://localhost:5000/tournaments')
             .then(response => response.json())
             .then(data => {
-                console.log(data)
                 setTournaments(data)
             })
     }, [deleteTrigger, addTrigger])
@@ -229,10 +229,12 @@ export default function Tournaments() {
     );
 }
 
-const Tournament = ({t, deleteHandle}) => {
+function Tournament({t, deleteHandle}) {
     const [tournament, setTournament] = useState(t);
 
     const [isEditing, setIsEditing] = useState(false);
+    const history = useHistory();
+
     const editTournament = () => setIsEditing(true);
     const submitForm = (event) => {
         event.preventDefault();
@@ -262,12 +264,16 @@ const Tournament = ({t, deleteHandle}) => {
         deleteHandle(tournament);
     }
 
+    function handleClick() {
+        history.push(`/tournaments/${tournament.tournament_id}`);
+    }
+
     return (
         <div className="tournament">
             <div className="tournament-details">
                 {!isEditing ? (
                     <>
-                        <h3>{tournament.tournament_name}</h3>
+                        <h3 onClick={handleClick} style={{cursor: 'pointer'}}>{tournament.tournament_name}</h3>
                         <p>Winner: {tournament.winner}</p>
                         <div className="buttons">
                             <button className="edit-button" onClick={editTournament}>Edit</button>
