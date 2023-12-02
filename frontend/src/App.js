@@ -4,6 +4,7 @@ import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 
 import Header from './js/Header';
 import Tournaments from './js/Tournament';
+import TournamentDetails from './js/TournamentDetails';
 import Squads from './js/Squads'; // Assuming you have a Squads component
 import Matches from './js/Matches'; 
 import Teams from './js/Teams';
@@ -16,6 +17,7 @@ function App() {
             <Header />
             <Switch>
                 <Route path="/tournaments" exact component={Tournaments} />
+                <Route path="/tournaments/:id" component={TournamentDetails} />
                 <Route path="/squads" exact component={Squads} />
                 <Route path="/matches/:match_id?" exact component={Matches} />
                 <Route path="/teams" exact component={Teams} />
