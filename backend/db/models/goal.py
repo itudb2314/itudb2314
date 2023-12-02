@@ -23,6 +23,10 @@ class Goal:
     own_goal: bool
     penalty: bool
 
+    #join data
+    given_name: str
+    family_name: str
+
 
 class GoalDAO():
     @staticmethod
@@ -74,6 +78,33 @@ class GoalDAO():
             connection.close()
 
     @staticmethod
+    def get_all_goals(db: db) -> List[Goal]:
+        goals = []
+        try:
+            connection = db.get_connection()
+            query = """
+                    SELECT g.*, p.given_name, p.family_name 
+                    FROM goals g 
+                    LEFT JOIN players p ON g.player_id = p.player_id
+                    """
+            cursor = connection.cursor()
+            cursor.execute(query)
+            results = cursor.fetchall()
+            if results:
+                for result in results:
+                    goal = Goal(result[0], result[1], result[2], result[3], result[4], result[5], result[6], result[7],
+                                result[8], result[9], result[10], result[11], result[12], result[13], result[14], result[15], result[16])
+                    goals.append(goal)
+                return goals
+            else:
+                return None
+        except mysql.connector.Error as error:
+            cursor.rollback()
+        finally:
+            cursor.close()
+            connection.close()
+
+    @staticmethod
     def get_goal_by_id(db: db, goal_id: str) -> Goal:
         try:
             connection = db.get_connection()
@@ -96,15 +127,15 @@ class GoalDAO():
             connection.close()
 
     @staticmethod
-    def get_match_goals(db: db, tournament_id: str, match_id: str) -> List[Goal]:
+    def get_match_goals(db: db, match_id: str) -> List[Goal]:
         goals = []
         try:
             connection = db.get_connection()
             query = """
-                    SELECT * FROM goals WHERE tournament_id = %s AND match_id = %s 
+                    SELECT * FROM goals WHERE match_id = %s 
                     """
             cursor = connection.cursor()
-            cursor.execute(query, (tournament_id, match_id))
+            cursor.execute(query, (match_id,))
             results = cursor.fetchall()
             if results:
                 for result in results:

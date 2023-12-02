@@ -18,6 +18,13 @@
     align-items: center;
 }
 
+.match_statistics {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
 .team_score {
     font-size: x-large;
     font-weight: bold;

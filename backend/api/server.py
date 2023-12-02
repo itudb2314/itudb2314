@@ -5,6 +5,7 @@ from db.models.tournament import TournamentDAO
 from db.models.tournament_stage import TournamentStageDAO
 from db.models.squad import SquadDAO
 from db.models.match import MatchDAO
+from db.models.goal import GoalDAO
 from db.models.teams import TeamsDAO
 from db.models.group_standing import GroupStandingDAO
 from db.models.manager import ManagerDAO
@@ -79,6 +80,20 @@ def create_server(db):
     def api_all_matches():
         matches = MatchDAO.get_all_matches(db)
         return flask.jsonify(matches)
+    
+    @app.route('/goals', methods=['GET'])
+    def api_all_goals():
+        goals = GoalDAO.get_all_goals(db)
+        return flask.jsonify(goals)
+    
+    @app.route('/matches/<match_id>', methods=['GET'])
+    def api_match_by_id(match_id : str):
+        print(match_id)
+        match = MatchDAO.get_match_by_id(db, match_id)
+        if match:
+            return flask.jsonify(match), 200
+        else:
+            return flask.jsonify({'message': 'Match not found'}), 404
     
     @app.route('/tournaments/teams', methods=['GET'])
     def api_all_teams():
