@@ -51,7 +51,7 @@ def create_server(db):
 
     @app.route('/groupstandings', methods=['GET'])
     def api_all_group_standings():
-        group_standings = GroupStandingDAO.get_all_group_standings(db)
+        group_standings = GroupStandingDAO.get_all_group_standings_joined(db)
         return flask.jsonify(group_standings)
 
     @app.route('/squads', methods=['POST'])
