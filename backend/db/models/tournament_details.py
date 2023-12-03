@@ -6,6 +6,15 @@ import mysql.connector
 from mysql.connector import errorcode
 
 
+@dataclass
+class TournamentDetails:
+    team1: str
+    team2: str
+    home_team_score: int
+    away_team_score: int
+    stage_name: str
+
+
 class TournamentDetailsDAO:
     @staticmethod
     def get_tournament_details(db: db, tournament_id: str):
@@ -15,7 +24,7 @@ class TournamentDetailsDAO:
             cursor = conn.cursor()
             cursor.execute(query, (tournament_id,))
             result = cursor.fetchall()
-            return result
+            return [TournamentDetails(*row) for row in result]
         except mysql.connector.Error as err:
             print(err)
         finally:
