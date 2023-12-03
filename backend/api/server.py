@@ -68,7 +68,7 @@ def create_server(db):
         
     @app.route('/squads', methods=['PUT'])
     def update_squad():
-        squad_data = flask.request.get_json().get('squadData')  # Use square brackets here
+        squad_data = flask.request.get_json()['squadData']  # Use square brackets here
         squad_data = make_dataclass('Squad', squad_data.keys())(**squad_data)
         SquadDAO.update_squad_member(db, squad_data)
         return flask.jsonify({'message': 'Squad updated successfully'})
@@ -91,7 +91,7 @@ def create_server(db):
         teams = TeamsDAO.get_all_teams(db)
         return flask.jsonify(teams)
     
-    @app.route('/tournaments/teams', methods=['POST'])
+    @app.route('/tournaments/teams', methods=['PUT'])
     def update_teams():
         teams = flask.request.get_json()["newTeam"]
         teams = make_dataclass('Team', teams.keys())(**teams)
