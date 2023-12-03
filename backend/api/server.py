@@ -4,6 +4,7 @@ from dataclasses import make_dataclass
 from db.models.tournament import TournamentDAO
 from db.models.squad import SquadDAO
 from db.models.match import MatchDAO
+from db.models.goal import GoalDAO
 from db.models.teams import TeamsDAO
 from db.models.group_standing import GroupStandingDAO
 from db.models.manager import ManagerDAO
@@ -86,22 +87,53 @@ def create_server(db):
         matches = MatchDAO.get_all_matches(db)
         return flask.jsonify(matches)
     
+    @app.route('/goals', methods=['GET'])
+    def api_all_goals():
+        goals = GoalDAO.get_all_goals(db)
+        return flask.jsonify(goals)
+    
+    @app.route('/matches/<match_id>', methods=['GET'])
+    def api_match_by_id(match_id : str):
+        match = MatchDAO.get_match_by_id(db, match_id)
+        if match:
+            return flask.jsonify(match), 200
+        else:
+            return flask.jsonify({'message': 'Match not found'}), 404
+        
+    @app.route('/goals/<match_id>', methods=['GET'])
+    def api_goals_by_match_id(match_id : str):
+        goals = GoalDAO.get_match_goals(db, match_id)
+        if goals:
+            return flask.jsonify(goals), 200
+        else:
+            return flask.jsonify({'message': 'Goals not found'}), 404
+
+    
     @app.route('/tournaments/teams', methods=['GET'])
     def api_all_teams():
         teams = TeamsDAO.get_all_teams(db)
         return flask.jsonify(teams)
     
-    @app.route('/tournaments/teams', methods=['POST'])
+    @app.route('/tournaments/teams', methods=['PUT'])
     def update_teams():
         teams = flask.request.get_json()["newTeam"]
         teams = make_dataclass('Team', teams.keys())(**teams)
         teams = TeamsDAO.update_team(db, teams)
         return flask.jsonify(teams)
 
+    
     @app.route('/tournaments/teams', methods=['DELETE'])
     def delete_teams():
-        team_id = flask.request.get_json()
-        TeamsDAO.delete_teams(db, team_id)
+        team_data = flask.request.get_json()
+        team_id = team_data['team_id']  # Correctly parse the team_id
+        TeamsDAO.delete_team(db, team_id)
+        return flask.jsonify({'message': 'Team deleted successfully'})
+
+    @app.route('/tournaments/teams', methods=['POST'])
+    def create_teams():
+        teams = flask.request.get_json()["newTeam"]
+        teams = make_dataclass('Team', teams.keys())(**teams)
+        TeamsDAO.create_team(db, teams)
         return flask.jsonify({})
     
 

@@ -19,7 +19,7 @@ function App() {
                 <Route path="/tournaments" exact component={Tournaments} />
                 <Route path="/tournaments/:id" component={TournamentDetails} />
                 <Route path="/squads" exact component={Squads} />
-                <Route path="/matches" exact component={Matches} />
+                <Route path="/matches/:match_id?" exact component={Matches} />
                 <Route path="/teams" exact component={Teams} />
                 <Route path="/groupstandings" exact component={Groupstandings} />
                 <Route path="/managers" exact component={Managers} />
