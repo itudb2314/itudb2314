@@ -21,8 +21,15 @@
 .match_statistics {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: space-evenly;
     align-items: center;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.match_goals {
+    padding: 0;
+    margin: 2px;
+    flex: 1;
 }
 
 .team_score {
@@ -54,6 +61,68 @@
 .center_div{
     position: relative;
     left: 50%;
-    top: 100px;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
 }
+
+
+
+
+.match-scoreboard {
+    font-family: 'Arial', sans-serif;
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .teams {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 100%;
+  }
+  
+  .team {
+    flex: 1;
+    text-align: center;
+  }
+  
+  .team h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+  
+  .score {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 10px 0;
+  }
+  
+  .goals {
+    list-style: none;
+    padding-top: 400px;
+    position: absolute;
+    font-family: 'Courier New', Courier, monospace;
+  }
+  
+  .goals li {
+    font-size: 16px;
+  }
+  
+  .vs {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0 20px;
+    align-self: center; /* Ensure the 'vs' is centered with respect to the scores */
+  }
+  
+  .match-info {
+    text-align: center;
+    font-size: 16px;
+    margin-top: 20px;
+  }
+  

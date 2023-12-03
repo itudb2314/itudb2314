@@ -132,7 +132,10 @@ class GoalDAO():
         try:
             connection = db.get_connection()
             query = """
-                    SELECT * FROM goals WHERE match_id = %s 
+                    SELECT g.*, p.given_name, p.family_name 
+                    FROM goals g 
+                    LEFT JOIN players p ON g.player_id = p.player_id
+                    WHERE match_id = %s 
                     """
             cursor = connection.cursor()
             cursor.execute(query, (match_id,))
@@ -140,7 +143,7 @@ class GoalDAO():
             if results:
                 for result in results:
                     goal =  Goal(result[0], result[1], result[2], result[3], result[4], result[5], result[6], result[7],
-                                result[8], result[9], result[10], result[11], result[12], result[13], result[14])
+                                result[8], result[9], result[10], result[11], result[12], result[13], result[14], result[15], result[16])
                     goals.append(goal)
                 return goals
             else:
