@@ -11,3 +11,8 @@ added squads.js frontend page and a get squads api call and the relative css fil
 
 Week 8 commits:
 added update, delete, add operations to the squads page, added its relative API calls in the server too. Edited squad.py for more capabitlities.
+
+Week 9 commits:
+added functionality and form for squads frontend page.
+Changed how group standings looks in the frontend.
+added join capabitlities to group standings to display team name instead of id
