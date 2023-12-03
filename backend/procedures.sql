@@ -7,7 +7,8 @@ SELECT
     TRIM(SUBSTRING_INDEX(match_name, 'vs', 1)) as team1,
     TRIM(SUBSTRING_INDEX(match_name, 'vs', -1)) as team2,
     home_team_score,
-    away_team_score
+    away_team_score,
+    stage_name
 FROM matches
 WHERE knockout_stage = '1' AND tournament_id = p_tournament_id;
 END //
