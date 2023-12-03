@@ -4,29 +4,135 @@
     align-items: center;
 }
 
+.player-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: large;
+}
+
 .squad-group {
-    width: 60%;
+    width: 80%;
+    margin: 20px auto;
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
-    margin: 10px 0;
+    justify-content: flex-start;
+    /* Align squads to the start of the container */
 }
 
 .squad {
     width: calc(25% - 20px);
-    margin: 10px 0;
-    border: 2px solid black;
+    margin: 10px 7px;
+    /* Increased spacing between squads */
+    border: 2px solid #ddd;
     border-radius: 10px;
-    box-shadow: 6px 5px 3px #606468;
-    background: azure;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    transition: box-shadow 0.3s;
+    /* Add transition for a smooth effect on hover */
+}
+
+.squad:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8);
 }
 
 .squad-details {
-    padding: 10px;
-    text-align: left;
+    padding: 15px;
+    text-align: center;
 }
 
-h2 {
-    margin-bottom: 10px;
+.Title {
+    background-color: #333;
+    color: #fff;
+    padding: 15px;
+    /* Increased padding for h2 */
+    border-radius: 5px 5px 0 0;
+    margin: 0;
+    text-align: center;
+    /* Center align header text */
     width: 100%;
+    /* Make the header span the entire row */
+}
+
+.tournament-team-info {
+    width: 100%;
+    /* Make Tournament ID and Team ID span the entire row */
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-bottom: 1px solid #ddd;
+    /* Add a border between header and player data */
+}
+
+.player-info {
+    display: flex;
+    align-items: center;
+}
+
+.player-info img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.player-info p {
+    margin: 0;
+}
+
+.edit-delete-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.edit-button,
+.delete-button {
+    padding: 8px;
+    cursor: pointer;
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+}
+
+.delete-button {
+    background-color: #f44336;
+}
+
+.edit-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-top: 1px solid #ddd;
+}
+
+.edit-form label {
+    margin-bottom: 8px;
+    font-weight: bold;
+    display: block;
+    /* Ensure labels are displayed as blocks */
+    height: 20px;
+    /* Set a fixed height for labels */
+}
+
+.edit-form input {
+    padding: 8px;
+    margin-bottom: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    height: 20px;
+    /* Set a fixed height for inputs */
+    vertical-align: middle;
+    /* Align text vertically within the input */
+}
+
+.save-button {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
 }

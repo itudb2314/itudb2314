@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import '../css/Squads.css';
+import siu from '../assets/ronaldo.png';
+import siu2 from '../assets/ronaldo2.png';
+
 
 export default function Squads() {
     const [squads, setSquads] = useState([]);
@@ -37,7 +40,8 @@ export default function Squads() {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ tournament_id: tournamentId, team_id: teamId, player_id: playerId }),
-        }).then(response => response.json())
+        })
+            .then(response => response.json())
             .then(data => {
                 console.log('Success:', data);
                 setDeleteTrigger(!deleteTrigger);
@@ -109,15 +113,19 @@ export default function Squads() {
             .then(response => response.json())
             .then(data => {
                 // Update the local state with the new data
-                setSquads(prevSquads => prevSquads.map(actualSquad => {
-                    if (actualSquad.tournament_id === squad.tournament_id && actualSquad.team_id === squad.team_id) {
-                        return {
-                            ...actualSquad,
-                            squad: actualSquad.squad.map(s => (s.player_id === squad.player_id ? { ...s, ...updatedSquad } : s)),
-                        };
-                    }
-                    return actualSquad;
-                }));
+                setSquads(prevSquads =>
+                    prevSquads.map(actualSquad => {
+                        if (actualSquad.tournament_id === squad.tournament_id && actualSquad.team_id === squad.team_id) {
+                            return {
+                                ...actualSquad,
+                                squad: actualSquad.squad.map(s =>
+                                    s.player_id === squad.player_id ? { ...s, ...updatedSquad } : s
+                                ),
+                            };
+                        }
+                        return actualSquad;
+                    })
+                );
             })
             .catch((error) => {
                 console.log('Error:', error);
@@ -125,7 +133,6 @@ export default function Squads() {
 
         setIsEditing(null);
     };
-
 
     const style = {
         alignSelf: 'center',
@@ -137,16 +144,21 @@ export default function Squads() {
             <h1 style={style}>Squads</h1>
             {squads.map((actualSquad) => (
                 <div key={`${actualSquad.tournament_id}-${actualSquad.team_id}`} className="squad-group">
-                    <h2>
+                    <h2 className='Title'>
                         {actualSquad.tournament_id} / {actualSquad.team_id}
                     </h2>
-                    {actualSquad.squad.map((squad) => (
+                    {actualSquad.squad.map((squad, playerIndex) => (
                         <div key={squad.player_id} className="squad">
                             <div className="squad-details">
                                 {!isEditing || isEditing.player_id !== squad.player_id ? (
                                     // Display squad details
                                     <>
-                                        <p>Player: {squad.player_id}</p>
+                                        <div className="player-name">
+                                            <p>Player: {squad.player_id}</p>
+                                        </div>
+                                        <div className="player-image">
+                                            <img src={playerIndex % 2 === 0 ? siu : siu2} alt={`Player ${playerIndex + 1}`} />
+                                        </div>
                                         <p>Shirt Number: {squad.shirt_number}</p>
                                         <p>Position: {squad.position_name}</p>
                                         <p>Position Code: {squad.position_code}</p>
@@ -159,39 +171,41 @@ export default function Squads() {
                                     </>
                                 ) : (
                                     // Display editable form
-                                    <form onSubmit={(e) => submitForm(e, squad)}>
-                                        <div>
-                                            <label htmlFor="shirt_number">Shirt Number</label>
-                                            <input
-                                                type="text"
-                                                id="shirt_number"
-                                                defaultValue={squad.shirt_number} // Populate with current value
-                                                required
-                                            />
-                                        </div>
+                                    <div className="edit-form">
+                                        <form onSubmit={(e) => submitForm(e, squad)}>
+                                            <div>
+                                                <label htmlFor="shirt_number">Shirt Number</label>
+                                                <input
+                                                    type="text"
+                                                    id="shirt_number"
+                                                    defaultValue={squad.shirt_number} // Populate with the current value
+                                                    required
+                                                />
+                                            </div>
 
-                                        <div>
-                                            <label htmlFor="position_name">Position Name</label>
-                                            <input
-                                                type="text"
-                                                id="position_name"
-                                                defaultValue={squad.position_name} // Populate with current value
-                                                required
-                                            />
-                                        </div>
+                                            <div>
+                                                <label htmlFor="position_name">Position Name</label>
+                                                <input
+                                                    type="text"
+                                                    id="position_name"
+                                                    defaultValue={squad.position_name} // Populate with the current value
+                                                    required
+                                                />
+                                            </div>
 
-                                        <div>
-                                            <label htmlFor="position_code">Position Code</label>
-                                            <input
-                                                type="text"
-                                                id="position_code"
-                                                defaultValue={squad.position_code} // Populate with current value
-                                                required
-                                            />
-                                        </div>
+                                            <div>
+                                                <label htmlFor="position_code">Position Code</label>
+                                                <input
+                                                    type="text"
+                                                    id="position_code"
+                                                    defaultValue={squad.position_code} // Populate with the current value
+                                                    required
+                                                />
+                                            </div>
 
-                                        <button className="save-button" type="submit">Save</button>
-                                    </form>
+                                            <button className="save-button" type="submit">Save</button>
+                                        </form>
+                                    </div>
                                 )}
                             </div>
                         </div>
@@ -207,7 +221,7 @@ export default function Squads() {
                             &times;
                         </span>
                         <form onSubmit={addSquad}>
-                            {/* Input fields for adding squad member */}
+                            {/* Input fields for adding a squad member */}
                             <label htmlFor="tournament_id">Tournament ID</label>
                             <input
                                 type="text"
