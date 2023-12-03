@@ -6,6 +6,7 @@ export default function Squads() {
     const [deleteTrigger, setDeleteTrigger] = useState(false);
     const [addTrigger, setAddTrigger] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
+    const [isEditing, setIsEditing] = useState(null);
 
     useEffect(() => {
         fetchSquads();
@@ -26,6 +27,7 @@ export default function Squads() {
 
     const toggleModal = () => {
         setModalVisible(!modalVisible);
+        setIsEditing(null);
     };
 
     const deleteSquad = (tournamentId, teamId, playerId) => {
@@ -62,7 +64,7 @@ export default function Squads() {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ newSquad }),  // Removed the extra curly braces around newSquad
+            body: JSON.stringify({ newSquad }),
         })
             .then(response => response.json())
             .then(data => {
@@ -79,37 +81,51 @@ export default function Squads() {
 
     function updateSquad(updatedSquad) {
         try {
-            const { tournament_id, team_id, player_id, ...rest } = updatedSquad;
-
-            const squadData = {
-                tournament_id,
-                team_id,
-                player_id,
-                ...rest,
-                shirt_number: document.getElementById('shirt_number').value,
-                position_name: document.getElementById('position_name').value,
-                position_code: document.getElementById('position_code').value,
-            };
-
-            fetch('http://localhost:5000/squads', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ squadData }),
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Success:', data);
-                    fetchSquads();
-                })
-                .catch((error) => {
-                    console.log('Error:', error);
-                });
+            setIsEditing(updatedSquad);
         } catch (error) {
             console.error('Error updating squad:', error);
         }
     }
+
+    const submitForm = (event, squad) => {
+        event.preventDefault();
+
+        const updatedSquad = {
+            shirt_number: event.target.shirt_number.value,
+            position_name: event.target.position_name.value,
+            position_code: event.target.position_code.value,
+            tournament_id: squad.tournament_id,
+            team_id: squad.team_id,
+            player_id: squad.player_id,
+        };
+
+        fetch('http://localhost:5000/squads', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ squadData: updatedSquad }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Update the local state with the new data
+                setSquads(prevSquads => prevSquads.map(actualSquad => {
+                    if (actualSquad.tournament_id === squad.tournament_id && actualSquad.team_id === squad.team_id) {
+                        return {
+                            ...actualSquad,
+                            squad: actualSquad.squad.map(s => (s.player_id === squad.player_id ? { ...s, ...updatedSquad } : s)),
+                        };
+                    }
+                    return actualSquad;
+                }));
+            })
+            .catch((error) => {
+                console.log('Error:', error);
+            });
+
+        setIsEditing(null);
+    };
+
 
     const style = {
         alignSelf: 'center',
@@ -127,15 +143,56 @@ export default function Squads() {
                     {actualSquad.squad.map((squad) => (
                         <div key={squad.player_id} className="squad">
                             <div className="squad-details">
-                                <p>Player: {squad.player_id}</p>
-                                <p>Shirt Number: {squad.shirt_number}</p>
-                                <p>Position: {squad.position_name}</p>
-                                <button className="edit-button" onClick={() => updateSquad(squad)}>
-                                    Edit
-                                </button>
-                                <button className="delete-button" onClick={() => deleteSquad(actualSquad.tournament_id, actualSquad.team_id, squad.player_id)}>
-                                    Delete
-                                </button>
+                                {!isEditing || isEditing.player_id !== squad.player_id ? (
+                                    // Display squad details
+                                    <>
+                                        <p>Player: {squad.player_id}</p>
+                                        <p>Shirt Number: {squad.shirt_number}</p>
+                                        <p>Position: {squad.position_name}</p>
+                                        <p>Position Code: {squad.position_code}</p>
+                                        <button className="edit-button" onClick={() => updateSquad(squad)}>
+                                            Edit
+                                        </button>
+                                        <button className="delete-button" onClick={() => deleteSquad(actualSquad.tournament_id, actualSquad.team_id, squad.player_id)}>
+                                            Delete
+                                        </button>
+                                    </>
+                                ) : (
+                                    // Display editable form
+                                    <form onSubmit={(e) => submitForm(e, squad)}>
+                                        <div>
+                                            <label htmlFor="shirt_number">Shirt Number</label>
+                                            <input
+                                                type="text"
+                                                id="shirt_number"
+                                                defaultValue={squad.shirt_number} // Populate with current value
+                                                required
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label htmlFor="position_name">Position Name</label>
+                                            <input
+                                                type="text"
+                                                id="position_name"
+                                                defaultValue={squad.position_name} // Populate with current value
+                                                required
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label htmlFor="position_code">Position Code</label>
+                                            <input
+                                                type="text"
+                                                id="position_code"
+                                                defaultValue={squad.position_code} // Populate with current value
+                                                required
+                                            />
+                                        </div>
+
+                                        <button className="save-button" type="submit">Save</button>
+                                    </form>
+                                )}
                             </div>
                         </div>
                     ))}
@@ -150,6 +207,7 @@ export default function Squads() {
                             &times;
                         </span>
                         <form onSubmit={addSquad}>
+                            {/* Input fields for adding squad member */}
                             <label htmlFor="tournament_id">Tournament ID</label>
                             <input
                                 type="text"
@@ -183,7 +241,7 @@ export default function Squads() {
                             <label htmlFor="position_code">Position Code</label>
                             <input
                                 type="text"
-                                id="position_code"  // Corrected to match the case in the addSquad function
+                                id="position_code"
                                 required
                             />
                             <button type="submit">Add Squad member</button>
