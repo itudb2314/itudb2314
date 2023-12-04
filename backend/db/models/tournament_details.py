@@ -8,8 +8,10 @@ from mysql.connector import errorcode
 
 @dataclass
 class TournamentDetails:
+    match_id: str
     team1: str
     team2: str
+    winner: int
     home_team_score: int
     away_team_score: int
     stage_name: str
