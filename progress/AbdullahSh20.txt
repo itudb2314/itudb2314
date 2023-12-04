@@ -16,3 +16,8 @@ Week 9 commits:
 added functionality and form for squads frontend page.
 Changed how group standings looks in the frontend.
 added join capabitlities to group standings to display team name instead of id
+
+Week 10 commits:
+Style changes to the Squads page
+Added Squad_apperance_player.py where I join multiple tables to get information for display
+Added a GET function with JOIN accross 4 tables, Tournaments, players, squads, teams

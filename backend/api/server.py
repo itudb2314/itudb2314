@@ -9,6 +9,7 @@ from db.models.teams import TeamsDAO
 from db.models.group_standing import GroupStandingDAO
 from db.models.manager import ManagerDAO
 from db.models.tournament_details import TournamentDetailsDAO
+from db.models.squad_appearance_player import SquadAppearancePlayerDAO
 
 
 def create_server(db):
@@ -44,7 +45,6 @@ def create_server(db):
         TournamentDAO.delete_tournament(db, tournament_id)
         return flask.jsonify({})
 
-
     @app.route('/tournaments/<tournament_id>/', methods=['GET'])
     def get_tournament(tournament_id):
         details = TournamentDetailsDAO.get_tournament_details(db, tournament_id)
@@ -65,6 +65,11 @@ def create_server(db):
     @app.route('/squads', methods=['GET'])
     def get_all_squads():
         squads = SquadDAO.get_all_squads(db)
+        return flask.jsonify(squads)
+    
+    @app.route('/squadsJOINED', methods=['GET'])
+    def get_all_squads_joined():
+        squads = SquadAppearancePlayerDAO.get_all_squads(db)
         return flask.jsonify(squads)
         
     @app.route('/squads', methods=['PUT'])

@@ -17,7 +17,7 @@ export default function Squads() {
 
     const fetchSquads = async () => {
         try {
-            const response = await fetch('http://localhost:5000/squads');
+            const response = await fetch('http://localhost:5000/squadsJOINED');
             if (!response.ok) {
                 throw new Error('Failed to fetch squads');
             }
@@ -145,7 +145,7 @@ export default function Squads() {
             {squads.map((actualSquad) => (
                 <div key={`${actualSquad.tournament_id}-${actualSquad.team_id}`} className="squad-group">
                     <h2 className='Title'>
-                        {actualSquad.tournament_id} / {actualSquad.team_id}
+                        {actualSquad.tournament_name} / {actualSquad.team_name}
                     </h2>
                     {actualSquad.squad.map((squad, playerIndex) => (
                         <div key={squad.player_id} className="squad">
@@ -154,7 +154,7 @@ export default function Squads() {
                                     // Display squad details
                                     <>
                                         <div className="player-name">
-                                            <p>Player: {squad.player_id}</p>
+                                            <p>Player Name: {squad.given_name} {squad.family_name}</p>
                                         </div>
                                         <div className="player-image">
                                             <img src={playerIndex % 2 === 0 ? siu : siu2} alt={`Player ${playerIndex + 1}`} />
