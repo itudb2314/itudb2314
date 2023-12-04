@@ -94,7 +94,7 @@ export default function TournamentDetails() {
 
     function matchComponent(match) {
         return (
-            (match.home_team_score > match.away_team_score) ?
+            (match.winner) ?
                 (
                     <p><span className="winner">{match.team1} {match.home_team_score}</span> - {match.away_team_score} {match.team2}</p>
                 ) :
@@ -195,7 +195,7 @@ export default function TournamentDetails() {
                         </div>
                     </div>
                 </div>
-            ):
+            ) :
             (
                 (tournamentDetails.length === 8) ? (
                         <div className="wrapper">
