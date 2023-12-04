@@ -1,15 +1,16 @@
 import './App.css';
 import React from 'react';
-import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import Header from './js/Header';
 import Tournaments from './js/Tournament';
 import TournamentDetails from './js/TournamentDetails';
 import Squads from './js/Squads'; // Assuming you have a Squads component
-import Matches from './js/Matches'; 
+import Matches from './js/Matches';
 import Teams from './js/Teams';
 import Groupstandings from './js/Groupstanding';
 import Managers from './js/Managers';
+import PlayerPage from './js/Player';
 
 function App() {
     return (
@@ -23,6 +24,7 @@ function App() {
                 <Route path="/teams" exact component={Teams} />
                 <Route path="/groupstandings" exact component={Groupstandings} />
                 <Route path="/managers" exact component={Managers} />
+                <Route path="/players/:playerId" exact component={PlayerPage} />
             </Switch>
         </Router>
     );

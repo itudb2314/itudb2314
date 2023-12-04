@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import '../css/Squads.css';
 import siu from '../assets/ronaldo.png';
 import siu2 from '../assets/ronaldo2.png';
-
+import { Link } from 'react-router-dom';
 
 export default function Squads() {
     const [squads, setSquads] = useState([]);
@@ -154,7 +154,7 @@ export default function Squads() {
                                     // Display squad details
                                     <>
                                         <div className="player-name">
-                                            <p>Player Name: {squad.given_name} {squad.family_name}</p>
+                                            <Link to={`/players/${squad.player_id}`}>{squad.given_name} {squad.family_name}</Link>
                                         </div>
                                         <div className="player-image">
                                             <img src={playerIndex % 2 === 0 ? siu : siu2} alt={`Player ${playerIndex + 1}`} />
