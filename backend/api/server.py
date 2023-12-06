@@ -10,7 +10,7 @@ from db.models.group_standing import GroupStandingDAO
 from db.models.manager import ManagerDAO
 from db.models.tournament_details import TournamentDetailsDAO
 from db.models.squad_appearance_player import SquadAppearancePlayerDAO
-
+from db.models.confederations import ConfederationDAO
 
 def create_server(db):
     app = flask.Flask(__name__)
@@ -47,6 +47,9 @@ def create_server(db):
 
     @app.route('/tournaments/<tournament_id>/', methods=['GET'])
     def get_tournament(tournament_id):
+        if tournament_id == 'WC-1950':
+            details = MatchDAO.get_tournemant_matches(db, tournament_id, "final round")
+            return flask.jsonify(details)
         details = TournamentDetailsDAO.get_tournament_details(db, tournament_id)
         return flask.jsonify(details)
 
@@ -146,5 +149,11 @@ def create_server(db):
     def api_all_managers():
         managers = ManagerDAO.get_all_managers(db)
         return flask.jsonify(managers)
+
+
+    @app.route('/confederations', methods=['GET'])
+    def get_confederation_names():
+        confederations = ConfederationDAO.get_confederation_names(db)
+        return flask.jsonify(confederations)
 
     return app

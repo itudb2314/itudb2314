@@ -185,7 +185,7 @@ class MatchDAO():
             connection.close()
 
     @staticmethod
-    def get_tournemant_matches(db : db, tournament_id: str) -> List[Match]:
+    def get_tournemant_matches(db : db, tournament_id: str) -> list[Match] | None:
         matches = []
         try:
             connection = db.get_connection()
@@ -193,7 +193,7 @@ class MatchDAO():
                     SELECT * FROM matches WHERE tournament_id = %s
                     """
             cursor = connection.cursor()
-            cursor.execute(query, (tournament_id))
+            cursor.execute(query, (tournament_id,))
             results = cursor.fetchall()
             if results:
                 for result in results:
