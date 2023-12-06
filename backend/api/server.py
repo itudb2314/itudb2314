@@ -115,8 +115,21 @@ def create_server(db):
             return flask.jsonify(goals), 200
         else:
             return flask.jsonify({'message': 'Goals not found'}), 404
-
+        
+    @app.route('/matches', methods=['DELETE'])
+    def delete_match():
+        match_id = flask.request.get_json()['match_id']
+        MatchDAO.delete_match(db, match_id)
+        return flask.jsonify({'message': 'Match deleted successfully'})
     
+    @app.route('/matches', methods=['POST'])
+    def create_match():
+        match = flask.request.get_json()['matchdata']
+        match = make_dataclass('Match', match.keys())(**match)
+        MatchDAO.create_match(db, match)
+        return flask.jsonify({})
+
+
     @app.route('/tournaments/teams', methods=['GET'])
     def api_all_teams():
         teams = TeamsDAO.get_all_teams(db)
