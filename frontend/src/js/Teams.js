@@ -7,14 +7,30 @@ export default function Teams() {
     const [deleteTrigger, setDeleteTrigger] = useState(false)
     const [addTrigger, setAddTrigger] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
+    const [confederations, setConfederations] = useState([]);
 
     useEffect(() => {
         fetch('http://localhost:5000/tournaments/teams')
             .then(response => response.json())
             .then(data => {
                 setTeams(data)
-                console.log(teams)
             })
+
+        // Fetch the confederation names from the API
+        fetch('http://localhost:5000/confederations', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then(response => response.json())
+            .then(data => {
+                setConfederations(data);
+                console.log(confederations)
+            })
+            .catch((error) => {
+                console.log('Error:', error);
+            });
+
     }, [deleteTrigger, addTrigger])
 
     const toggleModal = () => {
@@ -115,14 +131,14 @@ export default function Teams() {
             </div>
         )}
         {teams.map(team => (
-            <Team key={team.team_id} t={team} handleDeleteTeam={deleteTeam}/>
+            <Team key={team.team_id} t={team} handleDeleteTeam={deleteTeam} confederations={confederations}/>
         ))}
     </div>
 );
 }
 
 
-function Team({t, handleDeleteTeam}){
+function Team({t, handleDeleteTeam, confederations}){
     const [team, setTeam] = useState(t);
     const [isEditing, setIsEditing] = useState(false);
 
@@ -134,12 +150,12 @@ function Team({t, handleDeleteTeam}){
     
     function submitTeam(e) {
         e.preventDefault();
-        setIsEditing(false);
         const newTeam = {...team};
         newTeam.team_name = e.target.team_name.value;
         newTeam.team_code = e.target.team_code.value;
-        newTeam.confederation_id= e.target.confederation_id.value;
+        newTeam.confederation_id = e.target.confederation_id.value;
         newTeam.federation_wikipedia_link = e.target.federation_wikipedia_link.value;
+        console.log(newTeam)
 
         fetch('http://localhost:5000/tournaments/teams', {
             method: 'PUT',
@@ -149,7 +165,6 @@ function Team({t, handleDeleteTeam}){
             body: JSON.stringify({newTeam}),
         }).then(response => response.json())
             .then(data => {
-                console.log('Success:', data);
                 setTeam(newTeam);
             })
             .catch((error) => {
@@ -166,11 +181,15 @@ function Team({t, handleDeleteTeam}){
                         <label htmlFor="team_name">Team Name</label>
                         <input id='team_name' type="text" defaultValue={team.team_name}/>
                         <label htmlFor="team_code">Team Code</label>
-                        <input id='team_code'type="text" defaultValue={team.team_code}/>
-                        <label htmlFor="confederation_id">Confederation ID</label>
-                        <input id='confederation_id'type="text" defaultValue={team.confederation_id}/>
-                        <label htmlFor="federation_wikipedia_link">Federation Wikipedia Link</label>
-                        <input id='federation_wikipedia_link'type="text" defaultValue={team.federation_wikipedia_link}/>
+                        <input id='team_code' type="text" defaultValue={team.team_code}/>
+                        <label htmlFor="confederation_id">Confederation</label>
+                        <select className={"form-option"} id='confederation_id' defaultValue={team.confederation_id}>
+                            {confederations.map(confederation => (
+                                <option key={confederation.confederation_id} value={confederation.confederation_id}>{confederation.confederation_name}</option>
+                            ))}
+                        </select>
+                        <label htmlFor="federation_wikipedia_link">Wikipedia Link</label>
+                        <input id='federation_wikipedia_link' type="text" defaultValue={team.federation_wikipedia_link}/>
                         <button className="save-button" type='submit'>Save</button>
                     </form>
                 </div>
