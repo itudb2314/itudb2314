@@ -83,7 +83,9 @@ class GoalDAO():
         try:
             connection = db.get_connection()
             query = """
-                    SELECT g.*, p.given_name, p.family_name 
+                    SELECT g.*, 
+                    CASE WHEN p.given_name = 'not applicable' THEN ' ' ELSE p.given_name END as given_name, 
+                    CASE WHEN p.family_name = 'not applicable' THEN ' ' ELSE p.family_name END as family_name
                     FROM goals g 
                     LEFT JOIN players p ON g.player_id = p.player_id
                     """
