@@ -50,7 +50,7 @@ class MatchDAO():
         try:
             connection = db.get_connection()
             query = """ 
-                INSERT INTO goals(
+                INSERT INTO matches(
                     tournament_id, 
                     match_id,
                     match_name,
@@ -78,8 +78,8 @@ class MatchDAO():
                     result, 
                     home_team_win, 
                     away_team_win, 
-                    draw, 
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    draw
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
             cursor = connection.cursor()
             cursor.execute(query, (
@@ -110,10 +110,11 @@ class MatchDAO():
                     match.result, 
                     match.home_team_win, 
                     match.away_team_win, 
-                    match.draw, 
+                    match.draw
             ))
             connection.commit()
         except mysql.connector.Error as error:
+            print("MySQL Error:", error)
             connection.rollback()
         finally: 
             cursor.close()
