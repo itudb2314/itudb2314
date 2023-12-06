@@ -114,7 +114,7 @@ class MatchDAO():
             ))
             connection.commit()
         except mysql.connector.Error as error:
-            cursor.rollback()
+            connection.rollback()
         finally: 
             cursor.close()
             connection.close()
@@ -148,7 +148,7 @@ class MatchDAO():
                 return None
         
         except mysql.connector.Error as error:
-            cursor.rollback()
+            connection.rollback()
         finally:
             cursor.close()
             connection.close()
@@ -179,7 +179,7 @@ class MatchDAO():
                 return None
         
         except mysql.connector.Error as error:
-            cursor.rollback()
+            connection.rollback()
         finally:
             cursor.close()
             connection.close()
@@ -209,7 +209,7 @@ class MatchDAO():
         except mysql.connector.Error as error:
             cursor.rollback()
         finally:
-            cursor.close()
+            connection.close()
             connection.close()
 
     @staticmethod
@@ -235,7 +235,7 @@ class MatchDAO():
                 return None
         
         except mysql.connector.Error as error:
-            cursor.rollback()
+            connection.rollback()
         finally:
             cursor.close()
             connection.close()
@@ -263,7 +263,7 @@ class MatchDAO():
                 return None
         
         except mysql.connector.Error as error:
-            cursor.rollback()
+            connection.rollback()
         finally:
             cursor.close()
             connection.close()
@@ -291,7 +291,7 @@ class MatchDAO():
                 return None
         
         except mysql.connector.Error as error:
-            cursor.rollback()
+            connection.rollback()
         finally:
             cursor.close()
             connection.close()
@@ -319,7 +319,7 @@ class MatchDAO():
                 return None
         
         except mysql.connector.Error as error:
-            cursor.rollback()
+            connection.rollback()
         finally:
             cursor.close()
             connection.close()
@@ -392,7 +392,7 @@ class MatchDAO():
             ))
             connection.commit()
         except mysql.connector.Error as error:
-            cursor.rollback()
+            connection.rollback()
         finally:
             cursor.close()
             connection.close()
@@ -405,10 +405,10 @@ class MatchDAO():
                     DELETE FROM matches WHERE match_id = %s
                     """
             cursor = connection.cursor()
-            cursor.execute(query, (match_id))
+            cursor.execute(query, (match_id,))
             connection.commit()
         except mysql.connector.Error as error:
-            cursor.rollback()
+            connection.rollback()
         finally:
             cursor.close()
             connection.close()

@@ -72,7 +72,7 @@ class GoalDAO():
             ))
             connection.commit()
         except mysql.connector.Error as error:
-            cursor.rollback()
+            connection.rollback()
         finally:
             cursor.close()
             connection.close()
@@ -101,7 +101,7 @@ class GoalDAO():
             else:
                 return None
         except mysql.connector.Error as error:
-            cursor.rollback()
+            connection.rollback()
         finally:
             cursor.close()
             connection.close()
@@ -114,7 +114,7 @@ class GoalDAO():
                     SELECT * FROM goals WHERE goal_id = %s
                     """
             cursor = connection.cursor()
-            cursor.execute(query, (goal_id))
+            cursor.execute(query, (goal_id,))
             result = cursor.fetchone()
             if result:
                 return Goal(result[0], result[1], result[2], result[3], result[4], result[5], result[6], result[7],
@@ -122,7 +122,7 @@ class GoalDAO():
             else:
                 return None
         except mysql.connector.Error as error:
-            cursor.rollback()
+            connection.rollback()
 
         finally:
             cursor.close()
@@ -151,7 +151,7 @@ class GoalDAO():
             else:
                 return None
         except mysql.connector.Error as error:
-            cursor.rollback()
+            connection.rollback()
 
         finally:
             cursor.close()
@@ -177,7 +177,7 @@ class GoalDAO():
             else:
                 return None
         except mysql.connector.Error as error:
-            cursor.rollback()   
+            connection.rollback()   
         finally:
             cursor.close()
             connection.close()
@@ -202,7 +202,7 @@ class GoalDAO():
             else:
                 return None
         except mysql.connector.Error as error:
-            cursor.rollback()
+            connection.rollback()
         finally:
             cursor.close()
             connection.close()
@@ -248,7 +248,7 @@ class GoalDAO():
             ))
             connection.commit()
         except mysql.connector.Error as error:
-            cursor.rollback()
+            connection.rollback()
         finally:
             cursor.close()
             connection.close()
@@ -261,10 +261,10 @@ class GoalDAO():
                     DELETE FROM goals WHERE match_id = %s
                     """
             cursor = connection.cursor()
-            cursor.execute(query, (match_id))
+            cursor.execute(query, (match_id,))
             connection.commit()
         except mysql.connector.Error as error:
-            cursor.rollback()
+            connection.rollback()
         finally:
             cursor.close()
             connection.close()
