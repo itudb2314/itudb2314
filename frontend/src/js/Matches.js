@@ -8,6 +8,7 @@ export default function Matches() {
     const [match, setMatch] = useState([]);
     const [goals_by_id, setGoals_by_id] = useState([]);
     const {match_id} = useParams();
+    const [matchDeleted, setMatchDeleted] = useState(false);
     const [matchAdded, setMatchAdded] = useState(false);
 
     useEffect(() => {
@@ -57,7 +58,7 @@ export default function Matches() {
                 console.error('Error fetching data:', error);
             }); 
         }
-    }, [match_id, ]);
+    }, [match_id, matchAdded, matchDeleted]);
     const style = {
         margin: '2rem 0 2rem 0',
         color: 'reds',
@@ -65,10 +66,20 @@ export default function Matches() {
 
     //delete function
     const deleteMatchbyID = async (match_id) => {
-        await fetch(`http://localhost:5000/matches/${match_id}`, {
+        fetch(`http://localhost:5000/matches/${match_id}`, {
             method: 'DELETE',
-        });
-        setMatches(matches.filter((match) => match.match_id !== match_id));
+            headers: {
+                'Const-Type' : 'application/json',
+            },
+            body: JSON.stringify({match_id}),
+        }).then((response) => response.json())
+            .then((data) => {
+                setMatchDeleted(!matchDeleted);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        setMatchDeleted(!matchDeleted);
     };
 
     //insert function
@@ -129,7 +140,7 @@ export default function Matches() {
     return (
         <div className="matches">
             {/*button to toggle insert form*/}
-            <button onClick={toggleInsertForm}>Insert Match</button>
+            <button onClick={toggleInsertForm} className='insert-button'>Insert Match</button>
             {/*conditional rendering for insertion form*/}
             {showInsertForm && (
                 <div className='form'>
@@ -217,8 +228,15 @@ function Match({match, goals, onDeleteMatch}) {
     const [deleting, setDeleting] = useState(false);
 
     const handleDeleteMatch = () => {
-        setDeleting(true);
-        onDeleteMatch(match.match_id);
+        try {
+            setDeleting(true);
+            onDeleteMatch(match.match_id);
+            setDeleting(false);
+        }
+        catch (error) {
+            console.error('Error:', error);
+            setDeleting(false);
+        }
     }
 
     const match_style = {
@@ -265,7 +283,7 @@ function Match({match, goals, onDeleteMatch}) {
                 ))}
                 </div>
             </div>
-            <button onClick={handleDeleteMatch} disabled={deleting}>
+            <button onClick={handleDeleteMatch} disabled={deleting} className='delete-button'>
                 {deleting ? 'Deleting...' : 'Delete Match'}
             </button>
         </div>
