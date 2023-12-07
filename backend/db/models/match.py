@@ -188,13 +188,15 @@ class MatchDAO():
             connection.close()
 
     @staticmethod
-    def get_tournemant_matches(db : db, tournament_id: str) -> list[Match] | None:
+    def get_tournemant_matches(db: db, tournament_id: str) -> list[Match] | None:
+        print("HI")
         matches = []
         try:
             connection = db.get_connection()
             query = """
                     SELECT * FROM matches WHERE tournament_id = %s
                     """
+            print(query)
             cursor = connection.cursor()
             cursor.execute(query, (tournament_id,))
             results = cursor.fetchall()
