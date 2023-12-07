@@ -210,7 +210,7 @@ class MatchDAO():
                 return None
         
         except mysql.connector.Error as error:
-            cursor.rollback()
+            connection.rollback()
             print("MySQL Error:", error)
         finally:
             connection.close()
