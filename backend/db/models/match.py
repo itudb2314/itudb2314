@@ -200,7 +200,7 @@ class MatchDAO():
                     LEFT JOIN teams thome ON m.home_team_id = thome.team_id
                     LEFT JOIN teams taway ON m.away_team_id = taway.team_id
                     LEFT JOIN tournaments t ON m.tournament_id = t.tournament_id
-                    WHERE tournament_id = %s
+                    WHERE m.tournament_id = %s
                     """
             print(query)
             cursor = connection.cursor()
