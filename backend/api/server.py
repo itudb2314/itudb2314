@@ -116,9 +116,8 @@ def create_server(db):
         else:
             return flask.jsonify({'message': 'Goals not found'}), 404
         
-    @app.route('/matches', methods=['DELETE'])
-    def delete_match():
-        match_id = flask.request.get_json()['match_id']
+    @app.route('/matches/<match_id>', methods=['DELETE'])
+    def delete_match(match_id : str):
         MatchDAO.delete_match(db, match_id)
         return flask.jsonify({'message': 'Match deleted successfully'})
     
