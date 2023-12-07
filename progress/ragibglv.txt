@@ -4,3 +4,5 @@ Week 7:
     Updated connection and cursor management
 Week 8:
     Added frontend for teams  
+Week 9:
+    Added "add" operation for the teams in frontend
