@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import '../css/Matches.css';
+import Match from "./Match";
 
 export default function Matches() {
     const [matches, setMatches] = useState([]);
@@ -64,23 +65,9 @@ export default function Matches() {
         color: 'reds',
     };
 
-    //delete function
-    const deleteMatchbyID = async (match_id) => {
-        fetch(`http://localhost:5000/matches/${match_id}`, {
-            method: 'DELETE',
-            headers: {
-                'Const-Type' : 'application/json',
-            },
-            body: JSON.stringify({match_id}),
-        }).then((response) => response.json())
-            .then((data) => {
-                setMatchDeleted(!matchDeleted);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
+    function onMatchDelete() {
         setMatchDeleted(!matchDeleted);
-    };
+    }
 
     //insert function
     const [showInsertForm, setShowInsertForm] = useState(false);
@@ -216,7 +203,7 @@ export default function Matches() {
                     <div key={i}>
                         <h2 style={style}>{tournament_matches[0].tournament_name}</h2>
                         {tournament_matches.map((match) => (
-                            <Match key={match.match_id}  match={match} goals={goals[match.match_id]}  onDeleteMatch={deleteMatchbyID}/>
+                            <Match key={match.match_id}  match={match} goals={goals[match.match_id]}  setMatchDeleted={onMatchDelete}/>
                         ))}
                     </div>
                 )))} 
@@ -224,71 +211,6 @@ export default function Matches() {
     );
 }
 
-function Match({match, goals, onDeleteMatch}) {
-    const [deleting, setDeleting] = useState(false);
-
-    const handleDeleteMatch = () => {
-        try {
-            setDeleting(true);
-            onDeleteMatch(match.match_id);
-            setDeleting(false);
-        }
-        catch (error) {
-            console.error('Error:', error);
-            setDeleting(false);
-        }
-    }
-
-    const match_style = {
-        border: '1px solid black',
-        margin: '1rem',
-        borderRadius: '50px',
-        width: '75%',
-    }
-    return (
-        <div style={match_style} className='center_div'>
-            <h2 className = "match_header">
-                {match.stage_name} 
-            </h2>
-            <div className='match_details'>
-                <p className='team_names'>{match.home_team_name}</p>
-                <p className='team_score'>{match.home_team_score}   -   {match.away_team_score}</p>
-                <p className='team_names'>{match.away_team_name}</p>
-            </div>
-            <div className='match_statistics'>
-                <div className='match_goals'>
-                {goals &&  goals
-                .filter((goal) => goal.team_id === match.home_team_id)
-                .map((goal, index) => (
-                    <div key={index}> 
-                        <p>{goal.minute_label}  {goal.given_name}  {goal.family_name}</p>
-                    </div>
-                ))}
-                </div>
-                <div className='match_time'>
-                    {match.penalty_shootout ?  (
-                        <p className='match_time_item'>({match.home_team_score_penalties} - {match.away_team_score_penalties})</p>
-                    ) : null}
-                    <p className='match_time_item'>{match.match_time}</p>
-                    <p className='match_time_item'>{match.stadium_name}</p>
-                    <p className='match_time_item'>{match.city_name}</p>
-                </div>
-                <div className='match_goals'>
-                {goals && goals
-                .filter((goal) => goal.team_id === match.away_team_id)
-                .map((goal, index) => (
-                    <div key={index}>
-                        <p>{goal.minute_label}  {goal.given_name}  {goal.family_name}</p>
-                    </div>
-                ))}
-                </div>
-            </div>
-            <button onClick={handleDeleteMatch} disabled={deleting} className='delete-button'>
-                {deleting ? 'Deleting...' : 'Delete Match'}
-            </button>
-        </div>
-    );
-}
 
 function MatchScoreBoard({match, goals}) {
     return (

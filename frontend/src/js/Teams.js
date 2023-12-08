@@ -211,7 +211,7 @@ function Team({t, handleDeleteTeam, confederations}){
             }
             <div className='buttons'>
                 <button className="edit-button" onClick={editTeam}>Edit</button>
-                <button className="delete-button" onClick={deleteTeam}>Delete</button>
+                <button className="delete-button-danas" onClick={deleteTeam}>Delete</button>
             </div>
             </>
             )}

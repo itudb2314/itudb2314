@@ -277,7 +277,7 @@ function Tournament({t, deleteHandle}) {
                         <p>Winner: {tournament.winner}</p>
                         <div className="buttons">
                             <button className="edit-button" onClick={editTournament}>Edit</button>
-                            <button className="delete-button" onClick={deleteTournament}>Delete</button>
+                            <button className="delete-button-danas" onClick={deleteTournament}>Delete</button>
                         </div>
                     </>
                 ) : (

@@ -188,23 +188,36 @@ class MatchDAO():
             connection.close()
 
     @staticmethod
-    def get_tournemant_matches(db: db, tournament_id: str) -> list[Match] | None:
-        print("HI")
+    def get_tournemant_matches(db: db, tournament_id: str, stage_name: str = None) -> list[Match] | None:
         matches = []
         try:
             connection = db.get_connection()
-            query = """
-                    SELECT m.*, s.stadium_name, s.city_name, thome.team_name, taway.team_name, t.tournament_name 
-                    FROM matches m 
-                    LEFT JOIN stadiums s ON m.stadium_id = s.stadium_id 
-                    LEFT JOIN teams thome ON m.home_team_id = thome.team_id
-                    LEFT JOIN teams taway ON m.away_team_id = taway.team_id
-                    LEFT JOIN tournaments t ON m.tournament_id = t.tournament_id
-                    WHERE tournament_id = %s
-                    """
-            print(query)
-            cursor = connection.cursor()
-            cursor.execute(query, (tournament_id,))
+            if stage_name == None:
+                query = """
+                        SELECT m.*, s.stadium_name, s.city_name, thome.team_name, taway.team_name, t.tournament_name 
+                        FROM matches m 
+                        LEFT JOIN stadiums s ON m.stadium_id = s.stadium_id 
+                        LEFT JOIN teams thome ON m.home_team_id = thome.team_id
+                        LEFT JOIN teams taway ON m.away_team_id = taway.team_id
+                        LEFT JOIN tournaments t ON m.tournament_id = t.tournament_id
+                        WHERE m.tournament_id = %s
+                        """
+                cursor = connection.cursor()
+                cursor.execute(query, (tournament_id,stage_name))
+            else:
+                query = """
+                        SELECT m.*, s.stadium_name, s.city_name, thome.team_name, taway.team_name, t.tournament_name 
+                        FROM matches m 
+                        LEFT JOIN stadiums s ON m.stadium_id = s.stadium_id 
+                        LEFT JOIN teams thome ON m.home_team_id = thome.team_id
+                        LEFT JOIN teams taway ON m.away_team_id = taway.team_id
+                        LEFT JOIN tournaments t ON m.tournament_id = t.tournament_id
+                        WHERE m.tournament_id = %s and m.stage_name = %s
+                        ORDER BY m.match_id DESC
+                        """
+                cursor = connection.cursor()
+                cursor.execute(query, (tournament_id,stage_name))
+
             results = cursor.fetchall()
             if results:
                 for result in results:

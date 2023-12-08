@@ -165,7 +165,7 @@ export default function Squads() {
                                         <button className="edit-button" onClick={() => updateSquad(squad)}>
                                             Edit
                                         </button>
-                                        <button className="delete-button" onClick={() => deleteSquad(actualSquad.tournament_id, actualSquad.team_id, squad.player_id)}>
+                                        <button className="delete-button-danas" onClick={() => deleteSquad(actualSquad.tournament_id, actualSquad.team_id, squad.player_id)}>
                                             Delete
                                         </button>
                                     </>

@@ -166,17 +166,6 @@
     margin-bottom: 10px;
   }
 
-  .delete-button {
-    background-color: #4f1714;
-    color: white;
-    font-size: smaller;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    float: center;
-  }
-
   .insert-button {
     background-color: #144207;
     color: white;

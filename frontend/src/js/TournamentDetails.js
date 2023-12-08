@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import {Link, useParams} from "react-router-dom";
 import '../css/TournamentDetails.css';
 import '../css/Groupstanding.css'
+import Match from './Match'
 
 export default function TournamentDetails() {
     const { id } = useParams();
@@ -10,13 +11,22 @@ export default function TournamentDetails() {
     const [quarter_final, setQuarter_final] = useState([]);
     const [semi_final, setSemi_final] = useState([]);
     const [final, setFinal] = useState([]);
+    const [matchDeleted, setMatchDeleted] = useState(false);
+    const [matches, setMatches] = useState([]);
+
+    function onMatchDelete() {
+        setMatchDeleted(!matchDeleted);
+    }
 
     useEffect(() => {
         fetch(`http://localhost:5000/tournaments/${id}`)
             .then((response) => response.json())
             .then((data) => {
                 setTournamentDetails(data);
-
+                console.log(data);
+                if (id === 'WC-1950'){
+                    return
+                }
                 setRound_of_16(data.filter((tournament) => { return tournament.stage_name === "round of 16" }));
                 setQuarter_final(data.filter((tournament) => { return tournament.stage_name === "quarter-finals" ||
                     tournament.stage_name === "quarter-final" }));
@@ -24,16 +34,17 @@ export default function TournamentDetails() {
                 setSemi_final(data.filter((tournament) => { return tournament.stage_name === "semi-finals" ||
                     tournament.stage_name === "semi-final"}));
 
-                console.log(data);
+                console.log(data.length);
                 if (data.length === 2) {
                     return
                 }
                 reorderMatches(data)
+
             })
             .catch((error) => {
                 console.error("Error fetching data:", error);
             });
-    }, []);
+    }, [matchDeleted]);
 
     function reorderMatches(data) {
         const round_of_16 = data.filter((tournament) => {
@@ -111,7 +122,7 @@ export default function TournamentDetails() {
     }
 
     return (
-        (tournamentDetails.length === 16) ? (
+        (tournamentDetails.length >= 16 ) ? (
                 <div>
                     <div className="wrapper">
                         <div className="item">
@@ -247,7 +258,7 @@ export default function TournamentDetails() {
                         </div>
                     ) :
                     (
-                        (tournamentDetails.length === 4) ? (
+                        (tournamentDetails.length === 4 || tournamentDetails.length === 3) ? (
                             <div className="wrapper">
                                 <div className="item">
                                     <div className="item">
@@ -288,7 +299,13 @@ export default function TournamentDetails() {
                                     </div>
                                 ) :
                                 (
-                                    <div>Loading...</div>
+                                    <div className={"matches"}>
+                                        <div>
+                                            {tournamentDetails.map((match, index) => (
+                                                <Match key={index} match={match} goals={[]} onMatchDelete={onMatchDelete} />
+                                            ))}
+                                        </div>
+                                    </div>
                                 )
                         )
                     )

@@ -48,7 +48,8 @@ def create_server(db):
     @app.route('/tournaments/<tournament_id>/', methods=['GET'])
     def get_tournament(tournament_id):
         if tournament_id == 'WC-1950':
-            details = MatchDAO.get_tournemant_matches(db, tournament_id)
+            details = MatchDAO.get_tournemant_matches(db, tournament_id, "final round")
+            print(details)
             return flask.jsonify(details)
         details = TournamentDetailsDAO.get_tournament_details(db, tournament_id)
         return flask.jsonify(details)

@@ -86,7 +86,7 @@
 }
 
 .edit-button,
-.delete-button {
+.delete-button-danas {
     padding: 8px;
     cursor: pointer;
     background-color: #4caf50;
@@ -95,7 +95,7 @@
     border-radius: 5px;
 }
 
-.delete-button {
+.delete-button-danas {
     background-color: #f44336;
 }
 
