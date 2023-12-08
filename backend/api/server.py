@@ -129,6 +129,10 @@ def create_server(db):
         MatchDAO.create_match(db, match)
         return flask.jsonify({})
 
+    @app.route('/bookings/<match_id>', methods=['GET'])
+    def get_bookings_by_match_id(match_id : str):
+        bookings = BookingDAO.get_bookings(db, match_id)
+        return flask.jsonify(bookings)
 
     @app.route('/tournaments/teams', methods=['GET'])
     def api_all_teams():

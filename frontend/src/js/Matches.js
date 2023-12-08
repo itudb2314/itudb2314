@@ -11,6 +11,7 @@ export default function Matches() {
     const {match_id} = useParams();
     const [matchDeleted, setMatchDeleted] = useState(false);
     const [matchAdded, setMatchAdded] = useState(false);
+    const [bookings, setBookings] = useState([]);
 
     useEffect(() => {
         if(!match_id) {
@@ -47,6 +48,7 @@ export default function Matches() {
             Promise.all([ //fetching data from backend
                 fetch(`http://localhost:5000/matches/${match_id}`).then((response) => response.json()),
                 fetch(`http://localhost:5000/goals/${match_id}`).then((response) => response.json()),
+                fetch(`http://localhost:5000/bookings/${match_id}`).then((response) => response.json()),
             ])
             .then(([match_data, goals_data]) => {
                 //process and set matches
@@ -54,6 +56,9 @@ export default function Matches() {
 
                 //process and set goals
                 setGoals_by_id(goals_data);
+
+                //process and set bookings
+                setBookings(goals_data);
             })
             .catch((error) => {
                 console.error('Error fetching data:', error);
