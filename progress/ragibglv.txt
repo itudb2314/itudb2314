@@ -5,4 +5,4 @@ Week 7:
 Week 8:
     Added frontend for teams  
 Week 9:
-    Added "add" operation for the teams in frontend
+    Added "add" and "delete" operations for the teams in frontend
