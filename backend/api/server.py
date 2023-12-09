@@ -11,6 +11,7 @@ from db.models.manager import ManagerDAO
 from db.models.tournament_details import TournamentDetailsDAO
 from db.models.squad_appearance_player import SquadAppearancePlayerDAO
 from db.models.confederations import ConfederationDAO
+from db.models.bookings import BookingsDOA
 from db.models.Player import PlayerDAO
 
 
@@ -133,7 +134,7 @@ def create_server(db):
 
     @app.route('/bookings/<match_id>', methods=['GET'])
     def get_bookings_by_match_id(match_id : str):
-        bookings = BookingDAO.get_bookings(db, match_id)
+        bookings = BookingsDOA.get_bookings(db, match_id)
         return flask.jsonify(bookings)
 
     @app.route('/tournaments/teams', methods=['GET'])

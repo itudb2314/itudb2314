@@ -1,5 +1,5 @@
 .player-details {
-    max-width: 600px;
+    max-width: 750px;
     margin: 0 auto;
     padding: 20px;
     border: 1px solid #ccc;
@@ -21,14 +21,14 @@
 }
 
 .player-image img {
-    width: 170px;
-    height: 170px;
+    width: 256px;
+    height: 320px;
     margin-right: 20px;
 }
 
 .player-image-p img {
-    width: 170px;
-    height: 170px;
+    width: 256px;
+    height: 320px;
     border-radius: 50%;
     margin-right: 20px;
 }

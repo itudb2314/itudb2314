@@ -6,10 +6,11 @@ import siu2 from '../assets/ronaldo2.png';
 
 const PlayerPage = () => {
     const { playerId } = useParams();
-    const [player, setPlayer] = useState(false);
+    const [player, setPlayer] = useState({});
     const [deleteTrigger, setDeleteTrigger] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
+
 
     useEffect(() => {
         fetchPlayer();
@@ -62,19 +63,26 @@ const PlayerPage = () => {
 
     const submitForm = (event, player) => {
         event.preventDefault();
+
+        // Ensure event.target exists
+        if (!event.target) {
+            console.error('Event target is undefined.');
+            return;
+        }
+
         const updatedPlayer = {
             player_id: player.player_id,
-            family_name: event.target.family_name.value,
-            given_name: event.target.given_name.value,
-            birth_date: event.target.birth_date.value,
-            female: event.target.female.checked,
-            goal_keeper: event.target.goalkeeper.checked,
-            defender: event.target.defender.checked,
-            midfielder: event.target.midfielder.checked,
-            forward: event.target.forward.checked,
-            count_tournaments: parseInt(event.target.count_tournaments.value, 10),
-            list_tournaments: event.target.list_tournaments.value,
-            player_wikipedia_link: event.target.player_wikipedia_link.value,
+            family_name: event.target.family_name?.value || '',
+            given_name: event.target.given_name?.value || '',
+            birth_date: event.target.birth_date?.value || '',
+            female: event.target.female?.checked || false,
+            goal_keeper: event.target.goalkeeper?.checked || false,
+            defender: event.target.defender?.checked || false,
+            midfielder: event.target.midfielder?.checked || false,
+            forward: event.target.forward?.checked || false,
+            count_tournaments: parseInt(event.target.count_tournaments?.value, 10) || 0,
+            list_tournaments: event.target.list_tournaments?.value || '',
+            player_wikipedia_link: event.target.player_wikipedia_link?.value || '',
         };
 
         fetch('http://localhost:5000/players', {
@@ -82,16 +90,26 @@ const PlayerPage = () => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(updatedPlayer),
+            body: JSON.stringify({ playerData: updatedPlayer }),
         })
+
             .then(response => response.json())
             .then(data => {
                 // Assuming the player state is an array
-                setPlayer(prevPlayers =>
-                    prevPlayers.map(p =>
-                        p.player_id === updatedPlayer.player_id ? { ...p, ...updatedPlayer } : p
-                    )
-                );
+                // Assuming the player state is an object
+                setPlayer(prevPlayer => {
+                    // Check if prevPlayer is an object
+                    if (typeof prevPlayer === 'object' && !Array.isArray(prevPlayer)) {
+                        return { ...prevPlayer, ...updatedPlayer };
+                    } else {
+                        // Handle it accordingly, for example, log an error
+                        console.error('Invalid data structure for prevPlayer:', prevPlayer);
+                        return {};
+                    }
+                });
+
+
+
             })
             .catch((error) => {
                 console.error('Error updating player:', error);
@@ -195,6 +213,14 @@ const PlayerPage = () => {
                                 type="checkbox"
                                 id="goalkeeper"
                                 defaultChecked={player.goal_keeper}
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="defender">Defender</label>
+                            <input
+                                type="checkbox"
+                                id="defender"
+                                defaultChecked={player.defender}
                             />
                         </div>
                         <div>
