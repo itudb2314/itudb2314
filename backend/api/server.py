@@ -10,6 +10,7 @@ from db.models.group_standing import GroupStandingDAO
 from db.models.manager import ManagerDAO
 from db.models.tournament_details import TournamentDetailsDAO
 from db.models.squad_appearance_player import SquadAppearancePlayerDAO
+from db.models.Player import PlayerDAO
 
 
 def create_server(db):
@@ -112,7 +113,6 @@ def create_server(db):
             return flask.jsonify(goals), 200
         else:
             return flask.jsonify({'message': 'Goals not found'}), 404
-
     
     @app.route('/tournaments/teams', methods=['GET'])
     def api_all_teams():
@@ -146,5 +146,38 @@ def create_server(db):
     def api_all_managers():
         managers = ManagerDAO.get_all_managers(db)
         return flask.jsonify(managers)
+    
+    @app.route('/players', methods=['POST'])
+    def create_player():
+        new_player = flask.request.get_json()['newPlayer']
+        new_player = make_dataclass('Player', new_player.keys())(**new_player)
+        PlayerDAO.create_player(db, new_player)
+        return flask.jsonify({})
 
+    @app.route('/players', methods=['GET'])
+    def get_all_players():
+        players = PlayerDAO.get_all_players(db)
+        return flask.jsonify(players)
+
+    @app.route('/players/<player_id>', methods=['GET'])
+    def get_player(player_id):
+        player = PlayerDAO.get_player(db, player_id)
+        if player:
+            return flask.jsonify(player), 200
+        else:
+            return flask.jsonify({'message': 'Player not found'}), 404
+
+    @app.route('/players', methods=['PUT'])
+    def update_player():
+        player_data = flask.request.get_json()['playerData']
+        player_data = make_dataclass('Player', player_data.keys())(**player_data)
+        PlayerDAO.update_player(db, player_data)
+        return flask.jsonify({'message': 'Player updated successfully'})
+
+    @app.route('/players', methods=['DELETE'])
+    def delete_player():
+        player_id = flask.request.get_json()['player_id']
+        PlayerDAO.delete_player(db, player_id)
+        return flask.jsonify({'message': 'Player deleted successfully'})
+    
     return app
