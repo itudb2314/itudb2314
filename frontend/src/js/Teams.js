@@ -1,6 +1,7 @@
 import '../css/Teams.css';
 import '../css/Buttons.css';
 import {useEffect, useState} from "react";
+import getCountryISO2 from 'country-iso-3-to-2';
 
 export default function Teams() {
     const [teams, setTeams] = useState([])
@@ -70,19 +71,18 @@ export default function Teams() {
             });
     }
 
-
     function deleteTeam(team) {
         fetch('http://localhost:5000/tournaments/teams', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ team_id: team.team_id }),  // Correctly format the data as JSON
+            body: JSON.stringify({ team_id: team.team_id }),
         })
         .then(response => response.json())
         .then(data => {
             console.log('Delete successful:', data);
-            setDeleteTrigger(!deleteTrigger); // Trigger to re-fetch teams
+            setDeleteTrigger(!deleteTrigger);
         })
         .catch((error) => {
             console.log('Error:', error);
@@ -141,13 +141,15 @@ export default function Teams() {
 function Team({t, handleDeleteTeam, confederations}){
     const [team, setTeam] = useState(t);
     const [isEditing, setIsEditing] = useState(false);
+    const iso2 = getCountryISO2(t.team_code);
+    const flagUrl = `https://flagsapi.com/${iso2}/flat/64.png`;
 
     function editTeam() { setIsEditing(true)}
     
     function deleteTeam() {
         handleDeleteTeam(team)
     }
-    
+
     function submitTeam(e) {
         e.preventDefault();
         const newTeam = {...team};
@@ -198,9 +200,10 @@ function Team({t, handleDeleteTeam, confederations}){
             <h3>
                 {team.team_name}
             </h3>
-            <h3>
+            {/* <h3>
                 {team.team_id}
-            </h3>
+            </h3> */}
+            <img src={flagUrl} alt={`${t.team_name} Flag`} style={{ width: '64px', height: 'auto' }} />
             <p>({team.team_code})</p>
             <a href={team.mens_team_wikipedia_link}></a>
             {team.mens_team ? (
