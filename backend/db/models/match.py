@@ -50,7 +50,7 @@ class MatchDAO():
         try:
             connection = db.get_connection()
             query = """ 
-                INSERT INTO goals(
+                INSERT INTO matches(
                     tournament_id, 
                     match_id,
                     match_name,
@@ -78,8 +78,8 @@ class MatchDAO():
                     result, 
                     home_team_win, 
                     away_team_win, 
-                    draw, 
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    draw
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
             cursor = connection.cursor()
             cursor.execute(query, (
@@ -110,11 +110,12 @@ class MatchDAO():
                     match.result, 
                     match.home_team_win, 
                     match.away_team_win, 
-                    match.draw, 
+                    match.draw
             ))
             connection.commit()
         except mysql.connector.Error as error:
-            cursor.rollback()
+            connection.rollback()
+            print("MySQL Error:", error)
         finally: 
             cursor.close()
             connection.close()
@@ -148,7 +149,8 @@ class MatchDAO():
                 return None
         
         except mysql.connector.Error as error:
-            cursor.rollback()
+            connection.rollback()
+            print("MySQL Error:", error)
         finally:
             cursor.close()
             connection.close()
@@ -179,37 +181,61 @@ class MatchDAO():
                 return None
         
         except mysql.connector.Error as error:
-            cursor.rollback()
+            connection.rollback()
+            print("MySQL Error:", error)
         finally:
             cursor.close()
             connection.close()
 
     @staticmethod
-    def get_tournemant_matches(db : db, tournament_id: str) -> List[Match]:
+    def get_tournemant_matches(db: db, tournament_id: str, stage_name: str = None) -> list[Match] | None:
         matches = []
         try:
             connection = db.get_connection()
-            query = """
-                    SELECT * FROM matches WHERE tournament_id = %s
-                    """
-            cursor = connection.cursor()
-            cursor.execute(query, (tournament_id))
+            if stage_name == None:
+                query = """
+                        SELECT m.*, s.stadium_name, s.city_name, thome.team_name, taway.team_name, t.tournament_name 
+                        FROM matches m 
+                        LEFT JOIN stadiums s ON m.stadium_id = s.stadium_id 
+                        LEFT JOIN teams thome ON m.home_team_id = thome.team_id
+                        LEFT JOIN teams taway ON m.away_team_id = taway.team_id
+                        LEFT JOIN tournaments t ON m.tournament_id = t.tournament_id
+                        WHERE m.tournament_id = %s
+                        """
+                cursor = connection.cursor()
+                cursor.execute(query, (tournament_id,stage_name))
+            else:
+                query = """
+                        SELECT m.*, s.stadium_name, s.city_name, thome.team_name, taway.team_name, t.tournament_name 
+                        FROM matches m 
+                        LEFT JOIN stadiums s ON m.stadium_id = s.stadium_id 
+                        LEFT JOIN teams thome ON m.home_team_id = thome.team_id
+                        LEFT JOIN teams taway ON m.away_team_id = taway.team_id
+                        LEFT JOIN tournaments t ON m.tournament_id = t.tournament_id
+                        WHERE m.tournament_id = %s and m.stage_name = %s
+                        ORDER BY m.match_id DESC
+                        """
+                cursor = connection.cursor()
+                cursor.execute(query, (tournament_id,stage_name))
+
             results = cursor.fetchall()
             if results:
                 for result in results:
                     match = Match(result[0], result[1], result[2], result[3],result[4], result[5], result[6], 
                             result[7], result[8], result[9], result[10], result[11],result[12], result[13], 
                             result[14], result[15], result[16], result[17], result[18],result[19], result[20], 
-                            result[21], result[22], result[23], result[24], result[25], result[26],result[27])
+                            result[21], result[22], result[23], result[24], result[25], result[26],result[27], 
+                            result[28], result[29], result[30], result[31], result[32])
                     matches.append(match)
                 return matches
             else:
                 return None
         
         except mysql.connector.Error as error:
-            cursor.rollback()
+            connection.rollback()
+            print("MySQL Error:", error)
         finally:
-            cursor.close()
+            connection.close()
             connection.close()
 
     @staticmethod
@@ -235,7 +261,8 @@ class MatchDAO():
                 return None
         
         except mysql.connector.Error as error:
-            cursor.rollback()
+            connection.rollback()
+            print("MySQL Error:", error)
         finally:
             cursor.close()
             connection.close()
@@ -263,7 +290,8 @@ class MatchDAO():
                 return None
         
         except mysql.connector.Error as error:
-            cursor.rollback()
+            connection.rollback()
+            print("MySQL Error:", error)
         finally:
             cursor.close()
             connection.close()
@@ -291,7 +319,8 @@ class MatchDAO():
                 return None
         
         except mysql.connector.Error as error:
-            cursor.rollback()
+            connection.rollback()
+            print("MySQL Error:", error)
         finally:
             cursor.close()
             connection.close()
@@ -319,7 +348,8 @@ class MatchDAO():
                 return None
         
         except mysql.connector.Error as error:
-            cursor.rollback()
+            connection.rollback()
+            print("MySQL Error:", error)
         finally:
             cursor.close()
             connection.close()
@@ -392,7 +422,8 @@ class MatchDAO():
             ))
             connection.commit()
         except mysql.connector.Error as error:
-            cursor.rollback()
+            connection.rollback()
+            print("MySQL Error:", error)
         finally:
             cursor.close()
             connection.close()
@@ -405,10 +436,11 @@ class MatchDAO():
                     DELETE FROM matches WHERE match_id = %s
                     """
             cursor = connection.cursor()
-            cursor.execute(query, (match_id))
+            cursor.execute(query, (match_id,))
             connection.commit()
         except mysql.connector.Error as error:
-            cursor.rollback()
+            connection.rollback()
+            print("MySQL Error:", error)
         finally:
             cursor.close()
             connection.close()

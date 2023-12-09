@@ -149,7 +149,7 @@ const PlayerPage = () => {
                             <label>Wikipedia Link:</label> <a href={player.player_wikipedia_link}>{player.player_wikipedia_link}</a>
                         </p>
                         <button className="edit-button" onClick={() => updatePlayer(player)}>Edit</button>
-                        <button className="delete-button" onClick={() => deletePlayer(player.player_id)}>Delete</button>
+                        <button className="delete-button-danas" onClick={() => deletePlayer(player.player_id)}>Delete</button>
                     </div>
                 ) : (
 

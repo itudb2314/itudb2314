@@ -1,6 +1,8 @@
-import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import {Link, useParams} from "react-router-dom";
 import '../css/TournamentDetails.css';
+import '../css/Groupstanding.css'
+import Match from './Match'
 
 export default function TournamentDetails() {
     const { id } = useParams();
@@ -9,13 +11,22 @@ export default function TournamentDetails() {
     const [quarter_final, setQuarter_final] = useState([]);
     const [semi_final, setSemi_final] = useState([]);
     const [final, setFinal] = useState([]);
+    const [matchDeleted, setMatchDeleted] = useState(false);
+    const [matches, setMatches] = useState([]);
+
+    function onMatchDelete() {
+        setMatchDeleted(!matchDeleted);
+    }
 
     useEffect(() => {
         fetch(`http://localhost:5000/tournaments/${id}`)
             .then((response) => response.json())
             .then((data) => {
                 setTournamentDetails(data);
-
+                console.log(data);
+                if (id === 'WC-1950'){
+                    return
+                }
                 setRound_of_16(data.filter((tournament) => { return tournament.stage_name === "round of 16" }));
                 setQuarter_final(data.filter((tournament) => { return tournament.stage_name === "quarter-finals" ||
                     tournament.stage_name === "quarter-final" }));
@@ -23,12 +34,17 @@ export default function TournamentDetails() {
                 setSemi_final(data.filter((tournament) => { return tournament.stage_name === "semi-finals" ||
                     tournament.stage_name === "semi-final"}));
 
+                console.log(data.length);
+                if (data.length === 2) {
+                    return
+                }
                 reorderMatches(data)
+
             })
             .catch((error) => {
                 console.error("Error fetching data:", error);
             });
-    }, []);
+    }, [matchDeleted]);
 
     function reorderMatches(data) {
         const round_of_16 = data.filter((tournament) => {
@@ -44,13 +60,13 @@ export default function TournamentDetails() {
         });
 
         // reorder quarter_final according to the semi_final
-        for(let i = 0; i < 2; i++) {
+        for (let i = 0; i < 2; i++) {
             const team1 = semi_final[i].team1;
             const team2 = semi_final[i].team2;
 
             let k = i * 2;
-            for(let j = 0; j < 4; j++) {
-                if(quarter_final[j].team1 === team1 || quarter_final[j].team2 === team1
+            for (let j = 0; j < 4; j++) {
+                if (quarter_final[j].team1 === team1 || quarter_final[j].team2 === team1
                     || quarter_final[j].team1 === team2 || quarter_final[j].team2 === team2) {
                     let match = quarter_final[k];
                     quarter_final[k] = quarter_final[j];
@@ -90,22 +106,23 @@ export default function TournamentDetails() {
             }
         }
         setRound_of_16(round_of_16);
+        console.log("Final", final);
     }
 
     function matchComponent(match) {
         return (
-            (match.winner) ?
-                (
-                    <p><span className="winner">{match.team1} {match.home_team_score}</span> - {match.away_team_score} {match.team2}</p>
-                ) :
-                (
-                    <p>{match.team1} {match.home_team_score} - <span className="winner"> {match.away_team_score} {match.team2}</span></p>
-                )
+            <Link style={{text_decoration:'none'}} to={`/matches/${match.match_id}`}>
+                {(match.winner) ?
+                <p><span className="winner">{match.team1} {match.home_team_score}</span> - {match.away_team_score} {match.team2}</p>
+                :
+                <p>{match.team1} {match.home_team_score} - <span className="winner"> {match.away_team_score} {match.team2}</span></p>
+                }
+            </Link>
         )
     }
 
     return (
-        (tournamentDetails.length === 16) ? (
+        (tournamentDetails.length >= 16 ) ? (
                 <div>
                     <div className="wrapper">
                         <div className="item">
@@ -241,7 +258,56 @@ export default function TournamentDetails() {
                         </div>
                     ) :
                     (
-                        <div>Loading...</div>
+                        (tournamentDetails.length === 4 || tournamentDetails.length === 3) ? (
+                            <div className="wrapper">
+                                <div className="item">
+                                    <div className="item">
+                                        <div className="item-parent">
+                                            {matchComponent(final[0])}
+                                        </div>
+                                        <div className="item-childrens">
+                                            <div className="item-child">
+                                                <div className="item">
+                                                    <div className="item">
+                                                        {matchComponent(semi_final[0])}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="item-child">
+                                                <div className="item">
+                                                    <div className="item">
+                                                        {matchComponent(semi_final[1])}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ) :
+                        (
+                            (tournamentDetails.length === 2) ?
+                                (
+                                    <div className="wrapper">
+                                        <div className="item">
+                                            <div className="item">
+                                                <div className="item" style={{marginTop: "20px"}}>
+                                                    {matchComponent(final[0])}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ) :
+                                (
+                                    <div className={"matches"}>
+                                        <div>
+                                            {tournamentDetails.map((match, index) => (
+                                                <Match key={index} match={match} goals={[]} onMatchDelete={onMatchDelete} />
+                                            ))}
+                                        </div>
+                                    </div>
+                                )
+                        )
                     )
             )
     );

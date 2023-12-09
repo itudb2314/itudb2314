@@ -10,6 +10,7 @@ from db.models.group_standing import GroupStandingDAO
 from db.models.manager import ManagerDAO
 from db.models.tournament_details import TournamentDetailsDAO
 from db.models.squad_appearance_player import SquadAppearancePlayerDAO
+from db.models.confederations import ConfederationDAO
 from db.models.Player import PlayerDAO
 
 
@@ -48,6 +49,10 @@ def create_server(db):
 
     @app.route('/tournaments/<tournament_id>/', methods=['GET'])
     def get_tournament(tournament_id):
+        if tournament_id == 'WC-1950':
+            details = MatchDAO.get_tournemant_matches(db, tournament_id, "final round")
+            print(details)
+            return flask.jsonify(details)
         details = TournamentDetailsDAO.get_tournament_details(db, tournament_id)
         return flask.jsonify(details)
 
@@ -105,7 +110,7 @@ def create_server(db):
             return flask.jsonify(match), 200
         else:
             return flask.jsonify({'message': 'Match not found'}), 404
-        
+
     @app.route('/goals/<match_id>', methods=['GET'])
     def api_goals_by_match_id(match_id : str):
         goals = GoalDAO.get_match_goals(db, match_id)
@@ -113,7 +118,24 @@ def create_server(db):
             return flask.jsonify(goals), 200
         else:
             return flask.jsonify({'message': 'Goals not found'}), 404
+        
+    @app.route('/matches/<match_id>', methods=['DELETE'])
+    def delete_match(match_id : str):
+        MatchDAO.delete_match(db, match_id)
+        return flask.jsonify({'message': 'Match deleted successfully'})
     
+    @app.route('/matches', methods=['POST'])
+    def create_match():
+        match = flask.request.get_json()['matchdata']
+        match = make_dataclass('Match', match.keys())(**match)
+        MatchDAO.create_match(db, match)
+        return flask.jsonify({})
+
+    @app.route('/bookings/<match_id>', methods=['GET'])
+    def get_bookings_by_match_id(match_id : str):
+        bookings = BookingDAO.get_bookings(db, match_id)
+        return flask.jsonify(bookings)
+
     @app.route('/tournaments/teams', methods=['GET'])
     def api_all_teams():
         teams = TeamsDAO.get_all_teams(db)
@@ -147,6 +169,12 @@ def create_server(db):
         managers = ManagerDAO.get_all_managers(db)
         return flask.jsonify(managers)
     
+
+    @app.route('/confederations', methods=['GET'])
+    def get_confederation_names():
+        confederations = ConfederationDAO.get_confederation_names(db)
+        return flask.jsonify(confederations)
+
     @app.route('/players', methods=['POST'])
     def create_player():
         new_player = flask.request.get_json()['newPlayer']

@@ -18,4 +18,11 @@ HOME_TEAM home_team_score - away_team_score AWAY_TEAM
 	               Stadium
                          City
 also added necessary join operations as the match table had home_team_id, away_team_id, and stadium_id which i needed to obtain the names of using join operations with the stadiums table and teams table.
-		
+
+Week 09 commit:
+added api to get all goals and added the frontend to display them with the match details
+added api to get match by id and the frontend to display that match 
+added api to get goals by match id and the frontend to display it with the details of matches fetched by id
+
+Week 10 commit:
+added apis and frontend for insert and delete operations

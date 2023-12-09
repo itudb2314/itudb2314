@@ -1,20 +1,37 @@
 import '../css/Teams.css';
 import '../css/Buttons.css';
 import {useEffect, useState} from "react";
+import getCountryISO2 from 'country-iso-3-to-2';
 
 export default function Teams() {
     const [teams, setTeams] = useState([])
     const [deleteTrigger, setDeleteTrigger] = useState(false)
     const [addTrigger, setAddTrigger] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
+    const [confederations, setConfederations] = useState([]);
 
     useEffect(() => {
         fetch('http://localhost:5000/tournaments/teams')
             .then(response => response.json())
             .then(data => {
                 setTeams(data)
-                console.log(teams)
             })
+
+        // Fetch the confederation names from the API
+        fetch('http://localhost:5000/confederations', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then(response => response.json())
+            .then(data => {
+                setConfederations(data);
+                console.log(confederations)
+            })
+            .catch((error) => {
+                console.log('Error:', error);
+            });
+
     }, [deleteTrigger, addTrigger])
 
     const toggleModal = () => {
@@ -54,19 +71,18 @@ export default function Teams() {
             });
     }
 
-
     function deleteTeam(team) {
         fetch('http://localhost:5000/tournaments/teams', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ team_id: team.team_id }),  // Correctly format the data as JSON
+            body: JSON.stringify({ team_id: team.team_id }),
         })
         .then(response => response.json())
         .then(data => {
             console.log('Delete successful:', data);
-            setDeleteTrigger(!deleteTrigger); // Trigger to re-fetch teams
+            setDeleteTrigger(!deleteTrigger);
         })
         .catch((error) => {
             console.log('Error:', error);
@@ -115,31 +131,33 @@ export default function Teams() {
             </div>
         )}
         {teams.map(team => (
-            <Team key={team.team_id} t={team} handleDeleteTeam={deleteTeam}/>
+            <Team key={team.team_id} t={team} handleDeleteTeam={deleteTeam} confederations={confederations}/>
         ))}
     </div>
 );
 }
 
 
-function Team({t, handleDeleteTeam}){
+function Team({t, handleDeleteTeam, confederations}){
     const [team, setTeam] = useState(t);
     const [isEditing, setIsEditing] = useState(false);
+    const iso2 = getCountryISO2(t.team_code);
+    const flagUrl = `https://flagsapi.com/${iso2}/flat/64.png`;
 
     function editTeam() { setIsEditing(true)}
     
     function deleteTeam() {
         handleDeleteTeam(team)
     }
-    
+
     function submitTeam(e) {
         e.preventDefault();
-        setIsEditing(false);
         const newTeam = {...team};
         newTeam.team_name = e.target.team_name.value;
         newTeam.team_code = e.target.team_code.value;
-        newTeam.confederation_id= e.target.confederation_id.value;
+        newTeam.confederation_id = e.target.confederation_id.value;
         newTeam.federation_wikipedia_link = e.target.federation_wikipedia_link.value;
+        console.log(newTeam)
 
         fetch('http://localhost:5000/tournaments/teams', {
             method: 'PUT',
@@ -149,7 +167,6 @@ function Team({t, handleDeleteTeam}){
             body: JSON.stringify({newTeam}),
         }).then(response => response.json())
             .then(data => {
-                console.log('Success:', data);
                 setTeam(newTeam);
             })
             .catch((error) => {
@@ -166,11 +183,15 @@ function Team({t, handleDeleteTeam}){
                         <label htmlFor="team_name">Team Name</label>
                         <input id='team_name' type="text" defaultValue={team.team_name}/>
                         <label htmlFor="team_code">Team Code</label>
-                        <input id='team_code'type="text" defaultValue={team.team_code}/>
-                        <label htmlFor="confederation_id">Confederation ID</label>
-                        <input id='confederation_id'type="text" defaultValue={team.confederation_id}/>
-                        <label htmlFor="federation_wikipedia_link">Federation Wikipedia Link</label>
-                        <input id='federation_wikipedia_link'type="text" defaultValue={team.federation_wikipedia_link}/>
+                        <input id='team_code' type="text" defaultValue={team.team_code}/>
+                        <label htmlFor="confederation_id">Confederation</label>
+                        <select className={"form-option"} id='confederation_id' defaultValue={team.confederation_id}>
+                            {confederations.map(confederation => (
+                                <option key={confederation.confederation_id} value={confederation.confederation_id}>{confederation.confederation_name}</option>
+                            ))}
+                        </select>
+                        <label htmlFor="federation_wikipedia_link">Wikipedia Link</label>
+                        <input id='federation_wikipedia_link' type="text" defaultValue={team.federation_wikipedia_link}/>
                         <button className="save-button" type='submit'>Save</button>
                     </form>
                 </div>
@@ -179,9 +200,10 @@ function Team({t, handleDeleteTeam}){
             <h3>
                 {team.team_name}
             </h3>
-            <h3>
+            {/* <h3>
                 {team.team_id}
-            </h3>
+            </h3> */}
+            <img src={flagUrl} alt={`${t.team_name} Flag`} style={{ width: '64px', height: 'auto' }} />
             <p>({team.team_code})</p>
             <a href={team.mens_team_wikipedia_link}></a>
             {team.mens_team ? (
@@ -192,7 +214,7 @@ function Team({t, handleDeleteTeam}){
             }
             <div className='buttons'>
                 <button className="edit-button" onClick={editTeam}>Edit</button>
-                <button className="delete-button" onClick={deleteTeam}>Delete</button>
+                <button className="delete-button-danas" onClick={deleteTeam}>Delete</button>
             </div>
             </>
             )}
