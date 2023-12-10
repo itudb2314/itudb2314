@@ -47,6 +47,31 @@ def create_server(db):
         print(tournament_id)
         TournamentDAO.delete_tournament(db, tournament_id)
         return flask.jsonify({})
+    
+    @app.route('/managers', methods=['GET'])
+    def api_all_managers():
+        managers = ManagerDAO.get_all_managers(db)
+        return flask.jsonify(managers)
+    
+    @app.route('/managers', methods=['POST'])
+    def create_manager():
+        new_manager = flask.request.get_json()['newManager']
+        new_manager = make_dataclass('Manager', new_manager.keys())(**new_manager)
+        ManagerDAO.insert_manager(db, new_manager)
+        return flask.jsonify({})
+    
+    @app.route('/managers', methods=['PUT'])
+    def update_manager():
+        manager_data = flask.request.get_json()['managerData']
+        manager_data = make_dataclass('Manager', manager_data.keys())(**manager_data)
+        ManagerDAO.update_manager(db, manager_data)
+        return flask.jsonify(manager_data)
+    
+    @app.route('/managers', methods=['DELETE'])
+    def delete_manager():
+        manager_id = flask.request.get_json()['manager_id']
+        ManagerDAO.delete_manager(db, manager_id)
+        return flask.jsonify({})
 
     @app.route('/tournaments/<tournament_id>/', methods=['GET'])
     def get_tournament(tournament_id):
@@ -163,12 +188,6 @@ def create_server(db):
         teams = make_dataclass('Team', teams.keys())(**teams)
         TeamsDAO.create_team(db, teams)
         return flask.jsonify({})
-    
-
-    @app.route('/managers', methods=['GET'])
-    def api_all_managers():
-        managers = ManagerDAO.get_all_managers(db)
-        return flask.jsonify(managers)
     
 
     @app.route('/confederations', methods=['GET'])
