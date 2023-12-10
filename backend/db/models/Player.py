@@ -91,6 +91,7 @@ class PlayerDAO():
             connection = db.get_connection()
             query = """
                 SELECT * FROM players
+                LIMIT 100
             """
             cursor = connection.cursor()
             cursor.execute(query)
