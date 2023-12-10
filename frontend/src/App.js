@@ -12,6 +12,7 @@ import Groupstandings from './js/Groupstanding';
 import Managers from './js/Managers';
 import PlayerPage from './js/Player';
 import Players from './js/Players';
+import SingleSquadPage from './js/Squad';
 
 function App() {
     return (
@@ -27,6 +28,7 @@ function App() {
                 <Route path="/managers" exact component={Managers} />
                 <Route path="/players" exact component={Players} />
                 <Route path="/players/:playerId" exact component={PlayerPage} />
+                <Route path="/squads/:tournamentId/:teamId" exact component={SingleSquadPage} />
             </Switch>
         </Router>
     );
