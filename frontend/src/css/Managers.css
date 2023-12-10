@@ -1,4 +1,4 @@
-.teams{
+.managers{
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -8,7 +8,7 @@
     height: 100%;
 }
 
-.team{
+.manager{
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -27,26 +27,29 @@
     }
 }
 
-.teams .buttons {
-    margin-top: 15px;
-    margin-bottom: 20px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+.manager-info{
     width: 100%;
+    border: 2px solid black;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    margin: -2px 0 1px 24px;
+    padding: 5px 0 0 10px;
+    align-content: flex-start;
+    box-shadow: 6px 5px 3px #606468;
+    background: azure;
+    align-items: flex-start;
+    justify-content: flex-start;
+    text-align: left;
 }
 
-.team form {
-    padding-left: 5px;
+.manager-info form {
     padding-right: 20px;
     display: flex;
     flex-direction: column;
-    height: 200px;
-    overflow-y: auto;
-    overflow-x: hidden;
 }
 
-.team form input {
+.manager-info form input {
     font-size: 16px;
     padding-left: 5px;
     margin: 5px 0;
@@ -54,26 +57,4 @@
     height: 1.5rem;
     border-radius: 5px;
     border: 1px solid black;
-}
-
-.team form input:focus {
-    outline: none;
-    border: 1px solid #333;
-}
-
-.form-option {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-}
-
-select {
-    width: 108.5%;
-    background-color: white;
-    border: thin solid black;
-    border-radius: 5px;
-    font: inherit;
-    padding: 0.5em;
-    margin-bottom: 5px;
 }

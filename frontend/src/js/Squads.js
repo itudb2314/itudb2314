@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import '../css/Squads.css';
 import siu from '../assets/ronaldo.png';
 import siu2 from '../assets/ronaldo2.png';
-import { Link } from 'react-router-dom';
+import { useHistory } from "react-router-dom";
 
 export default function Squads() {
+    const history = useHistory();
     const [squads, setSquads] = useState([]);
     const [deleteTrigger, setDeleteTrigger] = useState(false);
     const [addTrigger, setAddTrigger] = useState(false);
@@ -139,12 +140,20 @@ export default function Squads() {
         padding: '2rem 0 0 2rem',
     };
 
+    function handleClick(actualSquad) {
+        history.push(`/squads/${actualSquad.tournament_id}/${actualSquad.team_id}`);
+    }
+
+    function handlePlayerClick(squad) {
+        history.push(`/players/${squad.player_id}`);
+    }
+
     return (
         <div className="tournaments">
             <h1 style={style}>Squads</h1>
             {squads.map((actualSquad) => (
                 <div key={`${actualSquad.tournament_id}-${actualSquad.team_id}`} className="squad-group">
-                    <h2 className='Title'>
+                    <h2 onClick={() => handleClick(actualSquad)} style={{ cursor: 'pointer' }} className='Title'>
                         {actualSquad.tournament_name} / {actualSquad.team_name}
                     </h2>
                     {actualSquad.squad.map((squad, playerIndex) => (
@@ -153,8 +162,8 @@ export default function Squads() {
                                 {!isEditing || isEditing.player_id !== squad.player_id ? (
                                     // Display squad details
                                     <>
-                                        <div className="player-name">
-                                            <Link to={`/players/${squad.player_id}`}>{squad.given_name} {squad.family_name}</Link>
+                                        <div className="player-name" onClick={() => handlePlayerClick(squad)} style={{ cursor: 'pointer' }} >
+                                            {squad.given_name} {squad.family_name}
                                         </div>
                                         <div className="player-image">
                                             <img src={playerIndex % 2 === 0 ? siu : siu2} alt={`Player ${playerIndex + 1}`} />
