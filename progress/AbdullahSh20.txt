@@ -31,3 +31,4 @@ Improved CSS of player page
 
 Week 12 commits: 
 added search bar with suggestions based on player name with clickability that sends to website
+added single squad fetching API and linked it to the matches table
