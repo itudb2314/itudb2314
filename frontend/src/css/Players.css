@@ -1,0 +1,10 @@
+.search-bar-container {
+    padding-top: 20vh;
+    width: 40%;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-width: 200px;
+}

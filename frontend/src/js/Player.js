@@ -10,6 +10,7 @@ const PlayerPage = () => {
     const [deleteTrigger, setDeleteTrigger] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
 
     useEffect(() => {
@@ -17,6 +18,7 @@ const PlayerPage = () => {
     }, [playerId, deleteTrigger]);
 
     const fetchPlayer = async () => {
+        setIsLoading(true); // Set loading to true before fetching data
         try {
             const response = await fetch(`http://localhost:5000/players/${playerId}`);
             if (!response.ok) {
@@ -26,6 +28,8 @@ const PlayerPage = () => {
             setPlayer(data);
         } catch (error) {
             console.error('Error fetching player:', error);
+        } finally {
+            setIsLoading(false); // Set loading to false after fetching data, whether successful or not
         }
     };
 
@@ -125,6 +129,10 @@ const PlayerPage = () => {
 
     if (!player) {
         return <div>Loading...</div>;
+    }
+
+    if (isLoading) {
+        return <div>Loading...</div>; // Render loading screen while data is being fetched
     }
 
     return (
