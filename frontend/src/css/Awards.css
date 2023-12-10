@@ -1,0 +1,29 @@
+.awards {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.awards-title {
+  padding-left: 1rem;
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.award {
+  color: white;
+  width: 29.8%;
+  text-align: left;
+  font-size: 1.7rem;
+  align-items: center;
+  margin: 1rem;
+  padding: 1rem;
+  border: #282c34;
+  background-color: #282c34;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  transition-duration: 0.3s;
+  &:hover {
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+  }
+}

@@ -22,11 +22,15 @@
     margin: -2px 0 1px 24px;
     padding: 5px 0 0 10px;
     align-content: flex-start;
-    box-shadow: 6px 5px 3px #606468;
-    background: azure;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    background: white;
     align-items: flex-start;
     justify-content: flex-start;
     text-align: left;
+    transition-duration: 0.3s;
+    &:hover {
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    }
 }
 
 .tournament-details form {

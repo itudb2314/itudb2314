@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import {Link, useParams} from "react-router-dom";
 import '../css/TournamentDetails.css';
 import '../css/Groupstanding.css'
+import '../css/Awards.css'
 import Match from './Match'
 
 export default function TournamentDetails() {
@@ -12,7 +13,7 @@ export default function TournamentDetails() {
     const [semi_final, setSemi_final] = useState([]);
     const [final, setFinal] = useState([]);
     const [matchDeleted, setMatchDeleted] = useState(false);
-    const [matches, setMatches] = useState([]);
+    const [awards, setAwards] = useState([]);
 
     function onMatchDelete() {
         setMatchDeleted(!matchDeleted);
@@ -23,7 +24,6 @@ export default function TournamentDetails() {
             .then((response) => response.json())
             .then((data) => {
                 setTournamentDetails(data);
-                console.log(data);
                 if (id === 'WC-1950'){
                     return
                 }
@@ -34,7 +34,8 @@ export default function TournamentDetails() {
                 setSemi_final(data.filter((tournament) => { return tournament.stage_name === "semi-finals" ||
                     tournament.stage_name === "semi-final"}));
 
-                console.log(data.length);
+                console.log(data.length)
+
                 if (data.length === 2) {
                     return
                 }
@@ -42,6 +43,17 @@ export default function TournamentDetails() {
 
             })
             .catch((error) => {
+                console.error("Error fetching data:", error);
+            });
+
+
+        console.log("Hello")
+        fetch(`http://localhost:5000/awards/${id}`)
+            .then((response) => response.json())
+            .then((data) => {
+                setAwards(data);
+
+            }).catch((error) => {
                 console.error("Error fetching data:", error);
             });
     }, [matchDeleted]);
@@ -92,8 +104,6 @@ export default function TournamentDetails() {
             for (let j = 0; j < 8; j++) {
                 if (round_of_16[j].team1 === team1 || round_of_16[j].team2 === team1
                     || round_of_16[j].team1 === team2 || round_of_16[j].team2 === team2) {
-                    console.log(team1, team2)
-                    console.log(round_of_16[j]);
 
                     let match = round_of_16[k];
                     round_of_16[k] = round_of_16[j];
@@ -106,7 +116,6 @@ export default function TournamentDetails() {
             }
         }
         setRound_of_16(round_of_16);
-        console.log("Final", final);
     }
 
     function matchComponent(match) {
@@ -122,87 +131,86 @@ export default function TournamentDetails() {
     }
 
     return (
-        (tournamentDetails.length >= 16 ) ? (
-                <div>
-                    <div className="wrapper">
-                        <div className="item">
-                            <div className="item-parent">
-                                {matchComponent(final[0])}
-                            </div>
-                            <div className="item-childrens">
-                                <div className="item-child">
-                                    <div className="item">
-                                        <div className="item-parent">
-                                            {matchComponent(semi_final[0])}
-                                        </div>
-                                        <div className="item-childrens">
-                                            <div className="item-child">
-                                                <div className="item">
-                                                    <div className="item-parent">
-                                                        {matchComponent(quarter_final[0])}
-                                                    </div>
-                                                    <div className="item-childrens">
-                                                        <div className="item-child">
-                                                            {matchComponent(round_of_16[0])}
-                                                        </div>
-                                                        <div className="item-child">
-                                                            {matchComponent(round_of_16[1])}
-                                                        </div>
-                                                    </div>
+        <div>
+            {
+            (tournamentDetails.length >= 16 ) ? (
+            <div className="wrapper">
+                <div className="item">
+                    <div className="item-parent">
+                        {matchComponent(final[0])}
+                    </div>
+                    <div className="item-childrens">
+                        <div className="item-child">
+                            <div className="item">
+                                <div className="item-parent">
+                                    {matchComponent(semi_final[0])}
+                                </div>
+                                <div className="item-childrens">
+                                    <div className="item-child">
+                                        <div className="item">
+                                            <div className="item-parent">
+                                                {matchComponent(quarter_final[0])}
+                                            </div>
+                                            <div className="item-childrens">
+                                                <div className="item-child">
+                                                    {matchComponent(round_of_16[0])}
+                                                </div>
+                                                <div className="item-child">
+                                                    {matchComponent(round_of_16[1])}
                                                 </div>
                                             </div>
-                                            <div className="item-child">
-                                                <div className="item">
-                                                    <div className="item-parent">
-                                                        {matchComponent(quarter_final[1])}
-                                                    </div>
-                                                    <div className="item-childrens">
-                                                        <div className="item-child">
-                                                            {matchComponent(round_of_16[2])}
-                                                        </div>
-                                                        <div className="item-child">
-                                                            {matchComponent(round_of_16[3])}
-                                                        </div>
-                                                    </div>
+                                        </div>
+                                    </div>
+                                    <div className="item-child">
+                                        <div className="item">
+                                            <div className="item-parent">
+                                                {matchComponent(quarter_final[1])}
+                                            </div>
+                                            <div className="item-childrens">
+                                                <div className="item-child">
+                                                    {matchComponent(round_of_16[2])}
+                                                </div>
+                                                <div className="item-child">
+                                                    {matchComponent(round_of_16[3])}
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="item-child">
-                                    <div className="item">
-                                        <div className="item-parent">
-                                            {matchComponent(semi_final[1])}
-                                        </div>
-                                        <div className="item-childrens">
-                                            <div className="item-child">
-                                                <div className="item">
-                                                    <div className="item-parent">
-                                                        {matchComponent(quarter_final[2])}
-                                                    </div>
-                                                    <div className="item-childrens">
-                                                        <div className="item-child">
-                                                            {matchComponent(round_of_16[4])}
-                                                        </div>
-                                                        <div className="item-child">
-                                                            {matchComponent(round_of_16[5])}
-                                                        </div>
-                                                    </div>
+                            </div>
+                        </div>
+                        <div className="item-child">
+                            <div className="item">
+                                <div className="item-parent">
+                                    {matchComponent(semi_final[1])}
+                                </div>
+                                <div className="item-childrens">
+                                    <div className="item-child">
+                                        <div className="item">
+                                            <div className="item-parent">
+                                                {matchComponent(quarter_final[2])}
+                                            </div>
+                                            <div className="item-childrens">
+                                                <div className="item-child">
+                                                    {matchComponent(round_of_16[4])}
+                                                </div>
+                                                <div className="item-child">
+                                                    {matchComponent(round_of_16[5])}
                                                 </div>
                                             </div>
-                                            <div className="item-child">
-                                                <div className="item">
-                                                    <div className="item-parent">
-                                                        {matchComponent(quarter_final[3])}
-                                                    </div>
-                                                    <div className="item-childrens">
-                                                        <div className="item-child">
-                                                            {matchComponent(round_of_16[6])}
-                                                        </div>
-                                                        <div className="item-child">
-                                                            {matchComponent(round_of_16[7])}
-                                                        </div>
-                                                    </div>
+                                        </div>
+                                    </div>
+                                    <div className="item-child">
+                                        <div className="item">
+                                            <div className="item-parent">
+                                                {matchComponent(quarter_final[3])}
+                                            </div>
+                                            <div className="item-childrens">
+                                                <div className="item-child">
+                                                    {matchComponent(round_of_16[6])}
+                                                </div>
+                                                <div className="item-child">
+                                                    {matchComponent(round_of_16[7])}
                                                 </div>
                                             </div>
                                         </div>
@@ -212,103 +220,120 @@ export default function TournamentDetails() {
                         </div>
                     </div>
                 </div>
+            </div>
             ) :
             (
-                (tournamentDetails.length === 8) ? (
-                        <div className="wrapper">
-                            <div className="item">
+            (tournamentDetails.length === 8) ? (
+            <div className="wrapper">
+                <div className="item">
+                    <div className="item">
+                        <div className="item-parent">
+                            {matchComponent(final[0])}
+                        </div>
+                        <div className="item-childrens">
+                            <div className="item-child">
                                 <div className="item">
                                     <div className="item-parent">
-                                        {matchComponent(final[0])}
+                                        {matchComponent(semi_final[0])}
                                     </div>
                                     <div className="item-childrens">
                                         <div className="item-child">
-                                            <div className="item">
-                                                <div className="item-parent">
-                                                    {matchComponent(semi_final[0])}
-                                                </div>
-                                                <div className="item-childrens">
-                                                    <div className="item-child">
-                                                        {matchComponent(quarter_final[0])}
-                                                    </div>
-                                                    <div className="item-child">
-                                                        {matchComponent(quarter_final[1])}
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            {matchComponent(quarter_final[0])}
                                         </div>
                                         <div className="item-child">
-                                            <div className="item">
-                                                <div className="item-parent">
-                                                    {matchComponent(semi_final[1])}
-                                                </div>
-                                                <div className="item-childrens">
-                                                    <div className="item-child">
-                                                        {matchComponent(quarter_final[2])}
-                                                    </div>
-                                                    <div className="item-child">
-                                                        {matchComponent(quarter_final[3])}
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            {matchComponent(quarter_final[1])}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="item-child">
+                                <div className="item">
+                                    <div className="item-parent">
+                                        {matchComponent(semi_final[1])}
+                                    </div>
+                                    <div className="item-childrens">
+                                        <div className="item-child">
+                                            {matchComponent(quarter_final[2])}
+                                        </div>
+                                        <div className="item-child">
+                                            {matchComponent(quarter_final[3])}
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    ) :
-                    (
-                        (tournamentDetails.length === 4 || tournamentDetails.length === 3) ? (
-                            <div className="wrapper">
+                    </div>
+                </div>
+            </div>
+            ) :
+            (
+            (tournamentDetails.length === 4 || tournamentDetails.length === 3) ? (
+            <div className="wrapper">
+                <div className="item">
+                    <div className="item">
+                        <div className="item-parent">
+                            {matchComponent(final[0])}
+                        </div>
+                        <div className="item-childrens">
+                            <div className="item-child">
                                 <div className="item">
                                     <div className="item">
-                                        <div className="item-parent">
-                                            {matchComponent(final[0])}
-                                        </div>
-                                        <div className="item-childrens">
-                                            <div className="item-child">
-                                                <div className="item">
-                                                    <div className="item">
-                                                        {matchComponent(semi_final[0])}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="item-child">
-                                                <div className="item">
-                                                    <div className="item">
-                                                        {matchComponent(semi_final[1])}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        {matchComponent(semi_final[0])}
                                     </div>
                                 </div>
                             </div>
-                        ) :
-                        (
-                            (tournamentDetails.length === 2) ?
-                                (
-                                    <div className="wrapper">
-                                        <div className="item">
-                                            <div className="item">
-                                                <div className="item" style={{marginTop: "20px"}}>
-                                                    {matchComponent(final[0])}
-                                                </div>
-                                            </div>
-                                        </div>
+                            <div className="item-child">
+                                <div className="item">
+                                    <div className="item">
+                                        {matchComponent(semi_final[1])}
                                     </div>
-                                ) :
-                                (
-                                    <div className={"matches"}>
-                                        <div>
-                                            {tournamentDetails.map((match, index) => (
-                                                <Match key={index} match={match} goals={[]} onMatchDelete={onMatchDelete} />
-                                            ))}
-                                        </div>
-                                    </div>
-                                )
-                        )
-                    )
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            ) :
+            (
+            (tournamentDetails.length === 2) ?
+            (
+            <div className="wrapper">
+                <div className="item">
+                    <div className="item">
+                        <div className="item" style={{marginTop: "20px"}}>
+                            {matchComponent(final[0])}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            ) :
+            (
+            <div className={"matches"}>
+                <div>
+                    {tournamentDetails.map((match, index) => (
+                        <Match key={index} match={match} goals={[]} onMatchDelete={onMatchDelete} />
+                    ))}
+                </div>
+            </div>
             )
+            )
+            )
+            )
+            }
+            <div style={{padding: '30px'}}>
+                <h4 className="awards-title">Tournament Awards</h4>
+                <div className="awards">
+                    {awards.map((award) => (
+                            <div className="award">
+                                <h3>{award.award_name}</h3>
+                                <Link style={{text_decoration:'none'}} to={`/players/${award.player_id}`}>
+                                    <p>{award.given_name} {award.family_name}</p>
+                                </Link>
+                            </div>
+                        )
+                    )}
+                </div>
+            </div>
+        </div>
     );
 }

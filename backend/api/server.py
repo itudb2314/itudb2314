@@ -13,6 +13,7 @@ from db.models.squad_appearance_player import SquadAppearancePlayerDAO
 from db.models.confederations import ConfederationDAO
 from db.models.bookings import BookingsDOA
 from db.models.Player import PlayerDAO
+from db.models.awards import AwardDAO
 
 
 def create_server(db):
@@ -208,5 +209,11 @@ def create_server(db):
         player_id = flask.request.get_json()['player_id']
         PlayerDAO.delete_player(db, player_id)
         return flask.jsonify({'message': 'Player deleted successfully'})
-    
+
+    @app.route('/awards/<tournament_id>', methods=['GET'])
+    def get_all_awards(tournament_id: int):
+        awards = AwardDAO.get_tournament_awards(db, tournament_id)
+        return flask.jsonify(awards)
+
+
     return app
