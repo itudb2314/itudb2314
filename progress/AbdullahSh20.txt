@@ -25,3 +25,9 @@ Added a GET function with JOIN accross 4 tables, Tournaments, players, squads, t
 Week 11 commits:
 Made player names in squads links to each players specific information which will be mapped using the player table and its api using player.js
 added design for the page
+added player API
+Fixed non functional updates and delete buttons
+Improved CSS of player page
+
+Week 12 commits: 
+added search bar with suggestions based on player name with clickability that sends to website
