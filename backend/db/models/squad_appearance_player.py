@@ -64,3 +64,44 @@ class SquadAppearancePlayerDAO():
         finally:
             cursor.close()
             connection.close()
+
+    @staticmethod
+    def get_single_squad(db: db,tournament_id, team_id):
+        try:
+            connection = db.get_connection()
+            query = """
+                SELECT s.tournament_id, s.team_id, s.player_id, s.shirt_number, s.position_name, s.position_code,
+                    p.family_name, p.given_name, t.team_name, tr.tournament_name
+                FROM squads s
+                JOIN players p ON s.player_id = p.player_id
+                JOIN teams t ON s.team_id = t.team_id
+                JOIN tournaments tr ON s.tournament_id = tr.tournament_id
+                WHERE s.tournament_id = %s AND s.team_id = %s
+                ORDER BY s.tournament_id DESC, s.team_id ASC
+            """
+            cursor = connection.cursor()
+            cursor.execute(query, (tournament_id, team_id))
+            results = cursor.fetchall()
+
+            if not results:
+                return None
+
+            squad_members = [
+                Squad(
+                    tournament_id, team_id, player_id, shirt_number, position_name, position_code,
+                    family_name=family_name, given_name=given_name, team_name=team_name, tournament_name=tournament_name
+                )
+                for (
+                    _, _, player_id, shirt_number, position_name, position_code,
+                    family_name, given_name, team_name, tournament_name
+                ) in results
+            ]
+
+            return actual_squad(tournament_id, team_id, squad_members[0].team_name, squad_members[0].tournament_name, squad_members)
+
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+            connection.rollback()
+        finally:
+            cursor.close()
+            connection.close()

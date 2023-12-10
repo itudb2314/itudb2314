@@ -1,7 +1,9 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import '../css/Matches.css';
+import { useHistory } from "react-router-dom";
 
-export default function Match({match, goals, setMatchDeleted}) {
+export default function Match({ match, goals, setMatchDeleted }) {
+    const history = useHistory();
     const [deleting, setDeleting] = useState(false);
 
     const handleDeleteMatch = () => {
@@ -20,9 +22,9 @@ export default function Match({match, goals, setMatchDeleted}) {
         fetch(`http://localhost:5000/matches/${match_id}`, {
             method: 'DELETE',
             headers: {
-                'Const-Type' : 'application/json',
+                'Const-Type': 'application/json',
             },
-            body: JSON.stringify({match_id}),
+            body: JSON.stringify({ match_id }),
         }).then((response) => response.json())
             .then(() => {
                 setMatchDeleted();
@@ -39,19 +41,31 @@ export default function Match({match, goals, setMatchDeleted}) {
         borderRadius: '50px',
         width: '75%',
     }
+
+    function handleHomeTeamClick(match) {
+        history.push(`/squads/${match.tournament_id}/${match.home_team_id}`);
+    }
+    function handleAwayTeamClick(match) {
+        history.push(`/squads/${match.tournament_id}/${match.away_team_id}`);
+    }
+
     return (
         <div style={match_style} className='center_div'>
-            <h2 className = "match_header">
+            <h2 className="match_header">
                 {match.stage_name}
             </h2>
             <div className='match_details'>
-                <p className='team_names'>{match.home_team_name}</p>
+                <p className='team_names' onClick={() => handleHomeTeamClick(match)} style={{ cursor: 'pointer' }}>
+                    {match.home_team_name}
+                </p>
                 <p className='team_score'>{match.home_team_score}   -   {match.away_team_score}</p>
-                <p className='team_names'>{match.away_team_name}</p>
+                <p className='team_names' onClick={() => handleAwayTeamClick(match)} style={{ cursor: 'pointer' }}>
+                    {match.away_team_name}
+                </p>
             </div>
             <div className='match_statistics'>
                 <div className='match_goals'>
-                    {goals &&  goals
+                    {goals && goals
                         .filter((goal) => goal.team_id === match.home_team_id)
                         .map((goal, index) => (
                             <div key={index}>
@@ -60,7 +74,7 @@ export default function Match({match, goals, setMatchDeleted}) {
                         ))}
                 </div>
                 <div className='match_time'>
-                    {match.penalty_shootout ?  (
+                    {match.penalty_shootout ? (
                         <p className='match_time_item'>({match.home_team_score_penalties} - {match.away_team_score_penalties})</p>
                     ) : null}
                     <p className='match_time_item'>{match.match_time}</p>

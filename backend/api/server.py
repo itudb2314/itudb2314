@@ -119,6 +119,14 @@ def create_server(db):
         SquadDAO.delete_squad_member(db, tournament_id, team_id, player_id)
         return flask.jsonify({})
     
+    @app.route('/squads/<tournament_id>/<team_id>', methods=['GET'])
+    def get_single_squad(tournament_id, team_id):
+        single_squad = SquadAppearancePlayerDAO.get_single_squad(db, tournament_id, team_id)
+        if single_squad:
+            return flask.jsonify(single_squad), 200
+        else:
+            return flask.jsonify({'message': 'Squad not found'}), 404
+        
     @app.route('/matches', methods=['GET'])
     def api_all_matches():
         matches = MatchDAO.get_all_matches(db)
