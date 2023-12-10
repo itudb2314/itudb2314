@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import '../css/Squads.css';
 import siu from '../assets/ronaldo.png';
 import siu2 from '../assets/ronaldo2.png';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useHistory } from "react-router-dom";
 
 const SingleSquadPage = () => {
+    const history = useHistory();
     const { tournamentId, teamId } = useParams();
     const [squad, setSquad] = useState({});
     const [isEditing, setIsEditing] = useState(null);
@@ -99,6 +101,10 @@ const SingleSquadPage = () => {
         return <p>Loading...</p>;
     }
 
+    function handlePlayerClick(squad) {
+        history.push(`/players/${squad.player_id}`);
+    }
+
     return (
         <div className="squad-group">
             <h1 className="Title">
@@ -110,10 +116,8 @@ const SingleSquadPage = () => {
                         <div className="squad-details">
                             {!isEditing || isEditing.player_id !== squadMember.player_id ? (
                                 <>
-                                    <div className="player-name">
-                                        <Link to={`/players/${squadMember.player_id}`}>
-                                            {squadMember.given_name} {squadMember.family_name}
-                                        </Link>
+                                    <div className="player-name" onClick={() => handlePlayerClick(squadMember)} style={{ cursor: 'pointer' }}>
+                                        {squadMember.given_name} {squadMember.family_name}
                                     </div>
                                     <div className="player-image">
                                         <img

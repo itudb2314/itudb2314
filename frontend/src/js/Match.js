@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import '../css/Matches.css';
-import { Link } from 'react-router-dom';
+import { useHistory } from "react-router-dom";
 
 export default function Match({ match, goals, setMatchDeleted }) {
+    const history = useHistory();
     const [deleting, setDeleting] = useState(false);
 
     const handleDeleteMatch = () => {
@@ -40,22 +41,27 @@ export default function Match({ match, goals, setMatchDeleted }) {
         borderRadius: '50px',
         width: '75%',
     }
+
+    function handleHomeTeamClick(match) {
+        history.push(`/squads/${match.tournament_id}/${match.home_team_id}`);
+    }
+    function handleAwayTeamClick(match) {
+        history.push(`/squads/${match.tournament_id}/${match.away_team_id}`);
+    }
+
     return (
         <div style={match_style} className='center_div'>
             <h2 className="match_header">
                 {match.stage_name}
             </h2>
             <div className='match_details'>
-                <p className='team_names'>
-                    <Link to={`/squads/${match.tournament_id}/${match.home_team_id}`}>
-                        {match.home_team_name}
-                    </Link>
+                <p className='team_names' onClick={() => handleHomeTeamClick(match)} style={{ cursor: 'pointer' }}>
+                    {match.home_team_name}
                 </p>
                 <p className='team_score'>{match.home_team_score}   -   {match.away_team_score}</p>
-                <p className='team_names'>
-                    <Link to={`/squads/${match.tournament_id}/${match.away_team_id}`}>
-                        {match.away_team_name}
-                    </Link></p>
+                <p className='team_names' onClick={() => handleAwayTeamClick(match)} style={{ cursor: 'pointer' }}>
+                    {match.away_team_name}
+                </p>
             </div>
             <div className='match_statistics'>
                 <div className='match_goals'>
