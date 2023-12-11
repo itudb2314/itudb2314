@@ -82,6 +82,12 @@ def create_server(db):
             return flask.jsonify(details)
         details = TournamentDetailsDAO.get_tournament_details(db, tournament_id)
         return flask.jsonify(details)
+    
+    @app.route('/groupstanding/<tournament_id>', methods=['GET'])
+    def get_group_standings(tournament_id):
+        group_standings = GroupStandingDAO.get_all_group_standings_on_tournament_joined(db, tournament_id)
+        return flask.jsonify(group_standings)
+
 
     @app.route('/groupstandings', methods=['GET'])
     def api_all_group_standings():

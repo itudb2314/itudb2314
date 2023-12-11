@@ -92,7 +92,7 @@
     border-radius: 8px;
     max-width: 400px;
     width: 100%;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
     position: relative;
 }
 
@@ -121,6 +121,15 @@
 
 .modal label {
     margin-bottom: 8px;
+    font-size: 1em;
+}
+
+.modal input {
+    font-size: 1em;
+    height: 1rem;
+    border: 1px solid black;
+    width: inherit;
+    margin-left: 0;
 }
 
 .modal {
@@ -141,4 +150,17 @@
         transition-duration: 0.3s;
         background-color: #0056b3;
     }
+}
+
+.modal form div {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 0;
+    padding: 0;
+    display: flex;
+}
+
+.modal form div input {
+    margin-left: 5px;
+    margin-top: 0;
 }
