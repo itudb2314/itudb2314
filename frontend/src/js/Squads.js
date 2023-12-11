@@ -11,23 +11,56 @@ export default function Squads() {
     const [addTrigger, setAddTrigger] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [isEditing, setIsEditing] = useState(null);
+    const [offset, setOffset] = useState(0);
 
     useEffect(() => {
         fetchSquads();
-    }, [deleteTrigger, addTrigger]);
+    }, [deleteTrigger, addTrigger, offset]);
+
+    // const fetchSquads = async () => {
+    //     try {
+    //         const response = await fetch('http://localhost:5000/squadsJOINED');
+    //         if (!response.ok) {
+    //             throw new Error('Failed to fetch squads');
+    //         }
+    //         const data = await response.json();
+    //         setSquads(data);
+    //     } catch (error) {
+    //         console.error('Error fetching squads:', error);
+    //     }
+    // };
 
     const fetchSquads = async () => {
         try {
-            const response = await fetch('http://localhost:5000/squadsJOINED');
+            const response = await fetch(`http://localhost:5000/squadsJOINED?page=${offset}&items_per_page=22`);
             if (!response.ok) {
                 throw new Error('Failed to fetch squads');
             }
             const data = await response.json();
-            setSquads(data);
+
+            // Ensure that data is an array before updating the state
+            if (Array.isArray(data)) {
+                setSquads(prev => [...prev, ...data]);
+            } else {
+                console.error('Invalid data format:', data);
+            }
         } catch (error) {
             console.error('Error fetching squads:', error);
         }
-    };
+    }
+
+    useEffect(() => {
+        const handleScroll = (e) => {
+            const scrollHeight = e.target.documentElement.scrollHeight;
+            const currentHeight = e.target.documentElement.scrollTop + window.innerHeight;
+            if (currentHeight + 1 >= scrollHeight) {
+                setOffset(offset + 1);
+            }
+        }
+        window.addEventListener("scroll", handleScroll)
+        return () => window.removeEventListener("scroll", handleScroll)
+    }, [offset])
+
 
     const toggleModal = () => {
         setModalVisible(!modalVisible);
@@ -54,6 +87,64 @@ export default function Squads() {
 
     function addSquad(e) {
         e.preventDefault();
+
+        const tournamentIdInput = document.getElementById('tournament_id');
+        const teamIdInput = document.getElementById('team_id');
+        const playerIdInput = document.getElementById('player_id');
+        const shirtNumberInput = document.getElementById('shirt_number');
+        const positionNameInput = document.getElementById('position_name');
+        const positionCodeInput = document.getElementById('position_code');
+
+        const tournamentId = tournamentIdInput.value;
+        const teamId = teamIdInput.value;
+        const playerId = playerIdInput.value;
+        const shirtNumber = parseInt(shirtNumberInput.value, 10);
+        const positionName = positionNameInput.value;
+        const positionCode = positionCodeInput.value;
+
+        if (!tournamentId || !teamId || !playerId || isNaN(shirtNumber) || !positionName || !positionCode) {
+            alert('Please fill in all required fields and ensure Shirt Number is a number.');
+            return;
+        }
+
+        // Validate tournamentId format (WC-XXXX where X is a number)
+        const tournamentIdRegex = /^WC-\d{4}$/;
+        if (!tournamentIdRegex.test(tournamentId)) {
+            alert('Invalid Tournament ID format. It should be in the format WC-XXXX where X is a number.');
+            return;
+        }
+
+        // Validate teamId format (T-XX where X is a number)
+        const teamIdRegex = /^T-\d{2}$/;
+        if (!teamIdRegex.test(teamId)) {
+            alert('Invalid Team ID format. It should be in the format T-XX where X is a number.');
+            return;
+        }
+
+        // Validate playerId format (P-XXXXX where X is a number)
+        const playerIdRegex = /^P-\d{5}$/;
+        if (!playerIdRegex.test(playerId)) {
+            alert('Invalid Player ID format. It should be in the format P-XXXXX where X is a number.');
+            return;
+        }
+
+        // Validate positionName and positionCode format (any text is accepted for now)
+        const nameRegex = /^[A-Za-z]+$/;
+        if (
+            typeof positionName !== 'string' ||
+            !nameRegex.test(positionName) ||
+            typeof positionCode !== 'string' ||
+            !nameRegex.test(positionCode)
+        ) {
+            alert('Invalid input types or patterns for Position Name or Position Code. Please check your input.');
+            return;
+        }
+
+        // Validate shirtNumber is a number
+        if (isNaN(shirtNumber) || !Number.isInteger(shirtNumber)) {
+            alert('Invalid Shirt Number. It should be a number.');
+            return;
+        }
 
         const newSquad = {
             tournament_id: document.getElementById('tournament_id').value,
@@ -94,6 +185,30 @@ export default function Squads() {
 
     const submitForm = (event, squad) => {
         event.preventDefault();
+
+
+        const shirtNumber = parseInt(event.target.shirt_number.value, 10) || 0;
+        const positionName = event.target.position_name.value;
+        const positionCode = event.target.position_code.value;
+
+        if (!shirtNumber || isNaN(shirtNumber) || !positionName || !positionCode) {
+            alert('Please fill in all required fields and ensure Shirt Number is a number.');
+            return;
+        }
+
+        const nameRegex = /^[A-Za-z]+$/;
+
+        if (
+            typeof positionName !== 'string' ||
+            !nameRegex.test(positionName) ||
+            typeof positionCode !== 'string' ||
+            !nameRegex.test(positionCode) ||
+            isNaN(shirtNumber) ||
+            !Number.isInteger(shirtNumber)
+        ) {
+            alert('Invalid input types or patterns. Please check your input.');
+            return;
+        }
 
         const updatedSquad = {
             shirt_number: event.target.shirt_number.value,
@@ -180,12 +295,12 @@ export default function Squads() {
                                     </>
                                 ) : (
                                     // Display editable form
-                                    <div className="edit-form">
+                                    <div className="abdullah-edit-form">
                                         <form onSubmit={(e) => submitForm(e, squad)}>
                                             <div>
                                                 <label htmlFor="shirt_number">Shirt Number</label>
                                                 <input
-                                                    type="text"
+                                                    type="number"
                                                     id="shirt_number"
                                                     defaultValue={squad.shirt_number} // Populate with the current value
                                                     required
@@ -229,7 +344,7 @@ export default function Squads() {
                         <span className="close" onClick={toggleModal}>
                             &times;
                         </span>
-                        <form onSubmit={addSquad}>
+                        <form onSubmit={addSquad} className='abdullah-edit-form'>
                             {/* Input fields for adding a squad member */}
                             <label htmlFor="tournament_id">Tournament ID</label>
                             <input
@@ -251,7 +366,7 @@ export default function Squads() {
                             />
                             <label htmlFor="shirt_number">Shirt Number</label>
                             <input
-                                type="text"
+                                type="number"
                                 id="shirt_number"
                                 required
                             />

@@ -42,6 +42,29 @@ const SingleSquadPage = () => {
     const submitForm = (event, squad) => {
         event.preventDefault();
 
+        const shirtNumber = parseInt(event.target.shirt_number.value, 10) || 0;
+        const positionName = event.target.position_name.value;
+        const positionCode = event.target.position_code.value;
+
+        if (!shirtNumber || isNaN(shirtNumber) || !positionName || !positionCode) {
+            alert('Please fill in all required fields and ensure Shirt Number is a number.');
+            return;
+        }
+
+        const nameRegex = /^[A-Za-z]+$/;
+
+        if (
+            typeof positionName !== 'string' ||
+            !nameRegex.test(positionName) ||
+            typeof positionCode !== 'string' ||
+            !nameRegex.test(positionCode) ||
+            isNaN(shirtNumber) ||
+            !Number.isInteger(shirtNumber)
+        ) {
+            alert('Invalid input types or patterns. Please check your input.');
+            return;
+        }
+
         const updatedSquad = {
             shirt_number: event.target.shirt_number.value,
             position_name: event.target.position_name.value,
@@ -70,8 +93,9 @@ const SingleSquadPage = () => {
             .catch((error) => {
                 console.log('Error:', error);
             });
-
+        fetchSquad();
         setIsEditing(null);
+
     };
 
     const deleteSquadMember = (playerId) => {
@@ -139,12 +163,12 @@ const SingleSquadPage = () => {
                                     </button>
                                 </>
                             ) : (
-                                <div className="edit-form">
+                                <div className="abdullah-edit-form">
                                     <form onSubmit={(e) => submitForm(e, squadMember)}>
                                         <div>
                                             <label htmlFor="shirt_number">Shirt Number</label>
                                             <input
-                                                type="text"
+                                                type="number"
                                                 id="shirt_number"
                                                 defaultValue={squadMember.shirt_number}
                                                 required

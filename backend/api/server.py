@@ -80,6 +80,12 @@ def create_server(db):
             return flask.jsonify(details)
         details = TournamentDetailsDAO.get_tournament_details(db, tournament_id)
         return flask.jsonify(details)
+    
+    @app.route('/groupstanding/<tournament_id>', methods=['GET'])
+    def get_group_standings(tournament_id):
+        group_standings = GroupStandingDAO.get_all_group_standings_on_tournament_joined(db, tournament_id)
+        return flask.jsonify(group_standings)
+
 
     @app.route('/groupstandings', methods=['GET'])
     def api_all_group_standings():
@@ -98,9 +104,16 @@ def create_server(db):
         squads = SquadDAO.get_all_squads(db)
         return flask.jsonify(squads)
     
+    # @app.route('/squadsJOINED', methods=['GET'])
+    # def get_all_squads_joined():
+    #     squads = SquadAppearancePlayerDAO.get_all_squads(db)
+    #     return flask.jsonify(squads)
+    
     @app.route('/squadsJOINED', methods=['GET'])
     def get_all_squads_joined():
-        squads = SquadAppearancePlayerDAO.get_all_squads(db)
+        page = flask.request.args.get('page', default=0, type=int)
+        items_per_page = flask.request.args.get('items_per_page', default=22, type=int)
+        squads = SquadAppearancePlayerDAO.get_squads_paginated(db, page, items_per_page)
         return flask.jsonify(squads)
         
     @app.route('/squads', methods=['PUT'])

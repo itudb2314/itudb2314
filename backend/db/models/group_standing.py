@@ -196,6 +196,9 @@ class GroupStandingDAO():
             cursor.close()
             conn.close()
 
+
+   
+
     @staticmethod
     def get_all_group_standings(db: db) -> list:
         try:
@@ -312,6 +315,63 @@ class GroupStandingDAO():
             """
             cursor = conn.cursor()
             cursor.execute(query)
+            results = cursor.fetchall()
+
+            tournament_list = {}
+            staged_list = {}
+            grouped_list = {}
+
+            for result in results:
+                (
+                    tournament_id, stage_number, stage_name, group_name, position, team_id,
+                    played, wins, draws, losses, goals_for, goals_against, goal_difference,
+                    points, advanced, team_name
+                ) = result
+
+                key1 = (tournament_id)
+                key2 = (tournament_id, stage_number)
+                key3 = (tournament_id, stage_number, group_name)
+
+                if key1 not in tournament_list:
+                    tournament_list[key1] = joined_Groups_of_Tournament(tournament_id=tournament_id, stagedlist=[])
+
+                if key2 not in staged_list:
+                    staged_list[key2] = joined_GroupStandings_of_Stages(stage_number=stage_number, stage_name=stage_name, grouplist=[])
+                    tournament_list[key1].stagedlist.append(staged_list[key2])
+
+                if key3 not in grouped_list:
+                    grouped_list[key3] = joined_GroupStandings_of_Groups(group_name=group_name, group_standings=[])
+                    staged_list[key2].grouplist.append(grouped_list[key3])
+
+                grouped_list[key3].group_standings.append(
+                    joined_GroupStanding(
+                        tournament_id=tournament_id, stage_number=stage_number, stage_name=stage_name,
+                        group_name=group_name, position=position, team_id=team_id, played=played,
+                        wins=wins, draws=draws, losses=losses, goals_for=goals_for, goals_against=goals_against,
+                        goal_difference=goal_difference, points=points, advanced=advanced, team_name=team_name
+                    )
+                )
+
+            return list(tournament_list.values())
+        except mysql.connector.Error as err:
+            conn.rollback()
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
+    def get_all_group_standings_on_tournament_joined(db: db, tournament_id):
+        try:
+            conn = db.get_connection()
+            query = """
+                SELECT gs.*, t.team_name
+                FROM group_standings gs
+                JOIN teams t ON gs.team_id = t.team_id
+                WHERE tournament_id=%s
+                ORDER BY gs.tournament_id DESC, gs.stage_number ASC, gs.group_name ASC, gs.position ASC
+            """
+            cursor = conn.cursor()
+            cursor.execute(query, (tournament_id,))
             results = cursor.fetchall()
 
             tournament_list = {}

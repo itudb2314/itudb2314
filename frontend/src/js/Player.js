@@ -68,6 +68,31 @@ const PlayerPage = () => {
     const submitForm = (event, player) => {
         event.preventDefault();
 
+        const familyName = event.target.family_name?.value;
+        const givenName = event.target.given_name?.value;
+        const birthDate = event.target.birth_date?.value;
+        const countTournaments = parseInt(event.target.count_tournaments?.value, 10) || 0;
+
+        // Basic form validation
+        if (!familyName || !givenName || !birthDate || !countTournaments) {
+            alert('Please fill in all required fields.');
+            return;
+        }
+
+        const nameRegex = /^[A-Za-z]+$/;
+
+        if (
+            typeof familyName !== 'string' ||
+            !nameRegex.test(familyName) ||
+            typeof givenName !== 'string' ||
+            !nameRegex.test(givenName) ||
+            isNaN(countTournaments) ||
+            !Number.isInteger(countTournaments)
+        ) {
+            alert('Invalid input types or patterns. Please check your input.');
+            return;
+        }
+
         // Ensure event.target exists
         if (!event.target) {
             console.error('Event target is undefined.');
@@ -179,7 +204,7 @@ const PlayerPage = () => {
                     </div>
                 ) : (
 
-                    <form className="edit-form" onSubmit={(e) => submitForm(e, player)}>
+                    <form className="abdullah-edit-form" onSubmit={(e) => submitForm(e, player)}>
                         <div>
                             <label htmlFor="family_name">Family Name</label>
                             <input
