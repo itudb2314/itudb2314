@@ -21,8 +21,9 @@
     width: 200px;
     height: 200px;
     border-radius: 8px;
+    transition: box-shadow 0.3s;
     &:hover{
-        box-shadow: 10px 10px 4px #111;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8);
     }
 }
 
@@ -36,13 +37,13 @@
 }
 
 .team form {
+    padding-left: 5px;
     padding-right: 20px;
     display: flex;
     flex-direction: column;
     height: 200px;
     overflow-y: auto;
     overflow-x: hidden;
-
 }
 
 .team form input {
@@ -53,4 +54,26 @@
     height: 1.5rem;
     border-radius: 5px;
     border: 1px solid black;
+}
+
+.team form input:focus {
+    outline: none;
+    border: 1px solid #333;
+}
+
+.form-option {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+select {
+    width: 108.5%;
+    background-color: white;
+    border: thin solid black;
+    border-radius: 5px;
+    font: inherit;
+    padding: 0.5em;
+    margin-bottom: 5px;
 }
