@@ -11,23 +11,56 @@ export default function Squads() {
     const [addTrigger, setAddTrigger] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [isEditing, setIsEditing] = useState(null);
+    const [offset, setOffset] = useState(0);
 
     useEffect(() => {
         fetchSquads();
-    }, [deleteTrigger, addTrigger]);
+    }, [deleteTrigger, addTrigger, offset]);
+
+    // const fetchSquads = async () => {
+    //     try {
+    //         const response = await fetch('http://localhost:5000/squadsJOINED');
+    //         if (!response.ok) {
+    //             throw new Error('Failed to fetch squads');
+    //         }
+    //         const data = await response.json();
+    //         setSquads(data);
+    //     } catch (error) {
+    //         console.error('Error fetching squads:', error);
+    //     }
+    // };
 
     const fetchSquads = async () => {
         try {
-            const response = await fetch('http://localhost:5000/squadsJOINED');
+            const response = await fetch(`http://localhost:5000/squadsJOINED?page=${offset}&items_per_page=22`);
             if (!response.ok) {
                 throw new Error('Failed to fetch squads');
             }
             const data = await response.json();
-            setSquads(data);
+
+            // Ensure that data is an array before updating the state
+            if (Array.isArray(data)) {
+                setSquads(prev => [...prev, ...data]);
+            } else {
+                console.error('Invalid data format:', data);
+            }
         } catch (error) {
             console.error('Error fetching squads:', error);
         }
-    };
+    }
+
+    useEffect(() => {
+        const handleScroll = (e) => {
+            const scrollHeight = e.target.documentElement.scrollHeight;
+            const currentHeight = e.target.documentElement.scrollTop + window.innerHeight;
+            if (currentHeight + 1 >= scrollHeight) {
+                setOffset(offset + 1);
+            }
+        }
+        window.addEventListener("scroll", handleScroll)
+        return () => window.removeEventListener("scroll", handleScroll)
+    }, [offset])
+
 
     const toggleModal = () => {
         setModalVisible(!modalVisible);
@@ -54,7 +87,6 @@ export default function Squads() {
 
     function addSquad(e) {
         e.preventDefault();
-
 
         const tournamentIdInput = document.getElementById('tournament_id');
         const teamIdInput = document.getElementById('team_id');

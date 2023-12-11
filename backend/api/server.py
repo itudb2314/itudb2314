@@ -100,9 +100,16 @@ def create_server(db):
         squads = SquadDAO.get_all_squads(db)
         return flask.jsonify(squads)
     
+    # @app.route('/squadsJOINED', methods=['GET'])
+    # def get_all_squads_joined():
+    #     squads = SquadAppearancePlayerDAO.get_all_squads(db)
+    #     return flask.jsonify(squads)
+    
     @app.route('/squadsJOINED', methods=['GET'])
     def get_all_squads_joined():
-        squads = SquadAppearancePlayerDAO.get_all_squads(db)
+        page = flask.request.args.get('page', default=0, type=int)
+        items_per_page = flask.request.args.get('items_per_page', default=22, type=int)
+        squads = SquadAppearancePlayerDAO.get_squads_paginated(db, page, items_per_page)
         return flask.jsonify(squads)
         
     @app.route('/squads', methods=['PUT'])
