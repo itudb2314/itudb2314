@@ -156,69 +156,67 @@ export default function Tournaments() {
                                 required
                             />
                             <div>
-                                <div>
-                                    <input style={{marginLeft:'0'}}
-                                        type="checkbox"
-                                        id="host_won"
-                                    />
-                                    <label htmlFor="host_won">Host Won</label>
-                                </div>
-                                <div>
-                                    <input style={{marginLeft:'0'}}
-                                        type="checkbox"
-                                        id="group_stage"
-                                    />
-                                    <label htmlFor="group_stage">Group Stage</label>
-                                </div>
-                                <div>
-                                    <input style={{marginLeft:'0'}}
-                                        type="checkbox"
-                                        id="second_group_stage"
-                                    />
-                                    <label htmlFor="second_group_stage">Second Group Stage</label>
-                                </div>
-                                <div>
-                                    <input style={{marginLeft:'0'}}
-                                        type="checkbox"
-                                        id="final_round"
-                                    />
-                                    <label htmlFor="final_round">Final Round</label>
-                                </div>
-                                <div>
-                                    <input style={{marginLeft:'0'}}
-                                        type="checkbox"
-                                        id="round_of_16"
-                                    />
-                                    <label htmlFor="round_of_16">Round of 16</label>
-                                </div>
-                                <div>
-                                    <input style={{marginLeft:'0'}}
-                                        type="checkbox"
-                                        id="quarter_finals"
-                                    />
-                                    <label htmlFor="quarter_finals">Quarter Finals</label>
-                                </div>
-                                <div>
-                                    <input style={{marginLeft:'0'}}
-                                        type="checkbox"
-                                        id="semi_finals"
-                                    />
-                                    <label htmlFor="semi_finals">Semi Finals</label>
-                                </div>
-                                <div>
-                                    <input style={{marginLeft:'0'}}
-                                        type="checkbox"
-                                        id="third_place_match"
-                                    />
-                                    <label htmlFor="third_place_match">Third Place Match</label>
-                                </div>
-                                <div>
-                                    <input style={{marginLeft:'0'}}
-                                        type="checkbox"
-                                        id="final"
-                                    />
-                                    <label htmlFor="final">Final</label>
-                                </div>
+                                <input style={{marginLeft:'0'}}
+                                       type="checkbox"
+                                       id="host_won"
+                                />
+                                <label htmlFor="host_won">Host Won</label>
+                            </div>
+                            <div>
+                                <input style={{marginLeft:'0'}}
+                                       type="checkbox"
+                                       id="group_stage"
+                                />
+                                <label htmlFor="group_stage">Group Stage</label>
+                            </div>
+                            <div>
+                                <input style={{marginLeft:'0'}}
+                                       type="checkbox"
+                                       id="second_group_stage"
+                                />
+                                <label htmlFor="second_group_stage">Second Group Stage</label>
+                            </div>
+                            <div>
+                                <input style={{marginLeft:'0'}}
+                                       type="checkbox"
+                                       id="final_round"
+                                />
+                                <label htmlFor="final_round">Final Round</label>
+                            </div>
+                            <div>
+                                <input style={{marginLeft:'0'}}
+                                       type="checkbox"
+                                       id="round_of_16"
+                                />
+                                <label htmlFor="round_of_16">Round of 16</label>
+                            </div>
+                            <div>
+                                <input style={{marginLeft:'0'}}
+                                       type="checkbox"
+                                       id="quarter_finals"
+                                />
+                                <label htmlFor="quarter_finals">Quarter Finals</label>
+                            </div>
+                            <div>
+                                <input style={{marginLeft:'0'}}
+                                       type="checkbox"
+                                       id="semi_finals"
+                                />
+                                <label htmlFor="semi_finals">Semi Finals</label>
+                            </div>
+                            <div>
+                                <input style={{marginLeft:'0'}}
+                                       type="checkbox"
+                                       id="third_place_match"
+                                />
+                                <label htmlFor="third_place_match">Third Place Match</label>
+                            </div>
+                            <div>
+                                <input style={{marginLeft:'0'}}
+                                       type="checkbox"
+                                       id="final"
+                                />
+                                <label htmlFor="final">Final</label>
                             </div>
                             <button type="submit">Add Tournament</button>
                         </form>
