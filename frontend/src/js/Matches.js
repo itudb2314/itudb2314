@@ -50,7 +50,7 @@ export default function Matches() {
                 fetch(`http://localhost:5000/goals/${match_id}`).then((response) => response.json()),
                 fetch(`http://localhost:5000/bookings/${match_id}`).then((response) => response.json()),
             ])
-            .then(([match_data, goals_data]) => {
+            .then(([match_data, goals_data, bookings_data]) => {
                 //process and set matches
                 setMatch(match_data);
 
@@ -58,7 +58,7 @@ export default function Matches() {
                 setGoals_by_id(goals_data);
 
                 //process and set bookings
-                setBookings(goals_data);
+                setBookings(bookings_data);
             })
             .catch((error) => {
                 console.error('Error fetching data:', error);
@@ -202,7 +202,7 @@ export default function Matches() {
                 </div>
             )}
             {match_id ? (
-                <MatchScoreBoard key={match.match_id}  match={match} goals={goals_by_id}/>
+                <MatchScoreBoard key={match.match_id}  match={match} goals={goals_by_id} bookings={bookings}/>
             ) : (
                 matches.map((tournament_matches, i) => (
                     <div key={i}>
@@ -217,20 +217,22 @@ export default function Matches() {
 }
 
 
-function MatchScoreBoard({match, goals}) {
+function MatchScoreBoard({match, goals, bookings}) {
     return (
         <div className="match-scoreboard">
           <div className="teams">
             <div className="team">
               <h2>{match.home_team_name}</h2>
               <ul className="goals">
-                {Array.isArray(goals) ? (goals
-                  .filter((goal) => goal.team_id === match.home_team_id)
-                  .map((goal, index) => (
+                {Array.isArray(goals) && goals
+                  .concat(bookings)
+                  .filter((event) => event.team_id === match.home_team_id)
+                  .sort((a, b) => parseInt(a.minute_label) - parseInt(b.minute_label))
+                  .map((event, index) => (
                     <li key={index}>
-                      <p>{goal.minute_label} {goal.given_name} {goal.family_name}</p>
+                      <p>{event.minute_label} {event.given_name} {event.family_name}</p>
                     </li>
-                  ))) : null}
+                ))}
               </ul>
             </div>
             <div className="vs">{match.home_team_score} - {match.away_team_score}</div>

@@ -14,7 +14,6 @@ class Booking:
     away_team: bool
     player_id: str
     shirt_number: int
-    player_team_id: str
     minute_label: str
     minute_regulation: int
     minute_stoppage: int
@@ -24,12 +23,20 @@ class Booking:
     second_yellow_card: bool
     sending_off: bool
 
+    #join data
+    given_name: str
+    family_name: str
+
 class BookingsDOA:
     @staticmethod
     def get_match_bookings(db : db, match_id : str):
         try:
             connection = db.get_connection()
-            query = """ SELECT * FROM bookings WHERE match_id = %s """
+            query = """ SELECT b.*, 
+                    CASE WHEN p.given_name = 'not applicable' THEN ' ' ELSE p.given_name END as given_name, 
+                    CASE WHEN p.family_name = 'not applicable' THEN ' ' ELSE p.family_name END as family_name
+                    FROM bookings b JOIN players p ON b.player_id = p.player_id
+                    WHERE match_id = %s """
             cursor = connection.cursor()
             cursor.execute(query, (match_id,))
             results = cursor.fetchall()
@@ -37,7 +44,7 @@ class BookingsDOA:
             for result in results:
                 booking = Booking(result[0], result[1], result[2], result[3], result[4], result[5],
                                 result[6], result[7], result[8], result[9], result[10], result[11], 
-                                result[12], result[13], result[14], result[15], result[16])
+                                result[12], result[13], result[14], result[15], result[16], result[17])
                 bookings.append(booking)
             return bookings
         except mysql.connector.Error as error:

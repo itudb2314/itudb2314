@@ -70,6 +70,7 @@
 .match-scoreboard {
     font-family: 'Arial', sans-serif;
     max-width: 800px;
+    min-height: 400px;
     margin: 20px auto;
     padding: 20px;
     border: 1px solid #ddd;
@@ -82,19 +83,20 @@
   
   .teams {
     display: flex;
-    align-items: flex-start;
     justify-content: space-between;
     width: 100%;
+    margin-bottom: 20px;
   }
   
   .team {
     flex: 1;
     text-align: center;
+    align-self: flex-start;
   }
   
   .team h2 {
     font-size: 20px;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
   }
   
   .score {
@@ -105,8 +107,11 @@
   
   .goals {
     list-style: none;
-    padding-top: 400px;
+    padding-left: 50px;
+    padding-top: 10px;
+    margin: 0;
     position: absolute;
+    text-align: left;
     font-family: 'Courier New', Courier, monospace;
   }
   
