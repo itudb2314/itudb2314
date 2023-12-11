@@ -105,14 +105,6 @@ export default function Teams() {
                         <input id='team_name' type="text"/>
                         <label htmlFor="team_code">Team Code</label>
                         <input id='team_code'type="text"/>
-                        <div className="checkbox">
-                            <label htmlFor="mens_team">Mens Team</label>
-                            <input id='mens_team' type="checkbox"/>
-                        </div>
-                        <div className="checkbox">
-                            <label htmlFor="womens_team">Womens Team</label>
-                            <input id='womens_team' type="checkbox"/>
-                        </div>
                         <label htmlFor="federation_name">Federation Name</label>
                         <input id='federation_name'type="text"/>
                         <label htmlFor="region_name">Region Name</label>
@@ -125,6 +117,14 @@ export default function Teams() {
                         <input id='womens_team_wikipedia_link'type="text"/>
                         <label htmlFor="federation_wikipedia_link">Federation Wikipedia Link</label>
                         <input id='federation_wikipedia_link'type="text"/>
+                        <div className="checkbox">
+                            <label htmlFor="mens_team">Mens Team</label>
+                            <input id='mens_team' type="checkbox"/>
+                        </div>
+                        <div className="checkbox">
+                            <label htmlFor="womens_team">Womens Team</label>
+                            <input id='womens_team' type="checkbox"/>
+                        </div>
                         <button className="save-button" type='submit'>Save</button>
                     </form>
                 </div>

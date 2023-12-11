@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import '../css/Matches.css';
 import Match from "./Match";
+import { useHistory } from 'react-router-dom';
 
 export default function Matches() {
     const [matches, setMatches] = useState([]);
@@ -218,6 +219,7 @@ export default function Matches() {
 
 
 function MatchScoreBoard({match, goals, bookings}) {
+    const history = useHistory();
 
     function renderEvent(event) {
         if(event.yellow_card) {
@@ -246,11 +248,24 @@ function MatchScoreBoard({match, goals, bookings}) {
         }
     }
 
+    function handleTeamClick(match) {
+        if(match.home_team_id)
+            history.push(`/squads/${match.tournament_id}/${match.home_team_id}`);
+        else 
+            history.push(`/squads/${match.tournament_id}/${match.away_team_id}`);
+    }
+
+    function handlePlayerClick(goal){
+        history.push(`/players/${goal.player_id}`); 
+    }
+
     return (
         <div className="match-scoreboard">
           <div className="teams">
             <div className="team">
-              <h2>{match.home_team_name}</h2>
+              <h2 onClick={() => handleTeamClick(match)} style={{ cursor: 'pointer' }}>
+                {match.home_team_name}
+              </h2>
               <ul className="goals">
                 {Array.isArray(goals) && goals
                   .concat(bookings)
@@ -258,14 +273,18 @@ function MatchScoreBoard({match, goals, bookings}) {
                   .sort((a, b) => parseInt(a.minute_label) - parseInt(b.minute_label))
                   .map((event, index) => (
                     <li key={index}>
-                      <p>{renderEvent(event)} {event.minute_label} {event.given_name} {event.family_name}</p>
+                      <p onClick={() => handlePlayerClick(event)} style={{cursor:'pointer'}}>
+                            {renderEvent(event)} {event.minute_label} {event.given_name} {event.family_name}
+                      </p>                   
                     </li>
                 ))}
               </ul>
             </div>
             <div className="vs">{match.home_team_score} - {match.away_team_score}</div>
             <div className="team">
-              <h2>{match.away_team_name}</h2>
+              <h2 onClick={() => handleTeamClick(match)} style={{cursor:'pointer'}}>
+                {match.away_team_name}
+              </h2>
               <ul className="goals">
               {Array.isArray(goals) && goals
                   .concat(bookings)
@@ -273,7 +292,9 @@ function MatchScoreBoard({match, goals, bookings}) {
                   .sort((a, b) => parseInt(a.minute_label) - parseInt(b.minute_label))
                   .map((event, index) => (
                     <li key={index}>
-                      <p>{renderEvent(event)} {event.minute_label} {event.given_name} {event.family_name}</p>
+                      <p onClick={() => handlePlayerClick(event)} style={{cursor:'pointer'}}>
+                            {renderEvent(event)} {event.minute_label} {event.given_name} {event.family_name}
+                      </p>
                     </li>
                 ))}
               </ul>
