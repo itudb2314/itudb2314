@@ -129,17 +129,17 @@ def create_server(db):
             return flask.jsonify({'message': 'Squad not found'}), 404
         
     @app.route('/matches', methods=['GET'])
-    def api_all_matches():
+    def get_all_matches():
         matches = MatchDAO.get_all_matches(db)
         return flask.jsonify(matches)
     
     @app.route('/goals', methods=['GET'])
-    def api_all_goals():
+    def get_all_goals():
         goals = GoalDAO.get_all_goals(db)
         return flask.jsonify(goals)
     
     @app.route('/matches/<match_id>', methods=['GET'])
-    def api_match_by_id(match_id : str):
+    def get_match_by_id(match_id : str):
         match = MatchDAO.get_match_by_id(db, match_id)
         if match:
             return flask.jsonify(match), 200
@@ -147,7 +147,7 @@ def create_server(db):
             return flask.jsonify({'message': 'Match not found'}), 404
 
     @app.route('/goals/<match_id>', methods=['GET'])
-    def api_goals_by_match_id(match_id : str):
+    def get_goals_by_match_id(match_id : str):
         goals = GoalDAO.get_match_goals(db, match_id)
         if goals:
             return flask.jsonify(goals), 200
@@ -168,7 +168,7 @@ def create_server(db):
 
     @app.route('/bookings/<match_id>', methods=['GET'])
     def get_bookings_by_match_id(match_id : str):
-        bookings = BookingsDOA.get_bookings(db, match_id)
+        bookings = BookingsDOA.get_match_bookings(db, match_id)
         return flask.jsonify(bookings)
 
     @app.route('/tournaments/teams', methods=['GET'])
