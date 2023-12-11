@@ -11,7 +11,6 @@ export default function Players() {
     const [newPlayer, setNewPlayer] = useState({
         given_name: '',
         family_name: '',
-        // Add other fields as needed
     });
 
     useEffect(() => {
@@ -59,7 +58,6 @@ export default function Players() {
         }
     };
 
-
     return (
         <div>
             <div className="search-bar-container">
@@ -92,7 +90,7 @@ export default function Players() {
                                 <p>Forward: {player.forward ? 'Yes' : 'No'}</p>
                                 <p>Tournaments Count: {player.count_tournaments}</p>
                                 <p>Tournaments List: {player.list_tournaments}</p>
-                                <p>Wikipedia Link: <a href={player.player_wikipedia_link}> link</a> </p>
+                                <p><a href={player.player_wikipedia_link}> Wikipedia Link</a> </p>
                             </div>
                         </div>
                     ))
