@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 
 export default function Managers() {
     const [managers, setManagers] = useState([])
-    cosnt [deleteTrigger, setDeleteTrigger] = useState(false)
+    const [deleteTrigger, setDeleteTrigger] = useState(false)
     const [addTrigger, setAddTrigger] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
