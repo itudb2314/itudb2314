@@ -132,7 +132,7 @@ export default function Matches() {
     return (
         <div className="matches">
             {/*button to toggle insert form*/}
-            <button onClick={toggleInsertForm} className='insert-button'>Insert Match</button>
+            {match_id ?  (<></>): (<button onClick={toggleInsertForm} className='insert-button'>Insert Match</button>)}
             {/*conditional rendering for insertion form*/}
             {showInsertForm && (
                 <div className='form'>
@@ -223,20 +223,20 @@ function MatchScoreBoard({match, goals, bookings}) {
         if(event.yellow_card) {
             return (
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="3" y="3" width="10" height="10" fill="#FFD700" />
+                    <rect x="3" y="3" width="10" height="20" fill="#FFD700" />
                 </svg>
             )
         } else if(event.red_card) {
             return (
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="3" y="3" width="10" height="10" fill="#FF0000" />
+                    <rect x="3" y="3" width="10" height="20" fill="#FF0000" />
                 </svg>
             )
         } else if(event.second_yellow_card) {
             return (
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="3" y="3" width="10" height="10" fill="#FFD700" />
-                    <rect x="5" y="5" width="10" height="10" fill="#FFD700" />  
+                    <rect x="3" y="3" width="10" height="20" fill="#FFD700" />
+                    <rect x="5" y="5" width="10" height="20" fill="#FFD700" />  
                 </svg>
             )
         } else {
@@ -258,7 +258,7 @@ function MatchScoreBoard({match, goals, bookings}) {
                   .sort((a, b) => parseInt(a.minute_label) - parseInt(b.minute_label))
                   .map((event, index) => (
                     <li key={index}>
-                      <p>{renderEvent(event)}{event.minute_label} {event.given_name} {event.family_name}</p>
+                      <p>{renderEvent(event)} {event.minute_label} {event.given_name} {event.family_name}</p>
                     </li>
                 ))}
               </ul>
