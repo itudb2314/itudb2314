@@ -80,25 +80,25 @@
     flex-direction: column;
     align-items: center;
   }
-  
+
   .teams {
     display: flex;
     justify-content: space-between;
     width: 100%;
     margin-bottom: 20px;
   }
-  
+
   .team {
     flex: 1;
     text-align: center;
     align-self: flex-start;
   }
-  
+
   .team h2 {
     font-size: 40px;
     margin-bottom: 20px;
   }
-  
+
   .goals {
     list-style: none;
     padding-left: 100px;
@@ -109,25 +109,25 @@
     font-family: 'Courier New', Courier, monospace;
     font-weight: bold;
   }
-  
+
   .goals li {
     font-size: 16px;
   }
-  
+
   .vs {
     font-size: 36px;
     font-weight: bold;
     margin: 10 20px;
     padding-top: 15px;
-    align-self: center; 
+    align-self: center;
   }
-  
+
   .match-info {
     text-align: center;
     font-size: 16px;
     margin-top: 20px;
   }
-  
+
   /* Form Styling */
   .form {
     position: fixed;

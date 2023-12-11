@@ -13,6 +13,7 @@ export default function Header() {
                 <li><Link className="menu_item" to="/teams">Teams</Link></li>
                 <li><Link className="menu_item" to="/groupstandings">Group Standings</Link></li>
                 <li><Link className="menu_item" to="/managers">Managers</Link></li>
+                <li><Link className="menu_item" to="/awards">Awards</Link></li>
             </ul>
         </header>
     );

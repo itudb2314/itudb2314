@@ -1,3 +1,5 @@
+from typing import List
+
 from dataclasses import dataclass
 from db.db import db
 import mysql.connector
@@ -20,7 +22,50 @@ class AwardWinner:
     team_id: str
 
 
+@dataclass
+class AwardWithTournament:
+    tournament_id: str
+    player_id: str
+    award_id: str
+    player_name: str
+    tournament_name: str
+    award_name: str
+
+
 class AwardDAO:
+    @staticmethod
+    def get_all_awards(db: db, tournament_filter: str, award_filter: str) -> list[AwardWithTournament]:
+        try:
+            conn = db.get_connection()
+            cursor = conn.cursor()
+            if award_filter == 'all':
+                award_filter = '%'
+
+            if tournament_filter == 'all':
+                tournament_filter = '%'
+
+            query = """
+                SELECT tournament_id, player_id, award_id, 
+                       CONCAT(given_name, CONCAT( ' ', family_name)) AS player_name, 
+                       tournament_name, award_name 
+                FROM award_winners
+                LEFT JOIN tournaments USING (tournament_id)
+                LEFT JOIN awards USING (award_id)
+                LEFT JOIN players USING (player_id)
+                WHERE award_name LIKE %s AND tournaments.tournament_id LIKE %s
+                ORDER BY tournament_id DESC, award_id ASC
+                """
+            cursor.execute(query, (award_filter, tournament_filter))
+
+            rows = cursor.fetchall()
+            return [AwardWithTournament(*row) for row in rows]
+
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+        finally:
+            cursor.close()
+            conn.close()
+
     @staticmethod
     def get_awards(db: db, award_id: str) -> Award:
         try:
