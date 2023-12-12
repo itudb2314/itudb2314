@@ -8,30 +8,33 @@ Also added some improvements to my previous code where I mapped the objects at r
 
 Week 7 commits:
 added squads.js frontend page and a get squads api call and the relative css files for it. also edited the function from its class to get unique elements only based on multiple primary keys
-
-Week 8 commits:
 added update, delete, add operations to the squads page, added its relative API calls in the server too. Edited squad.py for more capabitlities.
 
-Week 9 commits:
+Week 8 commits:
 added functionality and form for squads frontend page.
 Changed how group standings looks in the frontend.
 added join capabitlities to group standings to display team name instead of id
 
-Week 10 commits:
+Week 9 commits:
 Style changes to the Squads page
 Added Squad_apperance_player.py where I join multiple tables to get information for display
 Added a GET function with JOIN accross 4 tables, Tournaments, players, squads, teams
 
-Week 11 commits:
+
+Week 10 commits:
 Made player names in squads links to each players specific information which will be mapped using the player table and its api using player.js
 added design for the page
 added player API
 Fixed non functional updates and delete buttons
 Improved CSS of player page
 
-Week 12 commits: 
+Week 11 commits:
 added search bar with suggestions based on player name with clickability that sends to website
 added single squad fetching API and linked it to the matches table
 adding all players display in the players page with its api
 added validation to all input forms. Update forms and add forms.
 added pagination to squads
+
+Week 12 commits: 
+added pagination to players
+used a different api for the search bar and improved its efficiency by decreasing the number of calls made
