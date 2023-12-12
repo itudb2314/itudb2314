@@ -43,9 +43,7 @@ def create_server(db):
 
     @app.route('/tournaments', methods=['DELETE'])
     def delete_tournament():
-        # print body
         tournament_id = flask.request.get_json()
-        print(tournament_id)
         TournamentDAO.delete_tournament(db, tournament_id)
         return flask.jsonify({})
     
@@ -257,10 +255,16 @@ def create_server(db):
         PlayerDAO.delete_player(db, player_id)
         return flask.jsonify({'message': 'Player deleted successfully'})
 
-    @app.route('/awards/<tournament_id>', methods=['GET'])
-    def get_all_awards(tournament_id: int):
-        awards = AwardDAO.get_tournament_awards(db, tournament_id)
+
+    @app.route('/awards', methods=['GET'])
+    def get_all_awards():
+        awards = AwardDAO.get_all_awards(db)
         return flask.jsonify(awards)
 
+
+    @app.route('/awards/<tournament_filter>/<award_filter>', methods=['GET'])
+    def get_all_tournament_awards(tournament_filter: str, award_filter: str):
+        awards = AwardDAO.get_all_awards(db, tournament_filter, award_filter)
+        return flask.jsonify(awards)
 
     return app
