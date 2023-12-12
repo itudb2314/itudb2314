@@ -12,23 +12,41 @@ export default function Players() {
         given_name: '',
         family_name: '',
     });
+    const [offset, setOffset] = useState(0);
+    let isFetching = false;
 
     useEffect(() => {
         fetchPlayers();
-    }, []); // Fetch players when the component mounts
+    }, [offset]);
 
     const fetchPlayers = async () => {
+        if (isFetching) return;
+        isFetching = true;
         try {
-            const response = await fetch('http://localhost:5000/players');
+            const response = await fetch(`http://localhost:5000/playerspaginated?page=${offset}&items_per_page=22`);
             if (!response.ok) {
                 throw new Error('Failed to fetch players');
             }
             const data = await response.json();
-            setPlayers(data);
+            setPlayers(prev => [...prev, ...data]);
         } catch (error) {
             console.error('Error fetching players:', error);
         }
     };
+
+
+    useEffect(() => {
+        const handleScroll = (e) => {
+            const scrollHeight = e.target.documentElement.scrollHeight;
+            const currentHeight = e.target.documentElement.scrollTop + window.innerHeight;
+            if (currentHeight + 1 >= scrollHeight) {
+                setOffset(offset + 1);
+            }
+        }
+        window.addEventListener("scroll", handleScroll)
+        return () => window.removeEventListener("scroll", handleScroll)
+    }, [offset])
+
 
     const handlePlayerClick = (player) => {
         history.push(`/players/${player.player_id}`);

@@ -91,10 +91,31 @@ class PlayerDAO():
             connection = db.get_connection()
             query = """
                 SELECT * FROM players
-                LIMIT 100
             """
             cursor = connection.cursor()
             cursor.execute(query)
+            results = cursor.fetchall()
+            if results is None:
+                return None
+            return [Player(*result) for result in results]
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+            connection.rollback()
+        finally:
+            cursor.close()
+            connection.close()
+
+    @staticmethod
+    def get_all_players_paginated(db: db, page: int, items_per_page: int) -> list:
+        try:
+            connection = db.get_connection()
+            offset = (page) * items_per_page
+            query = """
+                SELECT * FROM players
+                limit %s offset %s
+            """
+            cursor = connection.cursor()
+            cursor.execute(query, (items_per_page, offset))
             results = cursor.fetchall()
             if results is None:
                 return None

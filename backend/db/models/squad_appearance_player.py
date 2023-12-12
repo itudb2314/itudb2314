@@ -110,7 +110,7 @@ class SquadAppearancePlayerDAO():
         try:
             connection = db.get_connection()
             offset = (page) * items_per_page
-            query = f"""
+            query = """
                 SELECT s.tournament_id, s.team_id, s.player_id, s.shirt_number, s.position_name, s.position_code,
                     p.family_name, p.given_name, t.team_name, tr.tournament_name
                 FROM squads s
@@ -118,10 +118,10 @@ class SquadAppearancePlayerDAO():
                 JOIN teams t ON s.team_id = t.team_id
                 JOIN tournaments tr ON s.tournament_id = tr.tournament_id
                 ORDER BY s.tournament_id DESC, s.team_id ASC
-                LIMIT {items_per_page} OFFSET {offset}
+                LIMIT %s OFFSET %s
             """
             cursor = connection.cursor()
-            cursor.execute(query)
+            cursor.execute(query, (items_per_page, offset))
             results = cursor.fetchall()
             if results is None:
                 return None
