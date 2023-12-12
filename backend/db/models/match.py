@@ -132,6 +132,7 @@ class MatchDAO():
                     LEFT JOIN teams thome ON m.home_team_id = thome.team_id
                     LEFT JOIN teams taway ON m.away_team_id = taway.team_id
                     LEFT JOIN tournaments t ON m.tournament_id = t.tournament_id
+                    ORDER BY m.tournament_id DESC, m.match_id DESC
                     """
             cursor = connection.cursor()
             cursor.execute(query)
