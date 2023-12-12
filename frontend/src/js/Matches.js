@@ -150,14 +150,26 @@ export default function Matches() {
                             <input type="text" name="stage_name" placeholder='ex:Group Stage'/>
                             <label> Group Name </label>
                             <input type="text" name="group_name" placeholder='ex:Group 1 or not applicable'/>
-                            <label> Group Stage </label>
-                            <input type="text" name="group_stage" placeholder='True or False'/>
-                            <label> Knockout Stage </label>
-                            <input type="text" name="knockout_stage" placeholder='True or False'/>
-                            <label> Replayed </label>
-                            <input type="text" name="replayed" placeholder='True or False'/>
-                            <label> Replay </label>
-                            <input type="text" name="replay" placeholder='True or False'/>
+                            <label> Group Stage </label><br/>
+                            <input type="radio" id="true" name="away_team_win" value="1"/>
+                            <label for="true" className='radio-label'> True </label> <br/>
+                            <input type="radio" id="false" name="away_team_win" value="0"/>
+                            <label for="false" className='radio-label'> False </label> <br/>
+                            <label> Knockout Stage </label><br/>
+                            <input type="radio" id="true" name="away_team_win" value="1"/>
+                            <label for="true" className='radio-label'> True </label> <br/>
+                            <input type="radio" id="false" name="away_team_win" value="0"/>
+                            <label for="false" className='radio-label'> False </label> <br/>
+                            <label> Replayed </label><br/>
+                            <input type="radio" id="true" name="away_team_win" value="1"/>
+                            <label for="true" className='radio-label'> True </label> <br/>
+                            <input type="radio" id="false" name="away_team_win" value="0"/>
+                            <label for="false" className='radio-label'> False </label> <br/>
+                            <label> Replay </label><br/>
+                            <input type="radio" id="true" name="away_team_win" value="1"/>
+                            <label for="true" className='radio-label'> True </label> <br/>
+                            <input type="radio" id="false" name="away_team_win" value="0"/>
+                            <label for="false" className='radio-label'> False </label> <br/>
                             <label> Match Date </label>
                             <input type="text" name="match_date" placeholder='YYYY-MM-DD'/>
                             <label> Match Time </label>
@@ -178,10 +190,16 @@ export default function Matches() {
                             <input type="text" name="home_team_score_margin" placeholder='HomeTeamScoreMargin = HomeTeamScore - AwayTeamScore'/>
                             <label> Away Team Score Margin </label>
                             <input type="text" name="away_team_score_margin" placeholder='AwayTeamScoreMargin = AwayTeamScore - HomeTeamScore'/>
-                            <label> Extra Time </label>
-                            <input type="text" name="extra_time" placeholder='True or False'/>
-                            <label> Penalty Shootout </label>
-                            <input type="text" name="penalty_shootout" placeholder='True or False'/>
+                            <label> Extra Time </label><br/>
+                            <input type="radio" id="true" name="away_team_win" value="1"/>
+                            <label for="true" className='radio-label'> True </label> <br/>
+                            <input type="radio" id="false" name="away_team_win" value="0"/>
+                            <label for="false" className='radio-label'> False </label> <br/>
+                            <label> Penalty Shootout </label><br/>
+                            <input type="radio" id="true" name="away_team_win" value="1"/>
+                            <label for="true" className='radio-label'> True </label> <br/>
+                            <input type="radio" id="false" name="away_team_win" value="0"/>
+                            <label for="false" className='radio-label'> False </label> <br/>
                             <label> Score Penalties </label>
                             <input type="text" name="score_penalties" placeholder='HomeTeam - AwayTeam'/>
                             <label> Home Team Score Penalties </label>
@@ -190,13 +208,21 @@ export default function Matches() {
                             <input type="text" name="away_team_score_penalties"/>
                             <label> Result </label>
                             <input type="text" name="result" placeholder='HomeTeamWin or AwayTeamWin or Draw'/>
-                            <label> Home Team Win </label>
-                            <input type="text" name="home_team_win" placeholder='True or False'/>
-                            <label> Away Team Win </label>
-                            <input type="text" name="away_team_win" placeholder='True or False'/>
-                            <label> Draw </label>
-                            <input type="text" name="draw" placeholder='True or False'/>
-                            <button type = "submit">Insert</button> 
+                            <label> Home Team Win </label><br/>
+                            <input type="radio" id="true" name="away_team_win" value="1"/>
+                            <label for="true" className='radio-label'> True </label> <br/>
+                            <input type="radio" id="false" name="away_team_win" value="0"/>
+                            <label for="false" className='radio-label'> False </label> <br/>
+                            <label> Away Team Win </label><br/>
+                            <input type="radio" id="true" name="away_team_win" value="1"/>
+                            <label for="true" className='radio-label'> True </label> <br/>
+                            <input type="radio" id="false" name="away_team_win" value="0"/>
+                            <label for="false" className='radio-label'> False </label> <br/>
+                            <label> Draw </label><br/>
+                            <input type="radio" id="true" name="away_team_win" value="1"/>
+                            <label for="true" className='radio-label'> True </label> <br/>
+                            <input type="radio" id="false" name="away_team_win" value="0"/>
+                            <label for="false" className='radio-label'> False </label> <br/>
                         </form>
                         <button onClick={toggleInsertForm}>Close</button>
                     </div>

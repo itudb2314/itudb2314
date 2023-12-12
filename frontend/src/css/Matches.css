@@ -137,6 +137,7 @@
     height: 50%;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 1; /* Sit on top */
+    text-align: left;
   }
 
   .form-content {
@@ -150,12 +151,17 @@
   }
 
   label {
-    display: block;
     margin-bottom: 5px;
     text-align: left;
     font-size: small;
     font-family: Arial, Helvetica, sans-serif;
     font-weight: bold;
+  }
+
+  .radio-label {
+    display: inline-block;
+    margin-left: 5px;
+    font-weight: lighter;
   }
 
   input {
@@ -165,6 +171,11 @@
     border-radius: 5px;
     border: 1px solid #ddd;
     margin-bottom: 10px;
+  }
+
+  input[type="radio"] {
+    width: auto;
+    margin-left: 5px;
   }
 
   .insert-button {
