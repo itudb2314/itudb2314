@@ -1,16 +1,19 @@
 import "../css/Groupstanding.css";
+import {Link, useParams} from "react-router-dom";
+
 import React, { useEffect, useState } from 'react';
 
-export default function Groupstandings() {
+export default function Groupstanding_tournament() {
     const [allgroups, setgroupstandings] = useState([])
+    const { id } = useParams();
+
 
     useEffect(() => {
-        fetch("http://localhost:5000/groupstandings")
+        fetch(`http://localhost:5000/groupstanding/${id}`)
             .then((response) => response.json())
             .then((data) => {
                 console.log(data);
-                const sorted_data = data.sort((a, b) => (a.tournament_id || 0) - (b.tournament_id || 0));
-                setgroupstandings(sorted_data);
+                setgroupstandings(data);
             })
             .catch((error) => {
                 console.error("Error fetching data:", error);
