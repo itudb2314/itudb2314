@@ -12,6 +12,7 @@ export default function Squads() {
     const [modalVisible, setModalVisible] = useState(false);
     const [isEditing, setIsEditing] = useState(null);
     const [offset, setOffset] = useState(0);
+    let isFetching = false;
 
     useEffect(() => {
         fetchSquads();
@@ -31,6 +32,8 @@ export default function Squads() {
     // };
 
     const fetchSquads = async () => {
+        if (isFetching) return;
+        isFetching = true;
         try {
             const response = await fetch(`http://localhost:5000/squadsJOINED?page=${offset}&items_per_page=22`);
             if (!response.ok) {
