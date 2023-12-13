@@ -20,10 +20,21 @@
     background-color: #282c34;
     font-size: 1.5rem;
     text-align: center;
-    transition-duration: 0.3s;
+    transition-duration: 1s;
     &:hover {
         box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
     }
+}
+
+.item p {
+    animation-name: grow;
+    animation-duration: 2s;
+    transition: max-height 2s ease-in-out;
+}
+
+@keyframes grow {
+    from { max-height: 0; }
+    to { max-height: 100px; }
 }
 
 .item-parent {

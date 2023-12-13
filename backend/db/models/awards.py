@@ -1,5 +1,3 @@
-from typing import List
-
 from dataclasses import dataclass
 from db.db import db
 import mysql.connector
@@ -34,7 +32,7 @@ class AwardWithTournament:
 
 class AwardDAO:
     @staticmethod
-    def get_all_awards(db: db, tournament_filter: str, award_filter: str) -> list[AwardWithTournament]:
+    def get_all_awards(db: db, tournament_filter: str, award_filter: str, sort: str) -> list[AwardWithTournament]:
         try:
             conn = db.get_connection()
             cursor = conn.cursor()
@@ -44,7 +42,14 @@ class AwardDAO:
             if tournament_filter == 'all':
                 tournament_filter = '%'
 
-            query = """
+            if sort == 'tournament_name':
+                sort = 'tournament_id DESC, award_id ASC'
+            elif sort == 'award_name':
+                sort = 'award_id ASC, tournament_id DESC'
+            elif sort == 'player_name':
+                sort = 'player_id DESC'
+
+            query = f"""
                 SELECT tournament_id, player_id, award_id, 
                        CONCAT(given_name, CONCAT( ' ', family_name)) AS player_name, 
                        tournament_name, award_name 
@@ -53,7 +58,7 @@ class AwardDAO:
                 LEFT JOIN awards USING (award_id)
                 LEFT JOIN players USING (player_id)
                 WHERE award_name LIKE %s AND tournaments.tournament_id LIKE %s
-                ORDER BY tournament_id DESC, award_id ASC
+                ORDER BY {sort}
                 """
             cursor.execute(query, (award_filter, tournament_filter))
 
@@ -125,6 +130,47 @@ class AwardDAO:
 
             result = cursor.fetchall()
             return [Award(*result) for result in result]
+
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+        finally:
+            cursor.close()
+            conn.close()
+
+
+    @staticmethod
+    def search_all_awards(db: db, tournament_filter: str, award_filter: str, sort: str, search: str):
+        try:
+            conn = db.get_connection()
+            cursor = conn.cursor()
+            if award_filter == 'all':
+                award_filter = '%'
+
+            if tournament_filter == 'all':
+                tournament_filter = '%'
+
+            if sort == 'tournament_name':
+                sort = 'tournament_id DESC, award_id ASC'
+            elif sort == 'award_name':
+                sort = 'award_id ASC, tournament_id DESC'
+            elif sort == 'player_name':
+                sort = 'player_id DESC'
+
+            query = f"""
+                    SELECT tournament_id, player_id, award_id,
+                    CONCAT(given_name, CONCAT( ' ', family_name)) AS player_name,
+                    tournament_name, award_name
+                    FROM award_winners
+                    LEFT JOIN tournaments USING (tournament_id)
+                    LEFT JOIN awards USING (award_id)
+                    LEFT JOIN players USING (player_id)
+                    WHERE award_name LIKE %s AND tournaments.tournament_id LIKE %s AND CONCAT(given_name, CONCAT( ' ', family_name)) LIKE CONCAT('%', %s, '%')
+                    ORDER BY {sort}
+                    """
+            cursor.execute(query, (award_filter, tournament_filter, search))
+
+            rows = cursor.fetchall()
+            return [AwardWithTournament(*row) for row in rows]
 
         except mysql.connector.Error as err:
             print(f"Error: {err}")

@@ -33,3 +33,10 @@
 .filter label {
     font-size: inherit;
 }
+
+.filter input {
+    font-size: inherit;
+    height: 70%;
+    width: inherit;
+    margin-left: 0;
+}

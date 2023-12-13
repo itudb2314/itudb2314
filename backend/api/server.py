@@ -262,9 +262,14 @@ def create_server(db):
         return flask.jsonify(awards)
 
 
-    @app.route('/awards/<tournament_filter>/<award_filter>', methods=['GET'])
-    def get_all_tournament_awards(tournament_filter: str, award_filter: str):
-        awards = AwardDAO.get_all_awards(db, tournament_filter, award_filter)
+    @app.route('/awards/<tournament_filter>/<award_filter>/<sort>', methods=['GET'])
+    def get_all_tournament_awards(tournament_filter: str, award_filter: str, sort: str):
+        awards = AwardDAO.get_all_awards(db, tournament_filter, award_filter, sort)
+        return flask.jsonify(awards)
+
+    @app.route('/awards/<tournament_filter>/<award_filter>/<sort>/<search>', methods=['GET'])
+    def search_all_tournament_awards(tournament_filter: str, award_filter: str, sort: str, search: str):
+        awards = AwardDAO.search_all_awards(db, tournament_filter, award_filter, sort, search)
         return flask.jsonify(awards)
 
     return app

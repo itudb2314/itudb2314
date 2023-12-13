@@ -4,7 +4,7 @@ import '../css/TournamentDetails.css';
 import '../css/Groupstanding.css'
 import '../css/Awards.css'
 import Match from './Match'
-import Groupstanding from './Groupstanding'
+import Groupstanding_tournament from "./groupstandings_tournament";
 
 export default function TournamentDetails() {
     const { id } = useParams();
@@ -50,7 +50,7 @@ export default function TournamentDetails() {
 
 
         console.log("Hello")
-        fetch(`http://localhost:5000/awards/${id}`)
+        fetch(`http://localhost:5000/awards/${id}/all/tournament_name`)
             .then((response) => response.json())
             .then((data) => {
                 setAwards(data);
@@ -119,71 +119,7 @@ export default function TournamentDetails() {
         }
         setRound_of_16(round_of_16);
     }
-
-    function getGroupStanding() {
-        fetch(`http://localhost:5000/groupstanding/${id}`)
-            .then((response) => response.json())
-            .then((data) => {
-                setGroupStanding(data);
-            }).catch((error) => {
-            console.error("Error fetching data:", error);
-        });
-
-        return(
-            <div className="groupstanding">
-                {groupStanding.map( all => (
-                    <div key={all.tournament_id} className="tournament-group">
-                        <h2 style={{textAlign: 'center'}}>
-                            {all.tournament_id}
-                        </h2>
-                        {all.stagedlist.map(staged => (
-                            <div style={{textAlign: 'center'}} key={all.tournament_id / staged.stage_number} className="stage-group">
-                                {staged.grouplist.map(grouped => (
-                                    <div key={all.tournament_id / staged.stage_number / grouped.group_name} className="group-group">
-                                        <div className="table-div">
-                                            <h4 style={{textAlign: 'center'}}>
-                                                {grouped.group_name}
-                                            </h4>
-
-                                            <div className="table-container">
-                                                <table className="table">
-                                                    <thead>
-                                                    <tr>
-                                                        <th>Position</th>
-                                                        <th>Team</th>
-                                                        <th>P</th>
-                                                        <th>W</th>
-                                                        <th>D</th>
-                                                        <th>L</th>
-                                                        <th>GF</th>
-                                                        <th>GA</th>
-                                                        <th>GD</th>
-                                                        <th>Points</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    {grouped.group_standings.map(groupstanding => (
-                                                        <Groupstanding key={groupstanding.tournament_id / groupstanding.stage_number / groupstanding.group_name} {...groupstanding} />
-                                                    ))}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        ))}
-                    </div>
-                ))}
-            </div>
-        )
-    }
-
-
-        
-
-
-
+    
     function matchComponent(match) {
         return (
             <Link style={{text_decoration:'none'}} to={`/matches/${match.match_id}`}>
@@ -393,13 +329,14 @@ export default function TournamentDetails() {
                             <div className="award">
                                 <h3>{award.award_name}</h3>
                                 <Link style={{text_decoration:'none'}} to={`/players/${award.player_id}`}>
-                                    <p>{award.given_name} {award.family_name}</p>
+                                    <p>{award.player_name}</p>
                                 </Link>
                             </div>
                         )
                     )}
                 </div>
             </div>
+            <Groupstanding_tournament tournament_id={id}/>
         </div>
     );
 }
