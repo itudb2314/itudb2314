@@ -266,5 +266,15 @@ def create_server(db):
     def get_all_tournament_awards(tournament_filter: str, award_filter: str):
         awards = AwardDAO.get_all_awards(db, tournament_filter, award_filter)
         return flask.jsonify(awards)
+    
+    @app.route('/tournamentstages/<tournament_id>', methods=['GET'])
+    def get_tournament_stages(tournament_id: str):
+        stages = TournamentDAO.get_tournament_stages(db, tournament_id)
+        return flask.jsonify(stages)
+    
+    @app.route('/groupnames/<tournament_id>/<stage_name>', methods=['GET'])
+    def get_group_names(tournament_id: str, stage_name: str):
+        groups = GroupStandingDAO.get_all_group_names(db, tournament_id, stage_name)
+        return flask.jsonify(groups)
 
     return app

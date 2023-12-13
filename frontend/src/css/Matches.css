@@ -164,18 +164,19 @@
     font-weight: lighter;
   }
 
-  input {
+  input[type="text"] {
     text-align: left;
     width: 100%;
+    font-size: 12px;
     padding: 5px;
     border-radius: 5px;
-    border: 1px solid #ddd;
+    border: 1px solid #574f4f;
     margin-bottom: 10px;
   }
 
   input[type="radio"] {
     width: auto;
-    margin-left: 5px;
+    margin-left: 10px;
   }
 
   .insert-button {
@@ -190,4 +191,13 @@
     bottom: 40px;
     right: 20px;
     position: fixed;
+  }
+
+  select {
+    width: 100%;
+    font-size: 12px;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #574f4f;
+    margin-bottom: 10px;
   }

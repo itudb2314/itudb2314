@@ -240,6 +240,31 @@ class GroupStandingDAO():
             conn.close()
     
     @staticmethod
+    def get_all_group_names(db: db, tournament_id: str, stage_name: str) -> list[str]:
+        try:
+            conn = db.get_connection()
+            query="""
+                SELECT DISTINCT group_name 
+                FROM group_standings 
+                WHERE tournament_id=%s AND stage_name=%s
+                """
+            cursor = conn.cursor()
+            cursor.execute(query, (tournament_id, stage_name))
+            results = cursor.fetchall()
+            groupnames = []
+            for result in results:
+                groupnames.append(result[0])
+            cursor.close()
+            conn.close()
+            return groupnames
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+            conn.rollback()
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
     def update_group_standing(db: db, group_standing: GroupStanding) -> None:
         try:
             conn = db.get_connection()

@@ -13,6 +13,10 @@ export default function Matches() {
     const [matchDeleted, setMatchDeleted] = useState(false);
     const [matchAdded, setMatchAdded] = useState(false);
     const [bookings, setBookings] = useState([]);
+    const [chosentournament, setChosenTournament] = useState('NULL');
+    const [chosenstage, setChosenStage] = useState('NULL');
+    const [tournamentstages, setTournamentStages] = useState([]);
+    const [groupnames, setGroupNames] = useState([]);
 
     useEffect(() => {
         if(!match_id) {
@@ -130,6 +134,45 @@ export default function Matches() {
         setMatchAdded(!matchAdded);
     };
 
+    //tournament stage validation
+    const handleTournamentChange = (event) => {
+        setChosenTournament(event.target.value);
+    }
+
+    useEffect(() => {
+        if(chosentournament != 'NULL') {
+            fetch(`http://localhost:5000/tournamentstages/${chosentournament}`)
+            .then((response) => response.json())
+            .then((data) => {
+                setTournamentStages(data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+    }, [chosentournament]);
+
+
+    //group number validation
+    const handleStageChange = (event) => {
+        setChosenStage(event.target.value);
+    }
+
+    useEffect(() => {
+        if(chosentournament != 'NULL' && chosenstage != 'NULL') {
+            fetch(`http://localhost:5000/groupnames/${chosentournament}/${chosenstage}`)
+            .then((response) => response.json())
+            .then((data) => {
+                setGroupNames(data);
+                console.log(data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+    }, [chosentournament, chosenstage]);
+
+
     return (
         <div className="matches">
             {/*button to toggle insert form*/}
@@ -140,91 +183,130 @@ export default function Matches() {
                     <div className='form-content'>
                         <h2>Insert Match</h2> 
                         <form onSubmit={handleInsertMatch}>
-                            <label> Tournament ID </label>
-                            <input type="text" name="tournament_id" placeholder='WC-YEAR'/>
-                            <label> Match ID </label>
-                            <input type="text" name="match_id" placeholder='M-YEAR-MATCHNUMBER'/>
-                            <label> Match Name </label>
-                            <input type="text" name="match_name" placeholder='HOMETEAM vs AWAYTEAM'/>
-                            <label> Stage Name </label>
-                            <input type="text" name="stage_name" placeholder='ex:Group Stage'/>
-                            <label> Group Name </label>
-                            <input type="text" name="group_name" placeholder='ex:Group 1 or not applicable'/>
+                            <label for="Tournament"> Tournament ID </label> <br/>
+                            <select id="Tournament" name="Tournament" value={chosentournament} onChange={handleTournamentChange}>
+                                <option value='NULL' disabled>select</option>
+                                <option value="WC-1930">World Cup 1930</option>
+                                <option value="WC-1934">World Cup 1934</option>
+                                <option value="WC-1938">World Cup 1938</option>
+                                <option value="WC-1950">World Cup 1950</option>
+                                <option value="WC-1954">World Cup 1954</option>
+                                <option value="WC-1958">World Cup 1958</option>
+                                <option value="WC-1962">World Cup 1962</option>
+                                <option value="WC-1966">World Cup 1966</option>
+                                <option value="WC-1970">World Cup 1970</option>
+                                <option value="WC-1974">World Cup 1974</option>
+                                <option value="WC-1978">World Cup 1978</option>
+                                <option value="WC-1982">World Cup 1982</option>
+                                <option value="WC-1986">World Cup 1986</option>
+                                <option value="WC-1990">World Cup 1990</option>
+                                <option value="WC-1994">World Cup 1994</option>
+                                <option value="WC-1998">World Cup 1998</option>
+                                <option value="WC-2002">World Cup 2002</option>
+                                <option value="WC-2006">World Cup 2006</option>
+                                <option value="WC-2010">World Cup 2010</option>
+                                <option value="WC-2014">World Cup 2014</option>
+                                <option value="WC-2018">World Cup 2018</option>
+                                <option value="WC-2022">World Cup 2022</option>
+                            </select>
+                            <label for="matchid"> Match ID </label>
+                            <input id="matchid" type="text" name="match_id" pattern="^M-\d{4}-\d{2,}$" placeholder='M-YEAR-MATCHNUMBER' required/>
+                            <label for="match_name"> Match Name </label>
+                            <input id= "match_name" type="text" name="match_name" placeholder='HOMETEAM vs AWAYTEAM' required/>
+                            <label for="stage"> Stage Name </label><br/>
+                            {Array.isArray(tournamentstages) && (
+                                <select id="stage" name="stage" value={chosenstage} onChange={handleStageChange}>
+                                    <option value='NULL' disabled>select</option>
+                                    {tournamentstages.map((stage) => (
+                                        <option value={stage}>{stage}</option>
+                                    ))}
+                                </select>
+                            )}
+                            {Array.isArray(groupnames) && <label for="group_name"> Group Name </label>}
+                            {Array.isArray(groupnames) && (
+                                <select id="group_name" name="group_name" required>
+                                    <option value='NULL' disabled>select</option>
+                                    {groupnames.map((groupname) => (
+                                        <option value={groupname}>{groupname}</option>
+                                    ))}
+                                </select>
+                            )}
                             <label> Group Stage </label><br/>
-                            <input type="radio" id="true" name="away_team_win" value="1"/>
-                            <label for="true" className='radio-label'> True </label> <br/>
-                            <input type="radio" id="false" name="away_team_win" value="0"/>
+                            <input type="radio" id="true" name="away_team_win" value="1" required/>
+                            <label for="true" className='radio-label'> True </label> 
+                            <input type="radio" id="false" name="away_team_win" value="0" required/>
                             <label for="false" className='radio-label'> False </label> <br/>
                             <label> Knockout Stage </label><br/>
-                            <input type="radio" id="true" name="away_team_win" value="1"/>
-                            <label for="true" className='radio-label'> True </label> <br/>
-                            <input type="radio" id="false" name="away_team_win" value="0"/>
+                            <input type="radio" id="true" name="away_team_win" value="1" required/>
+                            <label for="true" className='radio-label'> True </label>
+                            <input type="radio" id="false" name="away_team_win" value="0" required/>
                             <label for="false" className='radio-label'> False </label> <br/>
                             <label> Replayed </label><br/>
-                            <input type="radio" id="true" name="away_team_win" value="1"/>
-                            <label for="true" className='radio-label'> True </label> <br/>
-                            <input type="radio" id="false" name="away_team_win" value="0"/>
+                            <input type="radio" id="true" name="away_team_win" value="1" required/>
+                            <label for="true" className='radio-label'> True </label>
+                            <input type="radio" id="false" name="away_team_win" value="0" required/>
                             <label for="false" className='radio-label'> False </label> <br/>
                             <label> Replay </label><br/>
-                            <input type="radio" id="true" name="away_team_win" value="1"/>
-                            <label for="true" className='radio-label'> True </label> <br/>
-                            <input type="radio" id="false" name="away_team_win" value="0"/>
+                            <input type="radio" id="true" name="away_team_win" value="1" required/>
+                            <label for="true" className='radio-label'> True </label> 
+                            <input type="radio" id="false" name="away_team_win" value="0" required/>
                             <label for="false" className='radio-label'> False </label> <br/>
                             <label> Match Date </label>
-                            <input type="text" name="match_date" placeholder='YYYY-MM-DD'/>
+                            <input type="text" name="match_date" pattern="\d{4}-\d{2}-\d{2}" placeholder='YYYY-MM-DD' required/>
                             <label> Match Time </label>
-                            <input type="text" name="match_time" placeholder='HH:MM'/>
-                            <label> Stadium ID </label>
-                            <input type="text" name="stadium_id" placeholder='S-NUMBER'/>
+                            <input type="time" name="match_time" placeholder='HH:MM' required/>
+                            <label> Stadium </label>
+                            <input type="text" name="stadium_id" placeholder='S-NUMBER' required/>
                             <label> Home Team ID </label>
-                            <input type="text" name="home_team_id" placeholder='T-NUMBER'/>
+                            <input type="text" name="home_team_id" placeholder='T-NUMBER' required/>
                             <label> Away Team ID </label>
-                            <input type="text" name="away_team_id" placeholder='T-NUMBER'/>
+                            <input type="text" name="away_team_id" placeholder='T-NUMBER' required/>
                             <label> Score </label>
-                            <input type="text" name="score" placeholder='HomeTeamScore - AwayTeamScore'/>
+                            <input type="text" name="score" placeholder='HomeTeamScore - AwayTeamScore' required/>
                             <label> Home Team Score </label>
-                            <input type="text" name="home_team_score"/>
+                            <input type="text" name="home_team_score" required/>
                             <label> Away Team Score </label>
-                            <input type="text" name="away_team_score"/>
+                            <input type="text" name="away_team_score" required/>
                             <label> Home Team Score Margin </label>
-                            <input type="text" name="home_team_score_margin" placeholder='HomeTeamScoreMargin = HomeTeamScore - AwayTeamScore'/>
+                            <input type="text" name="home_team_score_margin" placeholder='HomeTeamScoreMargin = HomeTeamScore - AwayTeamScore' required/>
                             <label> Away Team Score Margin </label>
-                            <input type="text" name="away_team_score_margin" placeholder='AwayTeamScoreMargin = AwayTeamScore - HomeTeamScore'/>
+                            <input type="text" name="away_team_score_margin" placeholder='AwayTeamScoreMargin = AwayTeamScore - HomeTeamScore' required/>
                             <label> Extra Time </label><br/>
-                            <input type="radio" id="true" name="away_team_win" value="1"/>
-                            <label for="true" className='radio-label'> True </label> <br/>
-                            <input type="radio" id="false" name="away_team_win" value="0"/>
+                            <input type="radio" id="true" name="away_team_win" value="1" required/>
+                            <label for="true" className='radio-label'> True </label>
+                            <input type="radio" id="false" name="away_team_win" value="0" required/>
                             <label for="false" className='radio-label'> False </label> <br/>
                             <label> Penalty Shootout </label><br/>
-                            <input type="radio" id="true" name="away_team_win" value="1"/>
-                            <label for="true" className='radio-label'> True </label> <br/>
-                            <input type="radio" id="false" name="away_team_win" value="0"/>
+                            <input type="radio" id="true" name="away_team_win" value="1" required/>
+                            <label for="true" className='radio-label'> True </label>
+                            <input type="radio" id="false" name="away_team_win" value="0" required/>
                             <label for="false" className='radio-label'> False </label> <br/>
                             <label> Score Penalties </label>
-                            <input type="text" name="score_penalties" placeholder='HomeTeam - AwayTeam'/>
+                            <input type="text" name="score_penalties" placeholder='HomeTeam - AwayTeam' required/>
                             <label> Home Team Score Penalties </label>
-                            <input type="text" name="home_team_score_penalties"/>
+                            <input type="text" name="home_team_score_penalties" required/>
                             <label> Away Team Score Penalties </label>
-                            <input type="text" name="away_team_score_penalties"/>
+                            <input type="text" name="away_team_score_penalties" required/>
                             <label> Result </label>
-                            <input type="text" name="result" placeholder='HomeTeamWin or AwayTeamWin or Draw'/>
+                            <input type="text" name="result" placeholder='HomeTeamWin or AwayTeamWin or Draw' required/>
                             <label> Home Team Win </label><br/>
-                            <input type="radio" id="true" name="away_team_win" value="1"/>
-                            <label for="true" className='radio-label'> True </label> <br/>
-                            <input type="radio" id="false" name="away_team_win" value="0"/>
+                            <input type="radio" id="true" name="away_team_win" value="1" required/>
+                            <label for="true" className='radio-label'> True </label>
+                            <input type="radio" id="false" name="away_team_win" value="0" required/>
                             <label for="false" className='radio-label'> False </label> <br/>
                             <label> Away Team Win </label><br/>
-                            <input type="radio" id="true" name="away_team_win" value="1"/>
-                            <label for="true" className='radio-label'> True </label> <br/>
-                            <input type="radio" id="false" name="away_team_win" value="0"/>
+                            <input type="radio" id="true" name="away_team_win" value="1" required/>
+                            <label for="true" className='radio-label'> True </label>
+                            <input type="radio" id="false" name="away_team_win" value="0" required/>
                             <label for="false" className='radio-label'> False </label> <br/>
                             <label> Draw </label><br/>
-                            <input type="radio" id="true" name="away_team_win" value="1"/>
-                            <label for="true" className='radio-label'> True </label> <br/>
-                            <input type="radio" id="false" name="away_team_win" value="0"/>
+                            <input type="radio" id="true" name="away_team_win" value="1" required/>
+                            <label for="true" className='radio-label'> True </label>
+                            <input type="radio" id="false" name="away_team_win" value="0" required/>
                             <label for="false" className='radio-label'> False </label> <br/>
                         </form>
                         <button onClick={toggleInsertForm}>Close</button>
+                        <button type='submit' form='form' value='Submit'>Submit</button>
                     </div>
                 </div>
             )}

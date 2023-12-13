@@ -107,6 +107,45 @@ class TournamentDAO():
             return [Tournament(*row) for row in rows]
         except mysql.connector.Error as err:
             print(f"Error: {err}")
+            conn.rollback()
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
+    def get_tournament_stages(db, tournament_id: str) -> dict:
+        try:
+            connection = db.get_connection()
+            query = """
+                    SELECT
+                        CASE WHEN group_stage THEN "group stage" ELSE NULL END AS group_stage,
+                        CASE WHEN second_group_stage THEN "second group stage" ELSE NULL END AS second_group_stage,
+                        CASE WHEN final_round THEN "final round" ELSE NULL END AS final_round,
+                        CASE WHEN round_of_16 THEN "round of 16" ELSE NULL END AS round_of_16,
+                        CASE WHEN quarter_finals THEN "quarter finals" ELSE NULL END AS quarter_finals,
+                        CASE WHEN semi_finals THEN "semi finals" ELSE NULL END AS semi_finals,
+                        CASE WHEN third_place_match THEN "third place match" ELSE NULL END AS third_place_match,
+                        CASE WHEN final THEN "final" ELSE NULL END AS final
+                    FROM tournaments
+                    WHERE tournament_id = %s
+                """
+            cursor = connection.cursor()
+            cursor.execute(query, (tournament_id,))
+            result = cursor.fetchone()
+            stages = []
+            for result in result:
+                if result is not None:
+                    stages.append(result)
+            cursor.close()
+            connection.close()
+            return stages
+
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+            connection.rollback()
+        finally:
+            cursor.close()
+            connection.close()
 
     @staticmethod
     def update_tournament(db, tournament: Tournament) -> Tournament:
