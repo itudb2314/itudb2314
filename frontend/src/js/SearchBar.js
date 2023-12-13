@@ -1,10 +1,10 @@
 import React from "react";
-import '../css/SearchBar.css'
+import '../css/SearchBarKenan.css'
 
-export default function SearchBar({apiFunction}) {
+export default function SearchBar({ apiFunction }) {
     return (
         <div className="search-bar">
-            <input type="text" placeholder="Search" onChange={apiFunction}/>
+            <input type="text" placeholder="Search" onChange={apiFunction} />
         </div>
     )
 }

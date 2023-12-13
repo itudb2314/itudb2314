@@ -38,3 +38,4 @@ added pagination to squads
 Week 12 commits: 
 added pagination to players
 used a different api for the search bar and improved its efficiency by decreasing the number of calls made
+added filtering to players page. Was difficult to implement with pagination :'|

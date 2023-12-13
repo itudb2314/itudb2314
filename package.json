@@ -1,6 +1,9 @@
 {
   "dependencies": {
     "country-iso-3-to-2": "^1.1.1",
+    "cheerio": "^1.0.0-rc.12",
+    "parse5": "^7.1.2",
+    "react-icons": "^4.12.0",
     "react-router-dom": "^6.18.0"
   }
 }
