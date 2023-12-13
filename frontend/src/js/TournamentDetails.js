@@ -4,7 +4,7 @@ import '../css/TournamentDetails.css';
 import '../css/Groupstanding.css'
 import '../css/Awards.css'
 import Match from './Match'
-import Groupstandingstournament from "./groupstandings_tournament";
+import Groupstanding_tournament from "./groupstandings_tournament";
 
 export default function TournamentDetails() {
     const { id } = useParams();
@@ -15,6 +15,7 @@ export default function TournamentDetails() {
     const [final, setFinal] = useState([]);
     const [matchDeleted, setMatchDeleted] = useState(false);
     const [awards, setAwards] = useState([]);
+    const [groupStanding, setGroupStanding] = useState([]);
 
     function onMatchDelete() {
         setMatchDeleted(!matchDeleted);
@@ -25,8 +26,6 @@ export default function TournamentDetails() {
             .then((response) => response.json())
             .then((data) => {
                 setTournamentDetails(data);
-
-
                 if (id === 'WC-1950'){
                     return
                 }
@@ -51,7 +50,7 @@ export default function TournamentDetails() {
 
 
         console.log("Hello")
-        fetch(`http://localhost:5000/awards/${id}`)
+        fetch(`http://localhost:5000/awards/${id}/all/tournament_name`)
             .then((response) => response.json())
             .then((data) => {
                 setAwards(data);
@@ -59,8 +58,6 @@ export default function TournamentDetails() {
             }).catch((error) => {
                 console.error("Error fetching data:", error);
             });
-
-
     }, [matchDeleted]);
 
     function reorderMatches(data) {
@@ -123,16 +120,6 @@ export default function TournamentDetails() {
         setRound_of_16(round_of_16);
     }
     
-    
-    function groupStandingComponent() {
-        
-        return <Groupstandingstournament tournament_id={id}/>
-        
-    }
-
-
-
-
     function matchComponent(match) {
         return (
             <Link style={{text_decoration:'none'}} to={`/matches/${match.match_id}`}>
@@ -147,9 +134,6 @@ export default function TournamentDetails() {
 
     return (
         <div>
-            
-            {groupStandingComponent()}
-
             {
             (tournamentDetails.length >= 16 ) ? (
             <div className="wrapper">
@@ -345,13 +329,14 @@ export default function TournamentDetails() {
                             <div className="award">
                                 <h3>{award.award_name}</h3>
                                 <Link style={{text_decoration:'none'}} to={`/players/${award.player_id}`}>
-                                    <p>{award.given_name} {award.family_name}</p>
+                                    <p>{award.player_name}</p>
                                 </Link>
                             </div>
                         )
                     )}
                 </div>
             </div>
+            <Groupstanding_tournament tournament_id={id}/>
         </div>
     );
 }
