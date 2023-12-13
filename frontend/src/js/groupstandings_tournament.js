@@ -25,9 +25,6 @@ export default function Groupstanding_tournament() {
             <h1 style={{ textAlign: "center" }}>Group Standings</h1>
             {allgroups.map(alls => (
                 <div key={alls.tournament_id} className="tournament-group">
-                    <h2 style={{ textAlign: 'center' }}>
-                        {alls.tournament_id}
-                    </h2>
                     {alls.stagedlist.map(staged => (
                         <div style={{ textAlign: 'center' }} key={alls.tournament_id / staged.stage_number} className="stage-group">
                             {staged.grouplist.map(grouped => (
