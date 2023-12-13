@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "country-iso-3-to-2": "^1.1.1",
     "react-router-dom": "^6.18.0"
   }
 }
