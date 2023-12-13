@@ -40,3 +40,13 @@
     width: inherit;
     margin-left: 0;
 }
+
+.edit-select {
+    display: flex;
+    flex-direction: row;
+    background-color: white;
+    border: thin solid black;
+    border-radius: 5px;
+    font: inherit;
+    height: 70%;
+}

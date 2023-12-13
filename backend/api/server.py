@@ -261,6 +261,19 @@ def create_server(db):
         awards = AwardDAO.get_all_awards(db)
         return flask.jsonify(awards)
 
+    @app.route('/awards', methods=['PUT'])
+    def create_award():
+        new_award = flask.request.get_json()
+        new_award['shared'] = False
+        print(new_award)
+        new_award = make_dataclass('AwardWinner', new_award.keys())(**new_award)
+        AwardDAO.create_award(db, new_award)
+        return flask.jsonify({})
+
+    @app.route('/awards/<tournament_id>/<award_id>/<player_id>', methods=['DELETE'])
+    def delete_award(tournament_id: str, award_id: str, player_id: str):
+        AwardDAO.delete_award(db, tournament_id, award_id, player_id)
+        return flask.jsonify({})
 
     @app.route('/awards/<tournament_filter>/<award_filter>/<sort>', methods=['GET'])
     def get_all_tournament_awards(tournament_filter: str, award_filter: str, sort: str):

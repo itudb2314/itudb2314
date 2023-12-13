@@ -98,7 +98,7 @@ class TournamentDAO():
     def get_all_tournaments(db) -> list[Tournament]:
         try:
             conn = db.get_connection()
-            query = "SELECT * FROM tournaments"
+            query = "SELECT * FROM tournaments ORDER BY year DESC"
             cursor = conn.cursor()
             cursor.execute(query)
             rows = cursor.fetchall()
