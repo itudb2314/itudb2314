@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../css/searchbar.css';
+import '../css/SearchBarAbdullah.css';
 import { FaSearch } from 'react-icons/fa';
 
 export const SearchBar = ({ setResults }) => {
