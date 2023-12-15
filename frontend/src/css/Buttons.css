@@ -87,6 +87,8 @@
 
 /* Style for the modal content */
 .modal-content {
+    display: flex;
+    flex-direction: column;
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
@@ -130,6 +132,7 @@
     border: 1px solid black;
     width: inherit;
     margin-left: 0;
+    margin-top: 0;
 }
 
 .modal {
@@ -139,17 +142,27 @@
     border-radius: 4px;
 }
 
-.modal button {
-    padding: 10px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
+.cancel-button {
+    margin-bottom: 10px;
+    width: 100px;
+    color: white;
+    font-size: 20px;
+    border-radius: 8px;
+    background: #1c89ff;
+    transition-duration: 0.3s;
+    border: solid 1px transparent;
     cursor: pointer;
-    &:hover{
-        transition-duration: 0.3s;
-        background-color: #0056b3;
+    &:hover {
+        color: black;
+        background: white;
+        border-color: black;
     }
+}
+
+.modal .buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 10px
 }
 
 .modal form div {

@@ -393,11 +393,12 @@ class GroupStandingDAO():
                 FROM group_standings gs
                 JOIN teams t ON gs.team_id = t.team_id
                 WHERE tournament_id=%s
-                ORDER BY gs.tournament_id DESC, gs.stage_number ASC, gs.group_name ASC, gs.position ASC
+                ORDER BY gs.stage_number ASC, gs.group_name ASC, gs.position ASC
             """
             cursor = conn.cursor()
             cursor.execute(query, (tournament_id,))
             results = cursor.fetchall()
+
 
             tournament_list = {}
             staged_list = {}

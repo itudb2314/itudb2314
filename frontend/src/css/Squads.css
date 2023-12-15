@@ -148,3 +148,10 @@
     border: none;
     border-radius: 5px;
 }
+
+.edit-form-input {
+    font-size: inherit;
+    margin: 0;
+    color: white;
+    width: 80%
+}

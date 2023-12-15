@@ -105,14 +105,50 @@ class PlayerDAO():
             cursor.close()
             connection.close()
 
-    @staticmethod
-    def get_all_players_paginated(db: db, page: int, items_per_page: int) -> list:
+    # @staticmethod
+    # def get_all_players_paginated(db: db, page: int, items_per_page: int) -> list:
+    #     try:
+    #         connection = db.get_connection()
+    #         offset = (page) * items_per_page
+    #         query = """
+    #             SELECT * FROM players
+    #             limit %s offset %s
+    #         """
+    #         cursor = connection.cursor()
+    #         cursor.execute(query, (items_per_page, offset))
+    #         results = cursor.fetchall()
+    #         if results is None:
+    #             return None
+    #         return [Player(*result) for result in results]
+    #     except mysql.connector.Error as err:
+    #         print(f"Error: {err}")
+    #         connection.rollback()
+    #     finally:
+    #         cursor.close()
+    #         connection.close()
+
+    def get_all_players_paginated(db: db, page: int, items_per_page: int, female: str, goal_keeper: str, defender: str, midfielder: str, forward: str) -> list:
         try:
             connection = db.get_connection()
-            offset = (page) * items_per_page
-            query = """
+            offset = page * items_per_page
+
+            filters = []
+            if female != 'all':
+                filters.append(f"female = {female}")
+            if goal_keeper != 'all':
+                filters.append(f"goal_keeper = {goal_keeper}")
+            if defender != 'all':
+                filters.append(f"defender = {defender}")
+            if midfielder != 'all':
+                filters.append(f"midfielder = {midfielder}")
+            if forward != 'all':
+                filters.append(f"forward = {forward}")
+
+            query = f"""
                 SELECT * FROM players
-                limit %s offset %s
+                {"WHERE " + " AND ".join(filters) if filters else ""}
+                ORDER BY player_id
+                LIMIT %s OFFSET %s
             """
             cursor = connection.cursor()
             cursor.execute(query, (items_per_page, offset))

@@ -1,16 +1,6 @@
-from typing import List
-
 from dataclasses import dataclass
 from db.db import db
 import mysql.connector
-
-
-@dataclass
-class Award:
-    player_id: str
-    given_name: str
-    family_name: str
-    award_name: str
 
 
 @dataclass
@@ -30,11 +20,12 @@ class AwardWithTournament:
     player_name: str
     tournament_name: str
     award_name: str
+    team_id: str
 
 
 class AwardDAO:
     @staticmethod
-    def get_all_awards(db: db, tournament_filter: str, award_filter: str) -> list[AwardWithTournament]:
+    def get_all_awards(db: db, tournament_filter: str, award_filter: str, sort: str) -> list[AwardWithTournament]:
         try:
             conn = db.get_connection()
             cursor = conn.cursor()
@@ -44,16 +35,23 @@ class AwardDAO:
             if tournament_filter == 'all':
                 tournament_filter = '%'
 
-            query = """
+            if sort == 'tournament_name':
+                sort = 'tournament_id DESC, award_id ASC'
+            elif sort == 'award_name':
+                sort = 'award_id ASC, tournament_id DESC'
+            elif sort == 'player_name':
+                sort = 'player_id DESC'
+
+            query = f"""
                 SELECT tournament_id, player_id, award_id, 
                        CONCAT(given_name, CONCAT( ' ', family_name)) AS player_name, 
-                       tournament_name, award_name 
+                       tournament_name, award_name, team_id
                 FROM award_winners
                 LEFT JOIN tournaments USING (tournament_id)
                 LEFT JOIN awards USING (award_id)
                 LEFT JOIN players USING (player_id)
                 WHERE award_name LIKE %s AND tournaments.tournament_id LIKE %s
-                ORDER BY tournament_id DESC, award_id ASC
+                ORDER BY {sort}
                 """
             cursor.execute(query, (award_filter, tournament_filter))
 
@@ -66,20 +64,79 @@ class AwardDAO:
             cursor.close()
             conn.close()
 
+
     @staticmethod
-    def get_awards(db: db, award_id: str) -> Award:
+    def search_all_awards(db: db, tournament_filter: str, award_filter: str, sort: str, search: str):
         try:
             conn = db.get_connection()
-            query = """
-                    SELECT award_id, award_name, award_description, year_introduced
-                    FROM awards WHERE award_id = %s
-                """
-
             cursor = conn.cursor()
-            cursor.execute(query, (award_id,))
+            if award_filter == 'all':
+                award_filter = '%'
 
-            result = cursor.fetchone()
-            return Award(*result)
+            if tournament_filter == 'all':
+                tournament_filter = '%'
+
+            if sort == 'tournament_name':
+                sort = 'tournament_id DESC, award_id ASC'
+            elif sort == 'award_name':
+                sort = 'award_id ASC, tournament_id DESC'
+            elif sort == 'player_name':
+                sort = 'player_id DESC'
+
+            query = f"""
+                    SELECT tournament_id, player_id, award_id,
+                    CONCAT(given_name, CONCAT( ' ', family_name)) AS player_name,
+                    tournament_name, award_name, team_id
+                    FROM award_winners
+                    LEFT JOIN tournaments USING (tournament_id)
+                    LEFT JOIN awards USING (award_id)
+                    LEFT JOIN players USING (player_id)
+                    WHERE award_name LIKE %s AND tournaments.tournament_id LIKE %s AND CONCAT(given_name, CONCAT( ' ', family_name)) LIKE CONCAT('%', %s, '%')
+                    ORDER BY {sort}
+                    """
+            cursor.execute(query, (award_filter, tournament_filter, search))
+
+            rows = cursor.fetchall()
+            return [AwardWithTournament(*row) for row in rows]
+
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+        finally:
+            cursor.close()
+            conn.close()
+
+
+    @staticmethod
+    def create_award(db: db, award: AwardWinner):
+        try:
+            conn = db.get_connection()
+            cursor = conn.cursor()
+            query = """
+                    INSERT INTO award_winners (tournament_id, award_id, shared, player_id, team_id)
+                    VALUES (%s, %s, %s, %s, %s)
+                    """
+            cursor.execute(query, (award.tournament_id, award.award_id, award.shared, award.player_id, award.team_id))
+            conn.commit()
+
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+        finally:
+            cursor.close()
+            conn.close()
+
+
+    @staticmethod
+    def update_award(db: db, award: AwardWinner):
+        try:
+            conn = db.get_connection()
+            cursor = conn.cursor()
+            query = """
+                    UPDATE award_winners
+                    SET player_id = %s, team_id = %s
+                    WHERE tournament_id = %s AND award_id = %s
+                    """
+            cursor.execute(query, (award.player_id, award.team_id, award.tournament_id, award.award_id))
+            conn.commit()
 
         except mysql.connector.Error as err:
             print(f"Error: {err}")
@@ -88,44 +145,16 @@ class AwardDAO:
             conn.close()
 
     @staticmethod
-    def get_award_winner(db: db, tournament_id: str, award_id: str) -> AwardWinner:
+    def delete_award(db: db, tournament_id: str, award_id: str, player_id: str):
         try:
             conn = db.get_connection()
-            query = """
-                    SELECT tournament_id, award_id, shared, player_id, team_id
-                    FROM award_winners WHERE tournament_id = %s AND award_id = %s
-                """
-
             cursor = conn.cursor()
-            cursor.execute(query, (tournament_id, award_id))
-
-            result = cursor.fetchone()
-            return AwardWinner(*result)
-
-        except mysql.connector.Error as err:
-            print(f"Error: {err}")
-        finally:
-            cursor.close()
-            conn.close()
-
-    @staticmethod
-    def get_tournament_awards(db: db, tournament_id: str):
-        try:
-            conn = db.get_connection()
             query = """
-                SELECT player_id, given_name, family_name, award_name
-                FROM award_winners
-                LEFT JOIN players USING (player_id)
-                LEFT JOIN awards USING (award_id)
-                WHERE tournament_id = %s
-                """
-
-            cursor = conn.cursor()
-            cursor.execute(query, (tournament_id,))
-
-            result = cursor.fetchall()
-            return [Award(*result) for result in result]
-
+                    DELETE FROM award_winners
+                    WHERE tournament_id = %s AND award_id = %s AND player_id = %s
+                    """
+            cursor.execute(query, (tournament_id, award_id, player_id))
+            conn.commit()
         except mysql.connector.Error as err:
             print(f"Error: {err}")
         finally:

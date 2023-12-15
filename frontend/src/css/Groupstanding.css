@@ -1,4 +1,5 @@
 .table {
+    font-size: 1.5em;
     width: 30%;
     margin: 0 auto;
     border-collapse: collapse;
@@ -15,8 +16,8 @@
 }
 
 .table th {
-    background-color: lightblue;
-    color: #333;
+    background-color: #282c34;
+    color: white;
 }
 
 .table tr:nth-child(even) {
