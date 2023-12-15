@@ -2,7 +2,6 @@ from db.db import db
 from dataclasses import dataclass
 import mysql.connector
 from mysql.connector import errorcode
-from typing import List
 
 
 @dataclass
@@ -121,7 +120,7 @@ class MatchDAO():
             connection.close()
 
     @staticmethod
-    def get_all_matches(db : db) -> List[Match]:
+    def get_all_matches(db : db) -> list[Match]:
         try:
             matches = []
             connection = db.get_connection()
@@ -240,7 +239,7 @@ class MatchDAO():
             connection.close()
 
     @staticmethod
-    def get_groupstage_matches(db : db, tournament_id: str, group_stage: bool) -> List[Match]:
+    def get_groupstage_matches(db : db, tournament_id: str, group_stage: bool) -> list[Match]:
         matches = []
         try:
             connection = db.get_connection()
@@ -269,7 +268,7 @@ class MatchDAO():
             connection.close()
     
     @staticmethod
-    def get_knockoutstage_matches(db : db, tournament_id: str, knockout_stage: bool) -> List[Match]:
+    def get_knockoutstage_matches(db : db, tournament_id: str, knockout_stage: bool) -> list[Match]:
         matches = []
         try:
             connection = db.get_connection()
@@ -298,7 +297,87 @@ class MatchDAO():
             connection.close()
 
     @staticmethod
-    def get_hometeam_matches(db : db, tournament_id: str,home_team_id : str) -> List[Match]:
+    def get_tournament_stadiums(db: db, tournament_id: str) -> list[str]:
+        stadiums = []
+        try:
+            connection = db.get_connection()
+            query = """
+                    SELECT DISTINCT stadium_name 
+                    FROM matches LEFT JOIN stadiums 
+                    USING(stadium_id)
+                    WHERE tournament_id = %s
+                    """
+            cursor = connection.cursor()
+            cursor.execute(query, (tournament_id,))
+            results = cursor.fetchall()
+            if results:
+                for result in results:
+                    stadiums.append(result[0])
+                return stadiums
+            else:
+                return None
+        
+        except mysql.connector.Error as error:
+            connection.rollback()
+            print("MySQL Error:", error)
+        finally:
+            connection.close()
+            connection.close()
+
+    @staticmethod
+    def get_tournament_hometeams(db : db, tournament_id: str) -> list[dict]:
+        teams = []
+        try: 
+            conn = db.get_connection()
+            cursor = conn.cursor()
+            query = """
+                    SELECT team_name, home_team_id 
+                    FROM matches LEFT JOIN teams 
+                    ON home_team_id = team_id 
+                    WHERE tournament_id = %s
+                    """
+            cursor.execute(query, (tournament_id,))
+            rows = cursor.fetchall()
+            cursor.close()
+            conn.close()
+            for row in rows:
+                teams.append({"team_name": row[0], "team_id": row[1]})
+            return teams
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+            conn.rollback()
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
+    def get_tournament_awayteams(db : db, tournament_id: str) -> list[dict]:
+        teams = []
+        try: 
+            conn = db.get_connection()
+            cursor = conn.cursor()
+            query = """
+                    SELECT team_name, away_team_id 
+                    FROM matches LEFT JOIN teams 
+                    ON away_team_id = team_id 
+                    WHERE tournament_id = %s
+                    """
+            cursor.execute(query, (tournament_id,))
+            rows = cursor.fetchall()
+            cursor.close()
+            conn.close()
+            for row in rows:
+                teams.append({"team_name": row[0], "team_id": row[1]})
+            return teams
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+            conn.rollback()
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
+    def get_hometeam_matches(db : db, tournament_id: str,home_team_id : str) -> list[Match]:
         matches = []
         try:
             connection = db.get_connection()
@@ -327,7 +406,7 @@ class MatchDAO():
             connection.close()
 
     @staticmethod
-    def get_awayteam_matches(db : db, tournament_id: str, away_team_id : str) -> List[Match]:
+    def get_awayteam_matches(db : db, tournament_id: str, away_team_id : str) -> list[Match]:
         matches = []
         try:
             connection = db.get_connection()

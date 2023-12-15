@@ -299,5 +299,21 @@ def create_server(db):
     def get_group_names(tournament_id: str, stage_name: str):
         groups = GroupStandingDAO.get_all_group_names(db, tournament_id, stage_name)
         return flask.jsonify(groups)
+    
+    @app.route('/stadiums/<tournament_id>', methods=['GET'])
+    def get_stadiums(tournament_id: str):
+        stadiums = MatchDAO.get_tournament_stadiums(db, tournament_id)
+        return flask.jsonify(stadiums)
+    
+    @app.route('/tournament_home_teams/<tournament_id>', methods=['GET'])
+    def get_tournament_home_teams(tournament_id: str):
+        home_teams = MatchDAO.get_tournament_hometeams(db, tournament_id)
+        return flask.jsonify(home_teams)
 
+    @app.route('/tournament_away_teams/<tournament_id>', methods=['GET'])
+    def get_tournament_away_teams(tournament_id: str):
+        away_teams = MatchDAO.get_tournament_awayteams(db, tournament_id)
+        return flask.jsonify(away_teams)
+    
     return app
+

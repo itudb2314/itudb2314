@@ -177,6 +177,7 @@ class TournamentDAO():
             cursor.close()
             connection.close()
 
+
     @staticmethod
     def update_tournament(db, tournament: Tournament) -> Tournament:
         try:

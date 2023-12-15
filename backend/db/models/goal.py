@@ -2,7 +2,6 @@ from db.db import db
 from dataclasses import dataclass
 import mysql.connector
 from mysql.connector import errorcode
-from typing import List
 
 
 @dataclass
@@ -78,7 +77,7 @@ class GoalDAO():
             connection.close()
 
     @staticmethod
-    def get_all_goals(db: db) -> List[Goal]:
+    def get_all_goals(db: db) -> list[Goal]:
         goals = []
         try:
             connection = db.get_connection()
@@ -129,7 +128,7 @@ class GoalDAO():
             connection.close()
 
     @staticmethod
-    def get_match_goals(db: db, match_id: str) -> List[Goal]:
+    def get_match_goals(db: db, match_id: str) -> list[Goal]:
         goals = []
         try:
             connection = db.get_connection()
@@ -160,7 +159,7 @@ class GoalDAO():
             connection.close()
 
     @staticmethod
-    def get_team_goals(db: db, tournament_id: str, team_id: str) -> List[Goal]:
+    def get_team_goals(db: db, tournament_id: str, team_id: str) -> list[Goal]:
         goals = []
         try:
             connection = db.get_connection()
@@ -185,7 +184,7 @@ class GoalDAO():
             connection.close()
 
     @staticmethod
-    def get_player_goals(db: db, tournament_id: str, player_id: str) -> List[Goal]:
+    def get_player_goals(db: db, tournament_id: str, player_id: str) -> list[Goal]:
         goals = []
         try:
             connection = db.get_connection()
