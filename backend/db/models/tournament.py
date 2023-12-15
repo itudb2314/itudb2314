@@ -118,14 +118,44 @@ class TournamentDAO():
             connection = db.get_connection()
             query = """
                     SELECT
-                        CASE WHEN group_stage THEN "group stage" ELSE NULL END AS group_stage,
-                        CASE WHEN second_group_stage THEN "second group stage" ELSE NULL END AS second_group_stage,
-                        CASE WHEN final_round THEN "final round" ELSE NULL END AS final_round,
-                        CASE WHEN round_of_16 THEN "round of 16" ELSE NULL END AS round_of_16,
-                        CASE WHEN quarter_finals THEN "quarter finals" ELSE NULL END AS quarter_finals,
-                        CASE WHEN semi_finals THEN "semi finals" ELSE NULL END AS semi_finals,
-                        CASE WHEN third_place_match THEN "third place match" ELSE NULL END AS third_place_match,
-                        CASE WHEN final THEN "final" ELSE NULL END AS final
+                        CASE 
+                            WHEN group_stage AND tournament_id NOT IN('WC-1950', 'WC-1974', 'WC-1978', 'WC-1982') 
+                            THEN "group stage" 
+                            WHEN group_stage AND tournament_id = 'WC-1950' 
+                            THEN "first round"
+                            WHEN group_stage AND tournament_id IN('WC-1974', 'WC-1978', 'WC-1982') 
+                            THEN "first group stage" 
+                            ELSE NULL 
+                        END AS group_stage_2,
+                        CASE 
+                            WHEN second_group_stage 
+                            THEN "second group stage" 
+                            ELSE NULL 
+                        END AS second_group_stage,
+                        CASE 
+                            WHEN final_round 
+                            THEN "final round" ELSE NULL 
+                        END AS final_round,
+                        CASE 
+                            WHEN round_of_16 
+                            THEN "round of 16" ELSE NULL 
+                        END AS round_of_16,
+                        CASE 
+                            WHEN quarter_finals 
+                            THEN "quarter finals" ELSE NULL 
+                        END AS quarter_finals,
+                        CASE 
+                            WHEN semi_finals 
+                            THEN "semi finals" ELSE NULL 
+                        END AS semi_finals,
+                        CASE 
+                            WHEN third_place_match 
+                            THEN "third place match" ELSE NULL 
+                        END AS third_place_match,
+                        CASE 
+                            WHEN final 
+                            THEN "final" ELSE NULL 
+                        END AS final
                     FROM tournaments
                     WHERE tournament_id = %s
                 """
