@@ -331,7 +331,7 @@ class MatchDAO():
             conn = db.get_connection()
             cursor = conn.cursor()
             query = """
-                    SELECT team_name, home_team_id 
+                    SELECT DISTINCT team_name, home_team_id 
                     FROM matches LEFT JOIN teams 
                     ON home_team_id = team_id 
                     WHERE tournament_id = %s
@@ -357,7 +357,7 @@ class MatchDAO():
             conn = db.get_connection()
             cursor = conn.cursor()
             query = """
-                    SELECT team_name, away_team_id 
+                    SELECT DISTINCT team_name, away_team_id 
                     FROM matches LEFT JOIN teams 
                     ON away_team_id = team_id 
                     WHERE tournament_id = %s

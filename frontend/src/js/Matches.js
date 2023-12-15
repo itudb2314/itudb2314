@@ -312,11 +312,11 @@ export default function Matches() {
                                 </select>
                             )}
                             <label> Score </label>
-                            <input type="text" name="score" placeholder='HomeTeamScore - AwayTeamScore' required/>
+                            <input type="text" name="score" pattern="\b\d{1,2}-\d{1,2}\b" placeholder='HomeTeamScore - AwayTeamScore' required/>
                             <label> Home Team Score </label>
-                            <input type="number" name="home_team_score" required/>
+                            <input type="number" min="0" step="1" name="home_team_score" required/>
                             <label> Away Team Score </label>
-                            <input type="number" name="away_team_score" required/>
+                            <input type="number" min="0" step="1" name="away_team_score" required/>
                             <label> Home Team Score Margin </label>
                             <input type="number" name="home_team_score_margin" placeholder='HomeTeamScoreMargin = HomeTeamScore - AwayTeamScore' required/>
                             <label> Away Team Score Margin </label>
@@ -332,11 +332,11 @@ export default function Matches() {
                             <input type="radio" id="false" name="away_team_win" value="0" required/>
                             <label for="false" className='radio-label'> False </label> <br/>
                             <label> Score Penalties </label>
-                            <input type="text" name="score_penalties" placeholder='HomeTeam - AwayTeam' required/>
+                            <input type="text" name="score_penalties" pattern="\b\d{1,2}-\d{1,2}\b" placeholder='HomeTeam - AwayTeam' required/>
                             <label> Home Team Score Penalties </label>
-                            <input type="number" name="home_team_score_penalties" required/>
+                            <input type="number" min="0" step="1" name="home_team_score_penalties" required/>
                             <label> Away Team Score Penalties </label>
-                            <input type="number" name="away_team_score_penalties" required/>
+                            <input type="number" min="0" step="1" name="away_team_score_penalties" required/>
                             <label> Result </label>
                             <input type="text" name="result" placeholder='HomeTeamWin or AwayTeamWin or Draw' required/>
                             <label> Home Team Win </label><br/>
