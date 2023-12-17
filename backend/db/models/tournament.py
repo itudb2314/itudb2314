@@ -136,8 +136,8 @@ class TournamentDAO():
             cursor.execute(query, (
                 tournament.tournament_name,
                 tournament.year,
-                datetime.strptime(tournament.start_date, "%a, %d %b %Y %H:%M:%S %Z").strftime("%Y-%m-%d"),
-                datetime.strptime(tournament.end_date, "%a, %d %b %Y %H:%M:%S %Z").strftime("%Y-%m-%d"),
+                tournament.start_date,
+                tournament.end_date,
                 tournament.host_country,
                 tournament.winner,
                 tournament.host_won,

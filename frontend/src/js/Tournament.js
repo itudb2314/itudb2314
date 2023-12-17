@@ -241,6 +241,17 @@ function Tournament({t, deleteHandle}) {
         newTournament.winner = event.target.winner.value;
         newTournament.host_country = event.target.host_country.value;
         newTournament.year = event.target.year.value;
+        newTournament.start_date = event.target.start_date.value;
+        newTournament.end_date = event.target.end_date.value;
+        newTournament.count_teams = event.target.count_teams.value;
+        newTournament.group_stage = event.target.group_stage.checked;
+        newTournament.second_group_stage = event.target.second_group_stage.checked;
+        newTournament.final_round = event.target.final_round.checked;
+        newTournament.round_of_16 = event.target.round_of_16.checked;
+        newTournament.quarter_finals = event.target.quarter_finals.checked;
+        newTournament.semi_finals = event.target.semi_finals.checked;
+        newTournament.third_place_match = event.target.third_place_match.checked;
+        newTournament.final = event.target.final.checked;
 
         fetch('http://localhost:5000/tournaments', {
             method: 'PUT',
@@ -266,6 +277,10 @@ function Tournament({t, deleteHandle}) {
         history.push(`/tournaments/${tournament.tournament_id}`);
     }
 
+    function toDateFormat(date) {
+        return new Date(date).toISOString().slice(0, 10);
+    }
+
     return (
         <div className="tournament">
             <div className="tournament-details">
@@ -284,26 +299,126 @@ function Tournament({t, deleteHandle}) {
                         <input
                             type="text"
                             id="tournament_name"
+                            placeholder={tournament.tournament_name}
                             defaultValue={tournament.tournament_name}
                         />
                         <label htmlFor="winner">Winner</label>
                         <input
                             type="text"
                             id="winner"
+                            placeholder={tournament.winner}
                             defaultValue={tournament.winner}
                         />
                         <label htmlFor="host_country">Host Country</label>
                         <input
                             type="text"
                             id="host_country"
+                            placeholder={tournament.host_country}
                             defaultValue={tournament.host_country}
                         />
-                        <label htmlFor="year">Label</label>
+                        <label htmlFor="year">Year</label>
                         <input
                             type="text"
                             id="year"
+                            placeholder={tournament.year}
                             defaultValue={tournament.year}
                         />
+                        <label htmlFor="start_date">Start Date</label>
+                        <input
+                            type="date"
+                            id="start_date"
+                            placeholder={tournament.start_date}
+                            defaultValue={toDateFormat(tournament.start_date)}
+                        />
+                        <label htmlFor="end_date">End Date</label>
+                        <input
+                            type="date"
+                            id="end_date"
+                            placeholder={tournament.end_date}
+                            defaultValue={toDateFormat(tournament.end_date)}
+                        />
+                        <label htmlFor="count_teams">Count Teams</label>
+                        <input
+                            type="number"
+                            id="count_teams"
+                            placeholder={tournament.count_teams}
+                            defaultValue={tournament.count_teams}
+                        />
+                        <div className="checkboxes">
+                            <div>
+                                <label htmlFor="group_stage">Group Stage</label>
+                                <input
+                                    type="checkbox"
+                                    id="group_stage"
+                                    placeholder={tournament.group_stage}
+                                    defaultChecked={tournament.group_stage === 1}
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="second_group_stage">Second Group Stage</label>
+                                <input
+                                    type="checkbox"
+                                    id="second_group_stage"
+                                    placeholder={tournament.second_group_stage}
+                                    defaultChecked={tournament.second_group_stage === 1}
+                                />
+                            </div>
+
+                            <div>
+                                <label htmlFor="final_round">Final Round</label>
+                                <input
+                                    type="checkbox"
+                                    id="final_round"
+                                    placeholder={tournament.final_round}
+                                    defaultChecked={tournament.final_round === 1}
+                                />
+                            </div>
+
+                            <div>
+                                <label htmlFor="round_of_16">Round of 16</label>
+                                <input
+                                    type="checkbox"
+                                    id="round_of_16"
+                                    placeholder={tournament.round_of_16}
+                                    defaultChecked={tournament.round_of_16 === 1}
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="quarter_finals">Quarter Finals</label>
+                                <input
+                                    type="checkbox"
+                                    id="quarter_finals"
+                                    placeholder={tournament.quarter_finals}
+                                    defaultChecked={tournament.quarter_finals === 1}
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="semi_finals">Semi Finals</label>
+                                <input
+                                    type="checkbox"
+                                    id="semi_finals"
+                                    placeholder={tournament.semi_finals}
+                                    defaultChecked={tournament.semi_finals === 1}
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="third_place_match">Third Place Match</label>
+                                <input
+                                    type="checkbox"
+                                    id="third_place_match"
+                                    placeholder={tournament.third_place_match}
+                                    defaultChecked={tournament.third_place_match === 1}
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="third_place_match">Final Match</label>
+                                <input
+                                    type="checkbox"
+                                    id="final"
+                                    defaultChecked={tournament.final === 1}
+                                />
+                            </div>
+                        </div>
                         <button className="save-button" type="submit">Save</button>
                     </form>
                 )}
