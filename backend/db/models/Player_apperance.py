@@ -16,13 +16,32 @@ class Player_apperance():
     starter: bool
     substitute: bool
 
+@dataclass
+class Joined_Player_apperance():
+    tournament_id: str
+    match_id: str
+    team_id: str
+    home_team: bool
+    away_team: bool
+    player_id: str
+    shirt_number: int
+    position_name: str
+    position_code: str
+    starter: bool
+    substitute: bool
+    match_name: str
+    family_name: str
+    given_name: str
+    team_name: str
+    tournament_name: str
+
 class Player_apperanceDAO():
     @staticmethod
     def create_player_apperance(db: db, player_apperance: Player_apperance) -> None:
         try:
             connection = db.get_connection()
             query = """
-                INSERT INTO player_apperances (
+                INSERT INTO player_appearances (
                     tournament_id,
                     match_id,
                     team_id,
@@ -64,7 +83,7 @@ class Player_apperanceDAO():
         try:
             connection = db.get_connection()
             query = """
-                SELECT * FROM player_apperances WHERE tournament_id = %s AND match_id = %s AND team_id = %s
+                SELECT * FROM player_appearances WHERE tournament_id = %s AND match_id = %s AND team_id = %s
             """
             cursor = connection.cursor()
             cursor.execute(query, (tournament_id, match_id, team_id))
@@ -84,7 +103,7 @@ class Player_apperanceDAO():
         try:
             connection = db.get_connection()
             query = """
-                SELECT * FROM player_apperances WHERE tournament_id = %s AND match_id = %s AND team_id = %s AND player_id = %s
+                SELECT * FROM player_appearances WHERE tournament_id = %s AND match_id = %s AND team_id = %s AND player_id = %s
             """
             cursor = connection.cursor()
             cursor.execute(query, (tournament_id, match_id, team_id, player_id))
@@ -100,18 +119,40 @@ class Player_apperanceDAO():
             connection.close()
 
     @staticmethod
-    def get_all_player_apperances(db: db) -> list:
+    def get_all_player_appearances(db: db) -> list:
         try:
             connection = db.get_connection()
             query = """
-                SELECT * FROM player_apperances
+                SELECT 
+                    pa.tournament_id, 
+                    pa.match_id, 
+                    pa.team_id, 
+                    pa.home_team, 
+                    pa.away_team,
+                   pa.player_id, 
+                   pa.shirt_number, 
+                   pa.position_name, 
+                   pa.position_code,
+                   pa.starter, 
+                   pa.substitute, 
+                   m.match_name,
+                   p.family_name, 
+                   p.given_name, 
+                   t.team_name, 
+                   tr.tournament_name
+                FROM player_appearances pa
+                JOIN players p ON pa.player_id = p.player_id
+                JOIN teams t ON pa.team_id = t.team_id
+                JOIN tournaments tr ON pa.tournament_id = tr.tournament_id
+                JOIN matches m ON pa.match_id = m.match_id
+                LIMIT 100
             """
             cursor = connection.cursor()
             cursor.execute(query)
             results = cursor.fetchall()
             if results is None:
                 return None
-            return [Player_apperance(*result) for result in results]
+            return [Joined_Player_apperance(*result) for result in results]
         except mysql.connector.Error as err:
             print(f"Error: {err}")
             connection.rollback()
@@ -119,12 +160,13 @@ class Player_apperanceDAO():
             cursor.close()
             connection.close()
 
+
     @staticmethod
     def update_player_apperance(db: db, player_apperance: Player_apperance) -> None:
         try:
             connection = db.get_connection()
             query = """
-                UPDATE player_apperances SET
+                UPDATE player_appearances SET
                     shirt_number = %s,
                     position_name = %s,
                     position_code = %s,
@@ -158,7 +200,7 @@ class Player_apperanceDAO():
         try:
             connection = db.get_connection()
             query = """
-                DELETE FROM player_apperances WHERE tournament_id = %s AND match_id = %s AND team_id = %s AND player_id = %s
+                DELETE FROM player_appearances WHERE tournament_id = %s AND match_id = %s AND team_id = %s AND player_id = %s
             """
             cursor = connection.cursor()
             cursor.execute(query, (tournament_id, match_id, team_id, player_id))

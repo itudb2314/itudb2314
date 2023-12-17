@@ -14,6 +14,7 @@ from db.models.confederations import ConfederationDAO
 from db.models.bookings import BookingsDOA
 from db.models.Player import PlayerDAO
 from db.models.awards import AwardDAO
+from db.models.Player_apperance import Player_apperanceDAO
 
 
 def create_server(db):
@@ -321,6 +322,27 @@ def create_server(db):
     def get_tournament_away_teams(tournament_id: str):
         away_teams = MatchDAO.get_tournament_awayteams(db, tournament_id)
         return flask.jsonify(away_teams)
+    
+    @app.route('/player_appearances', methods=['GET'])
+    def get_all_player_appearances():
+        appearances = Player_apperanceDAO.get_all_player_appearances(db)
+        return flask.jsonify(appearances)
+    
+    @app.route('/player_appearances', methods=['DELETE'])
+    def delete_player_appearance():
+        tournament_id = flask.request.get_json()['tournament_id']
+        match_id = flask.request.get_json()['match_id']
+        team_id = flask.request.get_json()['team_id']
+        player_id = flask.request.get_json()['player_id']
+        Player_apperanceDAO.delete_player_apperance(db, tournament_id, match_id, team_id, player_id)
+        return flask.jsonify({})
+    
+    @app.route('/player_appearances', methods=['PUT'])
+    def update_player_appearance():
+        player_appearance = flask.request.get_json()['player_appearance']
+        player_appearance = make_dataclass('Player_apperance', player_appearance.keys())(**player_appearance)
+        Player_apperanceDAO.update_player_apperance(db, player_appearance)
+        return flask.jsonify({})
     
     return app
 
