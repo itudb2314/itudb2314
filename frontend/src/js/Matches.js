@@ -213,7 +213,7 @@ export default function Matches() {
                         <h2>Insert Match</h2> 
                         <form onSubmit={handleInsertMatch}>
                             <label for="Tournament"> Tournament ID </label> <br/>
-                            <select id="Tournament" name="Tournament" value={chosentournament} onChange={handleTournamentChange}>
+                            <select id="Tournament" className='input-text-select' name="Tournament" value={chosentournament} onChange={handleTournamentChange}>
                                 <option value='NULL' disabled>select</option>
                                 <option value="WC-1930">World Cup 1930</option>
                                 <option value="WC-1934">World Cup 1934</option>
@@ -239,9 +239,9 @@ export default function Matches() {
                                 <option value="WC-2022">World Cup 2022</option>
                             </select>
                             <label for="matchid"> Match ID </label>
-                            <input id="matchid" type="text" name="match_id" pattern="^M-\d{4}-\d{2,}$" placeholder='M-YEAR-MATCHNUMBER' required/>
+                            <input id="matchid" type="text" className='input-text-select' name="match_id" pattern="^M-\d{4}-\d{2,}$" placeholder='M-YEAR-MATCHNUMBER' required/>
                             <label for="match_name"> Match Name </label>
-                            <input id= "match_name" type="text" name="match_name" placeholder='HOMETEAM vs AWAYTEAM' required/>
+                            <input id= "match_name" type="text" className='input-text-select' name="match_name" placeholder='HOMETEAM vs AWAYTEAM' required/>
                             {Array.isArray(tournamentstages) && <label for="stage"> Stage Name </label>}
                             {Array.isArray(tournamentstages) && (
                                 <select id="stage" name="stage" value={chosenstage} onChange={handleStageChange}>
@@ -253,7 +253,7 @@ export default function Matches() {
                             )}
                             {Array.isArray(groupnames) && <label for="group_name"> Group Name </label>}
                             {Array.isArray(groupnames) && (
-                                <select id="group_name" name="group_name" required>
+                                <select id="group_name" name="group_name" className='input-text-select' required>
                                     <option value='NULL' disabled>select</option>
                                     {groupnames.map((groupname) => (
                                         <option value={groupname}>{groupname}</option>
@@ -281,12 +281,12 @@ export default function Matches() {
                             <input type="radio" id="false" name="away_team_win" value="0" required/>
                             <label for="false" className='radio-label'> False </label> <br/>
                             <label> Match Date </label>
-                            <input type="text" name="match_date" pattern="\d{4}-\d{2}-\d{2}" placeholder='YYYY-MM-DD' required/>
+                            <input type="text" name="match_date" className='input-text-select' pattern="\d{4}-\d{2}-\d{2}" placeholder='YYYY-MM-DD' required/>
                             <label> Match Time </label>
                             <input type="time" name="match_time" placeholder='HH:MM' required/>
                             <label> Stadium </label>
                             {Array.isArray(stadiums) && (
-                                <select id="stadium_name" name="stadium_name" required>
+                                <select id="stadium_name" className='input-text-select' name="stadium_name" required>
                                     <option value='NULL' disabled>select</option>
                                     {stadiums.map((stadium) => (
                                         <option value={stadium}>{stadium}</option>
@@ -295,7 +295,7 @@ export default function Matches() {
                             )}
                             <label> Home Team </label>
                             {Array.isArray(hometeams) && (
-                                <select id="hometeam_name" name="hometeam_name" required>
+                                <select id="hometeam_name" className='input-text-select' name="hometeam_name" required>
                                     <option value='NULL' disabled>select</option>
                                     {hometeams.map((hometeam) => (
                                         <option value={hometeam["team_id"]}>{hometeam["team_name"]}</option>
@@ -304,7 +304,7 @@ export default function Matches() {
                             )}
                             <label> Away Team </label>
                             {Array.isArray(awayteams) && (
-                                <select id="awayteam_name" name="hometeam_name" required>
+                                <select id="awayteam_name"className='input-text-select' name="hometeam_name" required>
                                     <option value='NULL' disabled>select</option>
                                     {awayteams.map((awayteam) => (
                                         <option value={awayteam["team_id"]}>{awayteam["team_name"]}</option>
@@ -312,15 +312,15 @@ export default function Matches() {
                                 </select>
                             )}
                             <label> Score </label>
-                            <input type="text" name="score" pattern="\b\d{1,2}-\d{1,2}\b" placeholder='HomeTeamScore - AwayTeamScore' required/>
+                            <input type="text" name="score" pattern="\b\d{1,2}-\d{1,2}\b" placeholder='HomeTeamScore - AwayTeamScore' className='input-text-select' required/>
                             <label> Home Team Score </label>
-                            <input type="number" min="0" step="1" name="home_team_score" required/>
+                            <input type="number" min="0" step="1" className='input-text-select' name="home_team_score" required/>
                             <label> Away Team Score </label>
-                            <input type="number" min="0" step="1" name="away_team_score" required/>
+                            <input type="number" min="0" step="1" className='input-text-select' name="away_team_score" required/>
                             <label> Home Team Score Margin </label>
-                            <input type="number" name="home_team_score_margin" placeholder='HomeTeamScoreMargin = HomeTeamScore - AwayTeamScore' required/>
+                            <input type="number" name="home_team_score_margin" className='input-text-select' placeholder='HomeTeamScoreMargin = HomeTeamScore - AwayTeamScore' required/>
                             <label> Away Team Score Margin </label>
-                            <input type="number" name="away_team_score_margin" placeholder='AwayTeamScoreMargin = AwayTeamScore - HomeTeamScore' required/>
+                            <input type="number" name="away_team_score_margin" className='input-text-select' placeholder='AwayTeamScoreMargin = AwayTeamScore - HomeTeamScore' required/>
                             <label> Extra Time </label><br/>
                             <input type="radio" id="true" name="away_team_win" value="1" required/>
                             <label for="true" className='radio-label'> True </label>
@@ -332,13 +332,13 @@ export default function Matches() {
                             <input type="radio" id="false" name="away_team_win" value="0" required/>
                             <label for="false" className='radio-label'> False </label> <br/>
                             <label> Score Penalties </label>
-                            <input type="text" name="score_penalties" pattern="\b\d{1,2}-\d{1,2}\b" placeholder='HomeTeam - AwayTeam' required/>
+                            <input type="text" name="score_penalties" className='input-text-select' pattern="\b\d{1,2}-\d{1,2}\b" placeholder='HomeTeam - AwayTeam' required/>
                             <label> Home Team Score Penalties </label>
-                            <input type="number" min="0" step="1" name="home_team_score_penalties" required/>
+                            <input type="number" min="0" step="1" className='input-text-select' name="home_team_score_penalties" required/>
                             <label> Away Team Score Penalties </label>
-                            <input type="number" min="0" step="1" name="away_team_score_penalties" required/>
+                            <input type="number" min="0" step="1" className='input-text-select' name="away_team_score_penalties" required/>
                             <label> Result </label>
-                            <input type="text" name="result" placeholder='HomeTeamWin or AwayTeamWin or Draw' required/>
+                            <input type="text" name="result" className='input-text-select' placeholder='HomeTeamWin or AwayTeamWin or Draw' required/>
                             <label> Home Team Win </label><br/>
                             <input type="radio" id="true" name="away_team_win" value="1" required/>
                             <label for="true" className='radio-label'> True </label>
