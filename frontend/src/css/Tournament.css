@@ -5,7 +5,7 @@
 }
 
 .tournament {
-    color: black;
+    color: white;
     width: 80%;
     display: flex;
     flex-direction: row;
@@ -15,7 +15,7 @@
 
 .tournament-details {
     font-size: 1.5rem;
-    color: white;
+    color: black;
     width: 100%;
     border: 2px solid black;
     border-radius: 10px;
@@ -24,7 +24,7 @@
     padding: 5px 0 0 10px;
     align-content: flex-start;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-    background-color: #282c34;
+    background-color: white;
     align-items: flex-start;
     justify-content: flex-start;
     text-align: left;
@@ -38,6 +38,13 @@
     padding-right: 20px;
     display: flex;
     flex-direction: column;
+    width: 50%;
+}
+
+.tournament-details form label{
+    font-size: 20px;
+    font-weight: bold;
+    margin: 10px 0;
 }
 
 .tournament-details form input {
@@ -48,4 +55,20 @@
     height: 1.5rem;
     border-radius: 5px;
     border: 1px solid black;
+}
+
+.checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; /* Adjust the gap as needed */
+}
+
+/* Optionally, you can add styles to align labels and checkboxes */
+.checkboxes  div {
+    display: flex;
+    align-items: center;
+}
+
+.checkboxes label {
+    margin-right: 5px; /* Adjust the margin as needed */
 }

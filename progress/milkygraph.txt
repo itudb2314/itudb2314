@@ -7,3 +7,11 @@ Week 7:
     Added additional functionalities such as update and delete.
 Week 8:
     Complete all operations on Touranemnts page.
+
+Week 9-11:
+    Wrote the backend for the awards page.
+    Added a new page for awards in frontend.
+    Added additional functionalities such as update and delete to awards page.
+    Updated CSS for TournamentDetails page.
+    Improved update functionalities for Tournaments page.
+    Added Group Standings and Awards to the TournamentDetails page.

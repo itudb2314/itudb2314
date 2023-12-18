@@ -1,3 +1,6 @@
+import base64
+import os
+
 import flask
 from flask_cors import CORS
 from dataclasses import make_dataclass
@@ -39,6 +42,7 @@ def create_server(db):
     def update_tournament():
         tournament = flask.request.get_json()["newTournament"]
         tournament = make_dataclass('Tournament', tournament.keys())(**tournament)
+        print(tournament)
         tournament = TournamentDAO.update_tournament(db, tournament)
         return flask.jsonify(tournament)
 
@@ -216,7 +220,17 @@ def create_server(db):
         teams = make_dataclass('Team', teams.keys())(**teams)
         TeamsDAO.create_team(db, teams)
         return flask.jsonify({})
-    
+
+
+    @app.route('/tournaments/teams/images', methods=['PUT'])
+    def add_image():
+        team_id = flask.request.get_json()['team_id']
+        team_image = flask.request.get_json()['team_image']
+        team_image = base64.b64decode(team_image.encode('utf-8'))
+
+        TeamsDAO.add_image(db, team_id, team_image)
+
+        return flask.jsonify({})
 
     @app.route('/confederations', methods=['GET'])
     def get_confederation_names():
