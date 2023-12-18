@@ -6,6 +6,7 @@ export default function Appearances() {
     const [appearances, setAppearances] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
     const [deleteTrigger, setDeleteTrigger] = useState(false);
+    const [editTrigger, setEditTrigger] = useState(false);
     const [addTrigger, setAddTrigger] = useState(false);
     const [isEditing, setIsEditing] = useState(null);
 
@@ -14,7 +15,7 @@ export default function Appearances() {
             .then(response => response.json())
             .then(data => setAppearances(data))
             .catch(error => console.error("Error fetching data:", error));
-    }, [deleteTrigger, addTrigger]);
+    }, [deleteTrigger, addTrigger, editTrigger]);
 
     function searchAppearance(e) {
         if (e.target.value === "") {
@@ -81,8 +82,10 @@ export default function Appearances() {
         const shirt_number = e.target.elements.shirt_number.value;
         const position_name = e.target.elements.position_name.value;
         const position_code = e.target.elements.position_code.value;
-        const starter = e.target.elements.starter.value;
-        const substitute = e.target.elements.substitute.value;
+        const starter = e.target.elements.starter.checked;
+        const substitute = e.target.elements.substitute.checked;
+        const home_team = e.target.elements.home.checked;
+        const away_team = e.target.elements.away.checked;
 
         fetch("http://localhost:5000/player_appearances", {
             method: "PUT",
@@ -100,6 +103,8 @@ export default function Appearances() {
                     position_code,
                     starter,
                     substitute,
+                    home_team,
+                    away_team
                 },
             }),
         })
@@ -114,6 +119,7 @@ export default function Appearances() {
                 ));
                 toggleModal();
                 setIsEditing(null);
+                setEditTrigger(!editTrigger);
             })
             .catch(error => {
                 console.error("Error:", error);
@@ -204,7 +210,7 @@ export default function Appearances() {
                             &times;
                         </span>
                         {!isEditing ? (
-                            <form onSubmit={addAppearance} className='abdullah-edit-form'>
+                            <form onSubmit={(e) => addAppearance(e, isEditing)} className='abdullah-edit-form'>
                                 <label htmlFor="tournament_id">Tournament ID</label>
                                 <input
                                     type="text"
@@ -243,31 +249,27 @@ export default function Appearances() {
                                 />
                                 <button type="submit">Add Appearance</button>
                             </form>) : (
-                            <form onSubmit={saveUpdateAppearance} className='abdullah-edit-form'>
-                                <label htmlFor="tournament_id">Tournament ID</label>
+                            <form onSubmit={(e) => saveUpdateAppearance(e)} className='abdullah-edit-form'>
                                 <input
-                                    type="text"
+                                    type="hidden"
                                     id="tournament_id"
                                     defaultValue={isEditing.tournament_id}
                                     required
                                 />
-                                <label htmlFor="match_id">Match ID</label>
                                 <input
-                                    type="text"
+                                    type="hidden"
                                     id="match_id"
                                     defaultValue={isEditing.match_id}
                                     required
                                 />
-                                <label htmlFor="team_id">Team ID</label>
                                 <input
-                                    type="text"
+                                    type="hidden"
                                     id="team_id"
                                     defaultValue={isEditing.team_id}
                                     required
                                 />
-                                <label htmlFor="player_id">Player ID</label>
                                 <input
-                                    type="text"
+                                    type="hidden"
                                     id="player_id"
                                     defaultValue={isEditing.player_id}
                                     required
@@ -293,20 +295,50 @@ export default function Appearances() {
                                     defaultValue={isEditing.position_code}
                                     required
                                 />
-                                <label htmlFor="starter">Starter</label>
-                                <input
-                                    type="text"
-                                    id="starter"
-                                    defaultValue={isEditing.starter}
-                                    required
-                                />
-                                <label htmlFor="substitute">Substitute</label>
-                                <input
-                                    type="text"
-                                    id="substitute"
-                                    defaultValue={isEditing.substitute}
-                                    required
-                                />
+                                <div className="radiocontainer">
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            id="starter"
+                                            name="playerType"
+                                            defaultChecked={isEditing.starter}
+                                            required
+                                        />
+                                        Starter
+                                    </label>
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            id="substitute"
+                                            name="playerType"
+                                            defaultChecked={isEditing.substitute}
+                                            required
+                                        />
+                                        Substitute
+                                    </label>
+                                </div>
+                                <div className="radiocontainer">
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            id="home"
+                                            name="area"
+                                            defaultChecked={isEditing.home_team}
+                                            required
+                                        />
+                                        home_team
+                                    </label>
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            id="away"
+                                            name="area"
+                                            defaultChecked={isEditing.away_team}
+                                            required
+                                        />
+                                        away_team
+                                    </label>
+                                </div>
                                 <button type="submit">Save</button>
                             </form>
                         )}

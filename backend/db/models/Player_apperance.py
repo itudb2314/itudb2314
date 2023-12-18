@@ -171,7 +171,9 @@ class Player_apperanceDAO():
                     position_name = %s,
                     position_code = %s,
                     starter = %s,
-                    substitute = %s
+                    substitute = %s,
+                    home_team = %s,
+                    away_team = %s
                 WHERE tournament_id = %s AND match_id = %s AND team_id = %s AND player_id = %s
             """
             cursor = connection.cursor()
@@ -181,6 +183,8 @@ class Player_apperanceDAO():
                 player_apperance.position_code,
                 player_apperance.starter,
                 player_apperance.substitute,
+                player_apperance.home_team,
+                player_apperance.away_team,
                 player_apperance.tournament_id,
                 player_apperance.match_id,
                 player_apperance.team_id,
