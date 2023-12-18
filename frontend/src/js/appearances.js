@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import '../css/appearances.css';
-import SearchBar from "./SearchBar";
+//import SearchBar from "./SearchBar";
 
 export default function Appearances() {
     const [appearances, setAppearances] = useState([]);
@@ -9,55 +9,71 @@ export default function Appearances() {
     const [editTrigger, setEditTrigger] = useState(false);
     const [addTrigger, setAddTrigger] = useState(false);
     const [isEditing, setIsEditing] = useState(null);
+    const [tournaments, setTournaments] = useState([])
 
     useEffect(() => {
         fetch("http://localhost:5000/player_appearances")
             .then(response => response.json())
             .then(data => setAppearances(data))
             .catch(error => console.error("Error fetching data:", error));
-    }, [deleteTrigger, addTrigger, editTrigger]);
+    }, [deleteTrigger, editTrigger, addTrigger]);
 
-    function searchAppearance(e) {
-        if (e.target.value === "") {
-            fetch("http://localhost:5000/player_appearances")
-                .then(response => response.json())
-                .then(data => setAppearances(data))
-                .catch(error => console.error("Error fetching data:", error));
-            return
-        }
+    // function searchAppearance(e) {
+    //     if (e.target.value === "") {
+    //         fetch("http://localhost:5000/player_appearances")
+    //             .then(response => response.json())
+    //             .then(data => setAppearances(data))
+    //             .catch(error => console.error("Error fetching data:", error));
+    //         return
+    //     }
 
-        fetch(`http://localhost:5000/player_appearances/${e.target.value}`)
-            .then(response => response.json())
-            .then(data => setAppearances(data))
-            .catch(error => console.error("Error fetching data:", error));
-    }
+    //     fetch(`http://localhost:5000/player_appearances/${e.target.value}`)
+    //         .then(response => response.json())
+    //         .then(data => setAppearances(data))
+    //         .catch(error => console.error("Error fetching data:", error));
+    // }
 
     function addAppearance(e) {
         e.preventDefault();
         const tournament_id = e.target.elements.tournament_id.value;
+        const match_id = e.target.elements.match_id.value;
         const team_id = e.target.elements.team_id.value;
         const player_id = e.target.elements.player_id.value;
         const shirt_number = e.target.elements.shirt_number.value;
         const position_name = e.target.elements.position_name.value;
         const position_code = e.target.elements.position_code.value;
+        const starter = e.target.elements.starter.checked;
+        const substitute = e.target.elements.substitute.checked;
+        const home_team = e.target.elements.home.checked;
+        const away_team = e.target.elements.away.checked;
+
+        const data = {
+            player_appearance: {
+                tournament_id,
+                match_id,
+                team_id,
+                player_id,
+                shirt_number,
+                position_name,
+                position_code,
+                starter,
+                substitute,
+                home_team,
+                away_team
+            }
+        };
 
         fetch("http://localhost:5000/player_appearances", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({
-                tournament_id: tournament_id,
-                team_id: team_id,
-                player_id: player_id,
-                shirt_number: shirt_number,
-                position_name: position_name,
-                position_code: position_code
-            })
+            body: JSON.stringify(data)
         })
             .then(response => response.json())
             .then(result => {
                 console.log("Success:", result);
+                setAddTrigger(!addTrigger);
                 setAppearances([...appearances, result]);
                 toggleModal();
             })
@@ -66,6 +82,15 @@ export default function Appearances() {
                 alert("Error adding data");
             });
         setModalVisible(false);
+    }
+
+
+    function fetchTournaments() {
+        fetch(`http://localhost:5000/tournaments`)
+            .then(response => response.json())
+            .then(data => {
+                setTournaments(data)
+            });
     }
 
     function updateAppearance(appearance) {
@@ -145,10 +170,6 @@ export default function Appearances() {
             });
     }
 
-    const submitForm = (event, appearance) => {
-        event.preventDefault();
-    };
-
     const toggleModal = () => {
         setModalVisible(!modalVisible);
     };
@@ -202,7 +223,7 @@ export default function Appearances() {
                 </tbody>
             </table>
 
-            <button className={'add-button'} onClick={() => setModalVisible(true)}>+ Add Appearance</button>
+            <button className={'add-button'} onClick={() => { setModalVisible(true); fetchTournaments() }}>+ Add Appearance</button>
             {modalVisible && (
                 <div className="modal">
                     <div className="modal-content">
@@ -210,11 +231,18 @@ export default function Appearances() {
                             &times;
                         </span>
                         {!isEditing ? (
-                            <form onSubmit={(e) => addAppearance(e, isEditing)} className='abdullah-edit-form'>
-                                <label htmlFor="tournament_id">Tournament ID</label>
+                            <form onSubmit={(e) => addAppearance(e)} className='abdullah-edit-form'>
+                                <label htmlFor="tournament_id">Tournament</label>
+                                <select name="tournament_id" id="tournament_id">
+                                    <option>All</option>
+                                    {tournaments.map((tournament) => (
+                                        <option key={tournament.tournament_id} value={tournament.tournament_id}>{tournament.tournament_name}</option>
+                                    ))}
+                                </select>
+                                <label htmlFor="match_id">Match ID</label>
                                 <input
                                     type="text"
-                                    id="tournament_id"
+                                    id="match_id"
                                     required
                                 />
                                 <label htmlFor="team_id">Team ID</label>
@@ -247,6 +275,51 @@ export default function Appearances() {
                                     id="position_code"
                                     required
                                 />
+                                <div className="radiocontainer">
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            id="starter"
+                                            name="playerType"
+                                            defaultChecked={true}
+                                            required
+                                        />
+                                        Starter
+                                    </label>
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            id="substitute"
+                                            name="playerType"
+                                            defaultChecked={false}
+                                            required
+                                        />
+                                        Substitute
+                                    </label>
+                                </div>
+                                <div className="radiocontainer">
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            id="home"
+                                            name="area"
+                                            defaultChecked={true}
+                                            required
+                                        />
+                                        home_team
+                                    </label>
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            id="away"
+                                            name="area"
+                                            defaultChecked={false}
+                                            required
+                                        />
+                                        away_team
+                                    </label>
+                                </div>
+
                                 <button type="submit">Add Appearance</button>
                             </form>) : (
                             <form onSubmit={(e) => saveUpdateAppearance(e)} className='abdullah-edit-form'>

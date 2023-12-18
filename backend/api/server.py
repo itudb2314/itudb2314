@@ -358,5 +358,12 @@ def create_server(db):
         Player_apperanceDAO.update_player_apperance(db, player_appearance)
         return flask.jsonify({})
     
+    @app.route('/player_appearances', methods=['POST'])
+    def create_player_appearance():
+        player_appearance = flask.request.get_json()['player_appearance']
+        player_appearance = make_dataclass('Player_apperance', player_appearance.keys())(**player_appearance)
+        Player_apperanceDAO.create_player_apperance(db, player_appearance)
+        return flask.jsonify({})
+    
     return app
 

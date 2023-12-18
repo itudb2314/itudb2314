@@ -53,7 +53,7 @@ class Player_apperanceDAO():
                     position_code,
                     starter,
                     substitute
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
             cursor = connection.cursor()
             cursor.execute(query, (
