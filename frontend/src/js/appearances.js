@@ -47,6 +47,37 @@ export default function Appearances() {
         const home_team = e.target.elements.home.checked;
         const away_team = e.target.elements.away.checked;
 
+        const teamIdRegex = /^T-\d{2}$/;
+        if (!teamIdRegex.test(team_id)) {
+            alert('Invalid Team ID format. It should be in the format T-XX where X is a number.');
+            return;
+        }
+        // Validate positionName and positionCode format (any text is accepted for now)
+        const nameRegex = /^[A-Za-z]+$/;
+        if (
+            typeof position_name !== 'string' ||
+            !nameRegex.test(position_name) ||
+            typeof position_code !== 'string' ||
+            !nameRegex.test(position_code)
+        ) {
+            alert('Invalid input types or patterns for Position Name or Position Code. Please check your input.');
+            return;
+        }
+
+        // Validate matchId is in the format M-XXXX-XX where X is a number
+        const matchIdRegex = /^M-\d{4}-\d{2}$/;
+        if (!matchIdRegex.test(match_id)) {
+            alert('Invalid Match ID format. It should be in the format M-XXXX-XX where X is a number.');
+            return;
+        }
+
+        // Validate playerId is in the format P-XXXX where X is a number
+        const playerIdRegex = /^P-\d{4}$/;
+        if (!playerIdRegex.test(player_id)) {
+            alert('Invalid Player ID format. It should be in the format P-XXXX where X is a number.');
+            return;
+        }
+
         const data = {
             player_appearance: {
                 tournament_id,
