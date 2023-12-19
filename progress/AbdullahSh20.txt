@@ -20,7 +20,6 @@ Style changes to the Squads page
 Added Squad_apperance_player.py where I join multiple tables to get information for display
 Added a GET function with JOIN accross 4 tables, Tournaments, players, squads, teams
 
-
 Week 10 commits:
 Made player names in squads links to each players specific information which will be mapped using the player table and its api using player.js
 added design for the page
@@ -41,4 +40,4 @@ used a different api for the search bar and improved its efficiency by decreasin
 added filtering to players page. Was difficult to implement with pagination :'|
 added appearances page
 added create, update, delete, read "CRUD" capabitlities to appearances page
-bug fixes
+bug fixes. Added sorting to players page. Added player addition function and implementation
