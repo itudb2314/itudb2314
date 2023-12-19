@@ -39,3 +39,6 @@ Week 12 commits:
 added pagination to players
 used a different api for the search bar and improved its efficiency by decreasing the number of calls made
 added filtering to players page. Was difficult to implement with pagination :'|
+added appearances page
+added create, update, delete, read "CRUD" capabitlities to appearances page
+bug fixes

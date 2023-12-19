@@ -240,7 +240,7 @@ export default function Squads() {
             return;
         }
 
-        const nameRegex = /^[A-Za-z]+$/;
+        const nameRegex = /^[A-Za-z\s]+$/;
 
         if (
             typeof positionName !== 'string' ||

@@ -23,6 +23,12 @@ export default function Players() {
         midfielder: 'all',
         forward: 'all',
     });
+    const [sortField, setSortField] = useState(
+        'neither'
+    );
+    const [sortOrder, setSortOrder] = useState(
+        'neither'
+    );
 
     let isFetching = false;
 
@@ -33,7 +39,7 @@ export default function Players() {
     useEffect(() => {
         resetState();
         fetchPlayers();
-    }, [filters]);
+    }, [filters, sortField, sortOrder]);
 
     const resetState = () => {
         setPlayers([]);
@@ -54,7 +60,8 @@ export default function Players() {
         try {
             const { female, goal_keeper, defender, midfielder, forward } = filters;
 
-            const response = await fetch(`http://localhost:5000/playerspaginated?page=${offset}&items_per_page=22&female=${female}&goal_keeper=${goal_keeper}&defender=${defender}&midfielder=${midfielder}&forward=${forward}`);
+            const sortParams = sortField && sortOrder ? `&sortField=${sortField}&sortOrder=${sortOrder}` : '';
+            const response = await fetch(`http://localhost:5000/playerspaginated?page=${offset}&items_per_page=22&female=${female}&goal_keeper=${goal_keeper}&defender=${defender}&midfielder=${midfielder}&forward=${forward}${sortParams}`);
 
             if (!response.ok) {
                 throw new Error('Failed to fetch players');
@@ -315,9 +322,76 @@ export default function Players() {
 
                         {showSort && (
                             <div className="sort-container">
-                                {/* Add your sorting contents here */}
-                                {/* For example, you can use buttons, dropdowns, etc. */}
-                                {/* Update your fetchPlayers function to include sorting parameters */}
+                                <h2>Sort by:</h2>
+                                <div className='options'>
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            name="sortField"
+                                            value="given_name"
+                                            checked={sortField === 'given_name'}
+                                            onChange={() => setSortField('given_name')}
+                                        />
+                                        Given Name
+                                    </label>
+
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            name="sortField"
+                                            value="family_name"
+                                            checked={sortField === 'family_name'}
+                                            onChange={() => setSortField('family_name')}
+                                        />
+                                        Family Name
+                                    </label>
+
+
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            name="sortField"
+                                            value="neither"
+                                            checked={sortField === 'neither'}
+                                            onChange={() => setSortField('neither')}
+                                        />
+                                        Neither
+                                    </label>
+                                </div>
+                                <div className='options'>
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            name="sortOrder"
+                                            value="asc"
+                                            checked={sortOrder === 'asc'}
+                                            onChange={() => setSortOrder('asc')}
+                                        />
+                                        Ascending
+                                    </label>
+
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            name="sortOrder"
+                                            value="desc"
+                                            checked={sortOrder === 'desc'}
+                                            onChange={() => setSortOrder('desc')}
+                                        />
+                                        Descending
+                                    </label>
+
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            name="sortOrder"
+                                            value="neither"
+                                            checked={sortOrder === 'neither'}
+                                            onChange={() => setSortOrder('neither')}
+                                        />
+                                        Neither
+                                    </label>
+                                </div>
                             </div>
                         )}
                     </div>

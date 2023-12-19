@@ -14,7 +14,7 @@ const SingleSquadPage = () => {
 
     useEffect(() => {
         fetchSquad();
-    }, [tournamentId, teamId]);
+    }, [tournamentId, teamId, isEditing]);
 
     const fetchSquad = async () => {
         try {
@@ -51,7 +51,7 @@ const SingleSquadPage = () => {
             return;
         }
 
-        const nameRegex = /^[A-Za-z]+$/;
+        const nameRegex = /^[A-Za-z\s]+$/;
 
         if (
             typeof positionName !== 'string' ||

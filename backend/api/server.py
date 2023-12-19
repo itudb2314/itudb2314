@@ -258,7 +258,9 @@ def create_server(db):
         defender = flask.request.args.get('defender', default='all', type=str)
         midfielder = flask.request.args.get('midfielder', default='all', type=str)
         forward = flask.request.args.get('forward', default='all', type=str)
-        players = PlayerDAO.get_all_players_paginated(db, page, items_per_page, female, goal_keeper, defender, midfielder, forward)
+        sorting_field = flask.request.args.get('sortField', default='neither', type=str)
+        sorting_order = flask.request.args.get('sortOrder', default='neither', type=str)
+        players = PlayerDAO.get_all_players_paginated(db, page, items_per_page, female, goal_keeper, defender, midfielder, forward, sorting_field, sorting_order)
         return flask.jsonify(players)
 
     @app.route('/players/<player_id>', methods=['GET'])
