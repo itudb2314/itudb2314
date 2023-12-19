@@ -12,9 +12,15 @@ export default function Squads() {
     const [modalVisible, setModalVisible] = useState(false);
     const [isEditing, setIsEditing] = useState(null);
     const [offset, setOffset] = useState(0);
+    const [tournaments, setTournaments] = useState([]);
+    const [teams, setTeams] = useState([]);
+
     let isFetching = false;
 
     useEffect(() => {
+        if (offset === 0) {
+            setSquads([]);
+        }
         fetchSquads();
     }, [deleteTrigger, addTrigger, offset]);
 
@@ -52,6 +58,32 @@ export default function Squads() {
         }
     }
 
+    const fetchTournaments = async () => {
+        try {
+            const response = await fetch('http://localhost:5000/tournaments');
+            if (!response.ok) {
+                throw new Error('Failed to fetch tournaments');
+            }
+            const data = await response.json();
+            setTournaments(data);
+        } catch (error) {
+            console.error('Error fetching tournaments:', error);
+        }
+    };
+
+    const fetchTeams = async () => {
+        try {
+            const response = await fetch(`http://localhost:5000/tournaments/teams`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch teams');
+            }
+            const data = await response.json();
+            setTeams(data);
+        } catch (error) {
+            console.error('Error fetching teams:', error);
+        }
+    };
+
     useEffect(() => {
         const handleScroll = (e) => {
             const scrollHeight = e.target.documentElement.scrollHeight;
@@ -81,7 +113,12 @@ export default function Squads() {
             .then(response => response.json())
             .then(data => {
                 console.log('Success:', data);
-                setDeleteTrigger(!deleteTrigger);
+                if (offset > 0) {
+                    setOffset(0);
+                }
+                else {
+                    setDeleteTrigger(!deleteTrigger);
+                }
             })
             .catch((error) => {
                 console.log('Error:', error);
@@ -110,19 +147,19 @@ export default function Squads() {
             return;
         }
 
-        // Validate tournamentId format (WC-XXXX where X is a number)
-        const tournamentIdRegex = /^WC-\d{4}$/;
-        if (!tournamentIdRegex.test(tournamentId)) {
-            alert('Invalid Tournament ID format. It should be in the format WC-XXXX where X is a number.');
-            return;
-        }
+        // // Validate tournamentId format (WC-XXXX where X is a number)
+        // const tournamentIdRegex = /^WC-\d{4}$/;
+        // if (!tournamentIdRegex.test(tournamentId)) {
+        //     alert('Invalid Tournament ID format. It should be in the format WC-XXXX where X is a number.');
+        //     return;
+        // }
 
-        // Validate teamId format (T-XX where X is a number)
-        const teamIdRegex = /^T-\d{2}$/;
-        if (!teamIdRegex.test(teamId)) {
-            alert('Invalid Team ID format. It should be in the format T-XX where X is a number.');
-            return;
-        }
+        // // Validate teamId format (T-XX where X is a number)
+        // const teamIdRegex = /^T-\d{2}$/;
+        // if (!teamIdRegex.test(teamId)) {
+        //     alert('Invalid Team ID format. It should be in the format T-XX where X is a number.');
+        //     return;
+        // }
 
         // Validate playerId format (P-XXXXX where X is a number)
         const playerIdRegex = /^P-\d{5}$/;
@@ -168,14 +205,18 @@ export default function Squads() {
             .then(response => response.json())
             .then(data => {
                 console.log('Success:', data);
-                setAddTrigger(!addTrigger);
+                if (offset > 0) {
+                    setOffset(0);
+                }
+                else {
+                    setAddTrigger(!addTrigger);
+                }
             })
             .catch((error) => {
                 console.log('Error:', error);
             });
 
         setModalVisible(false);
-        setAddTrigger(!addTrigger);
     }
 
     function updateSquad(updatedSquad) {
@@ -340,7 +381,7 @@ export default function Squads() {
                 </div>
             ))}
 
-            <button className={'add-button'} onClick={() => setModalVisible(true)}>+ Add Squad member</button>
+            <button className={'add-button'} onClick={() => { setModalVisible(true); fetchTournaments(); fetchTeams(); }}>+ Add Squad member</button>
             {modalVisible && (
                 <div className="modal">
                     <div className="modal-content">
@@ -349,18 +390,29 @@ export default function Squads() {
                         </span>
                         <form onSubmit={addSquad} className='abdullah-edit-form'>
                             {/* Input fields for adding a squad member */}
-                            <label htmlFor="tournament_id">Tournament ID</label>
+                            {/* <label htmlFor="tournament_id">Tournament ID</label>
                             <input
                                 type="text"
                                 id="tournament_id"
                                 required
-                            />
+                            /> */}
+                            <label htmlFor="tournament_id">Tournament ID</label>
+                            <select name="tournament_id" id="tournament_id">
+                                {tournaments.map((tournament) => (
+                                    <option key={tournament.tournament_id} value={tournament.tournament_id}>{tournament.tournament_name}</option>
+                                ))}
+                            </select>
                             <label htmlFor="team_id">Team ID</label>
-                            <input
+                            {/* <input
                                 type="text"
                                 id="team_id"
                                 required
-                            />
+                            /> */}
+                            <select name="team_id" id="team_id">
+                                {teams.map((team) => (
+                                    <option key={team.team_id} value={team.team_id}>{team.team_name}</option>
+                                ))}
+                            </select>
                             <label htmlFor="player_id">Player ID</label>
                             <input
                                 type="text"
