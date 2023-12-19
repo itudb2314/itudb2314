@@ -14,6 +14,7 @@ import PlayerPage from './js/Player';
 import Players from './js/Players';
 import SingleSquadPage from './js/Squad';
 import Awards from "./js/Awards";
+import Appearances from "./js/appearances";
 
 function App() {
     return (
@@ -31,6 +32,7 @@ function App() {
                 <Route path="/players/:playerId" exact component={PlayerPage} />
                 <Route path="/squads/:tournamentId/:teamId" exact component={SingleSquadPage} />
                 <Route path="/awards" exact component={Awards} />
+                <Route path="/appearances" exact component={Appearances} />
             </Switch>
         </Router>
     );

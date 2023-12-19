@@ -1,3 +1,6 @@
+import base64
+import os
+
 import flask
 from flask_cors import CORS
 from dataclasses import make_dataclass
@@ -14,6 +17,7 @@ from db.models.confederations import ConfederationDAO
 from db.models.bookings import BookingsDOA
 from db.models.Player import PlayerDAO
 from db.models.awards import AwardDAO
+from db.models.Player_apperance import Player_apperanceDAO
 
 
 def create_server(db):
@@ -38,6 +42,7 @@ def create_server(db):
     def update_tournament():
         tournament = flask.request.get_json()["newTournament"]
         tournament = make_dataclass('Tournament', tournament.keys())(**tournament)
+        print(tournament)
         tournament = TournamentDAO.update_tournament(db, tournament)
         return flask.jsonify(tournament)
 
@@ -215,7 +220,17 @@ def create_server(db):
         teams = make_dataclass('Team', teams.keys())(**teams)
         TeamsDAO.create_team(db, teams)
         return flask.jsonify({})
-    
+
+
+    @app.route('/tournaments/teams/images', methods=['PUT'])
+    def add_image():
+        team_id = flask.request.get_json()['team_id']
+        team_image = flask.request.get_json()['team_image']
+        team_image = base64.b64decode(team_image.encode('utf-8'))
+
+        TeamsDAO.add_image(db, team_id, team_image)
+
+        return flask.jsonify({})
 
     @app.route('/confederations', methods=['GET'])
     def get_confederation_names():
@@ -321,6 +336,34 @@ def create_server(db):
     def get_tournament_away_teams(tournament_id: str):
         away_teams = MatchDAO.get_tournament_awayteams(db, tournament_id)
         return flask.jsonify(away_teams)
+    
+    @app.route('/player_appearances', methods=['GET'])
+    def get_all_player_appearances():
+        appearances = Player_apperanceDAO.get_all_player_appearances(db)
+        return flask.jsonify(appearances)
+    
+    @app.route('/player_appearances', methods=['DELETE'])
+    def delete_player_appearance():
+        tournament_id = flask.request.get_json()['tournament_id']
+        match_id = flask.request.get_json()['match_id']
+        team_id = flask.request.get_json()['team_id']
+        player_id = flask.request.get_json()['player_id']
+        Player_apperanceDAO.delete_player_apperance(db, tournament_id, match_id, team_id, player_id)
+        return flask.jsonify({})
+    
+    @app.route('/player_appearances', methods=['PUT'])
+    def update_player_appearance():
+        player_appearance = flask.request.get_json()['player_appearance']
+        player_appearance = make_dataclass('Player_apperance', player_appearance.keys())(**player_appearance)
+        Player_apperanceDAO.update_player_apperance(db, player_appearance)
+        return flask.jsonify({})
+    
+    @app.route('/player_appearances', methods=['POST'])
+    def create_player_appearance():
+        player_appearance = flask.request.get_json()['player_appearance']
+        player_appearance = make_dataclass('Player_apperance', player_appearance.keys())(**player_appearance)
+        Player_apperanceDAO.create_player_apperance(db, player_appearance)
+        return flask.jsonify({})
     
     return app
 
