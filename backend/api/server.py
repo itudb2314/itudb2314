@@ -388,5 +388,19 @@ def create_server(db):
         Player_apperanceDAO.create_player_apperance(db, player_appearance)
         return flask.jsonify({})
     
+    @app.route('/team_stats/<team_id>/<tournament_filter>', methods=['GET'])
+    def get_team_stats_filtered(team_id, tournament_filter):
+        stats = TeamStatsDAO.get_team_stats(db, team_id, tournament_filter)
+        return flask.jsonify(stats)
+    
+    @app.route('/appearancespaginated', methods=['GET'])
+    def get_all_appearances_paginated():
+        page = flask.request.args.get('page', default=0, type=int)
+        items_per_page = flask.request.args.get('items_per_page', default=20, type=int)
+        order_by = flask.request.args.get('order_by', default='tournament_id', type=str)
+        order = flask.request.args.get('order', default='asc', type=str)
+        appearances = Player_apperanceDAO.get_all_appearances_paginated(db, page, items_per_page, order_by, order)
+        return flask.jsonify(appearances)
+    
     return app
 
