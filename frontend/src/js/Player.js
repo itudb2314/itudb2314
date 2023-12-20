@@ -162,7 +162,7 @@ const PlayerPage = () => {
 
     return (
         <div className="player-details">
-            <h1 className="player-details-title">Player Details:</h1>
+            <h1 className="player-details-title">Player Details</h1>
             <div className="player-info">
                 <div className="player-image-p">
                     <img src={player.player_id % 2 === 0 ? siu : siu2} alt={`Player ${player.player_id}`} />
@@ -170,7 +170,16 @@ const PlayerPage = () => {
                 {!isEditing ? (
                     <div className="player-data">
                         <p>
-                            <label>Player Name:</label> {player.given_name} {player.family_name}
+                            <label>Player Name:</label>
+                            {player.given_name !== "not applicable" && (
+                                <span>{player.given_name}</span>
+                            )}
+                            {player.given_name !== "not applicable" && player.family_name !== "not applicable" && (
+                                <span>&nbsp;</span>
+                            )}
+                            {player.family_name !== "not applicable" && (
+                                <span>{player.family_name}</span>
+                            )}
                         </p>
                         <p>
                             <label>Birth Date:</label> {new Date(player.birth_date).toLocaleDateString()}

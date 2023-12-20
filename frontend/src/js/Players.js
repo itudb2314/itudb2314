@@ -16,14 +16,10 @@ export default function Players() {
 
     const toggleModal = () => {
         setShowFilter(false);
-        setShowFilter(false);
+        setShowSort(false);
         setModalVisible(!modalVisible);
     };
 
-    const [newPlayer, setNewPlayer] = useState({
-        given_name: '',
-        family_name: '',
-    });
     const [offset, setOffset] = useState(0);
     const [filters, setFilters] = useState({
         female: 'all',
@@ -100,11 +96,6 @@ export default function Players() {
 
     const handlePlayerClick = (player) => {
         history.push(`/players/${player.player_id}`);
-    };
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setNewPlayer((prevPlayer) => ({ ...prevPlayer, [name]: value }));
     };
 
     function handleAddPlayer(e) {

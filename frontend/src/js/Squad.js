@@ -141,7 +141,15 @@ const SingleSquadPage = () => {
                             {!isEditing || isEditing.player_id !== squadMember.player_id ? (
                                 <>
                                     <div className="player-name" onClick={() => handlePlayerClick(squadMember)} style={{ cursor: 'pointer' }}>
-                                        {squadMember.given_name} {squadMember.family_name}
+                                        {squadMember.given_name !== "not applicable" && (
+                                            <span>{squadMember.given_name}</span>
+                                        )}
+                                        {squadMember.given_name !== "not applicable" && squadMember.family_name !== "not applicable" && (
+                                            <span>&nbsp;</span>
+                                        )}
+                                        {squadMember.family_name !== "not applicable" && (
+                                            <span>{squadMember.family_name}</span>
+                                        )}
                                     </div>
                                     <div className="player-image">
                                         <img
