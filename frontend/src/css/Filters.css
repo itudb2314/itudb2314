@@ -35,9 +35,7 @@
 }
 
 .filter input {
-    font-size: inherit;
-    height: 70%;
-    width: inherit;
+    height: 40%;
     margin-left: 0;
 }
 
