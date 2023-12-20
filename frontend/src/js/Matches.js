@@ -261,24 +261,24 @@ export default function Matches() {
                                 </select>
                             )}
                             <label> Group Stage </label><br/>
-                            <input type="radio" id="true" name="away_team_win" value="1" required/>
+                            <input type="radio" id="true" name="group-stage" value="1" required/>
                             <label for="true" className='radio-label'> True </label> 
-                            <input type="radio" id="false" name="away_team_win" value="0" required/>
+                            <input type="radio" id="false" name="group-stage" value="0" required/>
                             <label for="false" className='radio-label'> False </label> <br/>
                             <label> Knockout Stage </label><br/>
-                            <input type="radio" id="true" name="away_team_win" value="1" required/>
+                            <input type="radio" id="true" name="knockout" value="1" required/>
                             <label for="true" className='radio-label'> True </label>
-                            <input type="radio" id="false" name="away_team_win" value="0" required/>
+                            <input type="radio" id="false" name="knockout" value="0" required/>
                             <label for="false" className='radio-label'> False </label> <br/>
                             <label> Replayed </label><br/>
-                            <input type="radio" id="true" name="away_team_win" value="1" required/>
+                            <input type="radio" id="true" name="replayed" value="1" required/>
                             <label for="true" className='radio-label'> True </label>
-                            <input type="radio" id="false" name="away_team_win" value="0" required/>
+                            <input type="radio" id="false" name="replayed" value="0" required/>
                             <label for="false" className='radio-label'> False </label> <br/>
                             <label> Replay </label><br/>
-                            <input type="radio" id="true" name="away_team_win" value="1" required/>
+                            <input type="radio" id="true" name="replay" value="1" required/>
                             <label for="true" className='radio-label'> True </label> 
-                            <input type="radio" id="false" name="away_team_win" value="0" required/>
+                            <input type="radio" id="false" name="replay" value="0" required/>
                             <label for="false" className='radio-label'> False </label> <br/>
                             <label> Match Date </label>
                             <input type="text" name="match_date" className='input-text-select' pattern="\d{4}-\d{2}-\d{2}" placeholder='YYYY-MM-DD' required/>
@@ -322,14 +322,14 @@ export default function Matches() {
                             <label> Away Team Score Margin </label>
                             <input type="number" name="away_team_score_margin" className='input-text-select' placeholder='AwayTeamScoreMargin = AwayTeamScore - HomeTeamScore' required/>
                             <label> Extra Time </label><br/>
-                            <input type="radio" id="true" name="away_team_win" value="1" required/>
+                            <input type="radio" id="true" name="extra-time" value="1" required/>
                             <label for="true" className='radio-label'> True </label>
-                            <input type="radio" id="false" name="away_team_win" value="0" required/>
+                            <input type="radio" id="false" name="extra-time" value="0" required/>
                             <label for="false" className='radio-label'> False </label> <br/>
                             <label> Penalty Shootout </label><br/>
-                            <input type="radio" id="true" name="away_team_win" value="1" required/>
+                            <input type="radio" id="true" name="penalty-shootout" value="1" required/>
                             <label for="true" className='radio-label'> True </label>
-                            <input type="radio" id="false" name="away_team_win" value="0" required/>
+                            <input type="radio" id="false" name="penalty-shootout" value="0" required/>
                             <label for="false" className='radio-label'> False </label> <br/>
                             <label> Score Penalties </label>
                             <input type="text" name="score_penalties" className='input-text-select' pattern="\b\d{1,2}-\d{1,2}\b" placeholder='HomeTeam - AwayTeam' required/>
@@ -340,9 +340,9 @@ export default function Matches() {
                             <label> Result </label>
                             <input type="text" name="result" className='input-text-select' placeholder='HomeTeamWin or AwayTeamWin or Draw' required/>
                             <label> Home Team Win </label><br/>
-                            <input type="radio" id="true" name="away_team_win" value="1" required/>
+                            <input type="radio" id="true" name="home_team_win" value="1" required/>
                             <label for="true" className='radio-label'> True </label>
-                            <input type="radio" id="false" name="away_team_win" value="0" required/>
+                            <input type="radio" id="false" name="home_team_win" value="0" required/>
                             <label for="false" className='radio-label'> False </label> <br/>
                             <label> Away Team Win </label><br/>
                             <input type="radio" id="true" name="away_team_win" value="1" required/>
@@ -350,9 +350,9 @@ export default function Matches() {
                             <input type="radio" id="false" name="away_team_win" value="0" required/>
                             <label for="false" className='radio-label'> False </label> <br/>
                             <label> Draw </label><br/>
-                            <input type="radio" id="true" name="away_team_win" value="1" required/>
+                            <input type="radio" id="true" name="draw" value="1" required/>
                             <label for="true" className='radio-label'> True </label>
-                            <input type="radio" id="false" name="away_team_win" value="0" required/>
+                            <input type="radio" id="false" name="draw" value="0" required/>
                             <label for="false" className='radio-label'> False </label> <br/>
                         </form>
                         <button onClick={toggleInsertForm}>Close</button>
@@ -368,7 +368,7 @@ export default function Matches() {
                     <div key={i}>
                         <h2 style={style}>{tournament_matches[0].tournament_name}</h2>
                         {tournament_matches.map((match) => (
-                            <Match key={match.match_id}  match={match} goals={goals[match.match_id]}  setMatchDeleted={onMatchDelete}/>
+                            <Match key={match.match_id}  match={match} goals={goals[match.match_id]}  setMatchDeleted={onMatchDelete} setMatch={setMatch}/>
                         ))}
                     </div>
                 ))) :
