@@ -79,10 +79,16 @@ class TournamentDAO():
             print(f"Error: {err}")
 
     @staticmethod
-    def get_tournament_by_id(db: db, tournament_id: str) -> Tournament:
+    def get_tournament_by_id(db: db, tournament_id: str, sort: str, order: str) -> Tournament:
         try:
+            if sort == "none":
+                sort = "year"
+            
+            if order == "none":
+                order = "ASC"
+
             conn = db.get_connection()
-            query = "SELECT * FROM tournaments WHERE tournament_id = %s"
+            query = "SELECT * FROM tournaments WHERE tournament_id = %s ORDER BY {sort} {order}"
             cursor = conn.cursor()
             cursor.execute(query, (tournament_id,))
             rows = cursor.fetchone()
@@ -95,10 +101,11 @@ class TournamentDAO():
             print(f"Error: {err}")
 
     @staticmethod
-    def get_all_tournaments(db) -> list[Tournament]:
+    def get_all_tournaments(db: db, sort: str, order: str) -> list[Tournament]:
         try:
             conn = db.get_connection()
-            query = "SELECT * FROM tournaments ORDER BY year DESC"
+            query = f"""SELECT * FROM tournaments 
+                        ORDER BY {sort} {order}"""
             cursor = conn.cursor()
             cursor.execute(query)
             rows = cursor.fetchall()
