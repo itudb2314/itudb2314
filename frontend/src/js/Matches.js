@@ -211,7 +211,7 @@ export default function Matches() {
                 <div className='form'>
                     <div className='form-content'>
                         <h2>Insert Match</h2> 
-                        <form onSubmit={handleInsertMatch}>
+                        <form id = "insert-form" onSubmit={handleInsertMatch}>
                             <label for="Tournament"> Tournament ID </label> <br/>
                             <select id="Tournament" className='input-text-select' name="Tournament" value={chosentournament} onChange={handleTournamentChange}>
                                 <option value='NULL' disabled>select</option>
@@ -283,7 +283,7 @@ export default function Matches() {
                             <label> Match Date </label>
                             <input type="text" name="match_date" className='input-text-select' pattern="\d{4}-\d{2}-\d{2}" placeholder='YYYY-MM-DD' required/>
                             <label> Match Time </label>
-                            <input type="time" name="match_time" placeholder='HH:MM' required/>
+                            <input type="text" name="match_time" placeholder='HH:MM' required/>
                             <label> Stadium </label>
                             {Array.isArray(stadiums) && (
                                 <select id="stadium_name" className='input-text-select' name="stadium_name" required>
@@ -356,7 +356,7 @@ export default function Matches() {
                             <label for="false" className='radio-label'> False </label> <br/>
                         </form>
                         <button onClick={toggleInsertForm}>Close</button>
-                        <button type='submit' form='form' value='Submit'>Submit</button>
+                        <button type='submit' form='insert-form' value='Submit'>Submit</button>
                     </div>
                 </div>
             )}

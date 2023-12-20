@@ -445,8 +445,7 @@ class MatchDAO():
                         replay = %s,
                         match_date = %s,
                         match_time = %s,
-                        stadium_id = %s,
-                        extra_time = %s,
+                        extra_time = %s
                     WHERE match_id = %s
                     """
             cursor = connection.cursor()
@@ -456,7 +455,6 @@ class MatchDAO():
                     match.replay,
                     match.match_date,
                     match.match_time,
-                    match.stadium_id,
                     match.extra_time,
                     match.match_id
             ))

@@ -191,12 +191,14 @@ def create_server(db):
         MatchDAO.create_match(db, match)
         return flask.jsonify({})
     
+
     @app.route('/matches', methods=['PUT'])
-    def update_match(match_id : str):
-        match = flask.request.get_json()['new_data']
+    def update_matches():
+        match = flask.request.get_json()['updatedMatch']
         match = make_dataclass('Match', match.keys())(**match)
-        match = MatchDAO.update_match(db, match)
-        return flask.jsonify(match)
+        updated_match = MatchDAO.update_match(db, match)
+        return flask.jsonify(updated_match)
+
 
     @app.route('/bookings/<match_id>', methods=['GET'])
     def get_bookings_by_match_id(match_id : str):
