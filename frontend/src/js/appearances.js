@@ -10,13 +10,77 @@ export default function Appearances() {
     const [addTrigger, setAddTrigger] = useState(false);
     const [isEditing, setIsEditing] = useState(null);
     const [tournaments, setTournaments] = useState([])
+    const [offset, setOffset] = useState(0);
+    const [order, setOrder] = useState('asc');
+    const [orderBy, setOrderBy] = useState('tournament_name');
+    let isFetching = false;
 
     useEffect(() => {
-        fetch("http://localhost:5000/player_appearances")
-            .then(response => response.json())
-            .then(data => setAppearances(data))
-            .catch(error => console.error("Error fetching data:", error));
-    }, [deleteTrigger, editTrigger, addTrigger]);
+        if (offset === 0) {
+            setAppearances([]);
+        }
+        fetchAppearances();
+    }, [deleteTrigger, editTrigger, addTrigger, offset]);
+
+    useEffect(() => {
+        resetState();
+        fetchAppearances();
+    }, [orderBy, order]);
+
+    const resetState = () => {
+        setAppearances([]);
+        setOffset(0);
+    };
+
+    const handleHeaderClick = (columnName) => {
+        if (columnName === orderBy) {
+            setOrder(order === 'asc' ? 'desc' : 'asc');
+        }
+        else {
+            setOrderBy(columnName);
+            setOrder('asc');
+        }
+        if (offset !== 0) {
+            setOffset(0);
+        }
+        else {
+            setAppearances([]);
+            fetchAppearances();
+        }
+    }
+
+    const fetchAppearances = async () => {
+        if (isFetching) return;
+        isFetching = true;
+        try {
+            const response = await fetch(`http://localhost:5000/appearancespaginated?page=${offset}&items_per_page=20&order_by=${orderBy}&order=${order}`)
+            if (!response.ok) {
+                throw new Error('Failed to fetch appearances');
+            }
+            const data = await response.json();
+            if (Array.isArray(data)) {
+                setAppearances(prev => [...prev, ...data]);
+            }
+            else {
+                console.error('No more data');
+            }
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }
+
+    useEffect(() => {
+        const handleScroll = (e) => {
+            const scrollHeight = e.target.documentElement.scrollHeight;
+            const currentHeight = e.target.documentElement.scrollTop + window.innerHeight;
+            if (currentHeight + 1 >= scrollHeight) {
+                setOffset(offset + 1);
+            }
+        }
+        window.addEventListener("scroll", handleScroll)
+        return () => window.removeEventListener("scroll", handleScroll)
+    }, [offset])
 
     // function searchAppearance(e) {
     //     if (e.target.value === "") {
@@ -71,10 +135,10 @@ export default function Appearances() {
             return;
         }
 
-        // Validate playerId is in the format P-XXXX where X is a number
-        const playerIdRegex = /^P-\d{4}$/;
+        // Validate playerId is in the format P-XXXXX where X is a number
+        const playerIdRegex = /^P-\d{5}$/;
         if (!playerIdRegex.test(player_id)) {
-            alert('Invalid Player ID format. It should be in the format P-XXXX where X is a number.');
+            alert('Invalid Player ID format. It should be in the format P-XXXXX where X is a number.');
             return;
         }
 
@@ -104,9 +168,14 @@ export default function Appearances() {
             .then(response => response.json())
             .then(result => {
                 console.log("Success:", result);
-                setAddTrigger(!addTrigger);
                 setAppearances([...appearances, result]);
                 toggleModal();
+                if (offset > 0) {
+                    setOffset(0);
+                }
+                else {
+                    setAddTrigger(!addTrigger);
+                }
             })
             .catch(error => {
                 console.error("Error:", error);
@@ -175,7 +244,13 @@ export default function Appearances() {
                 ));
                 toggleModal();
                 setIsEditing(null);
-                setEditTrigger(!editTrigger);
+
+                if (offset > 0) {
+                    setOffset(0);
+                }
+                else {
+                    setEditTrigger(!editTrigger);
+                }
             })
             .catch(error => {
                 console.error("Error:", error);
@@ -194,7 +269,12 @@ export default function Appearances() {
             .then(response => response.json())
             .then(data => {
                 console.log('Success:', data);
-                setDeleteTrigger(!deleteTrigger);
+                if (offset > 0) {
+                    setOffset(0);
+                }
+                else {
+                    setDeleteTrigger(!deleteTrigger);
+                }
             })
             .catch((error) => {
                 console.log('Error:', error);
@@ -211,11 +291,11 @@ export default function Appearances() {
             <table>
                 <thead>
                     <tr>
-                        <th style={{ textAlign: 'center' }}>Tournament Name</th>
-                        <th style={{ textAlign: 'center' }}>Match</th>
-                        <th style={{ textAlign: 'center' }}>Team Name</th>
-                        <th style={{ textAlign: 'center' }}>Given Name</th>
-                        <th style={{ textAlign: 'center' }}>Family Name</th>
+                        <th style={{ textAlign: 'center' }} onClick={() => handleHeaderClick('tournament_name')}>Tournament Name</th>
+                        <th style={{ textAlign: 'center' }} onClick={() => handleHeaderClick('match_name')}>Match</th>
+                        <th style={{ textAlign: 'center' }} onClick={() => handleHeaderClick('team_name')}>Team Name</th>
+                        <th style={{ textAlign: 'center' }} onClick={() => handleHeaderClick('given_name')}>Given Name</th>
+                        <th style={{ textAlign: 'center' }} onClick={() => handleHeaderClick('family_name')}>Family Name</th>
                         <th style={{ textAlign: 'center' }}>Home Team</th>
                         <th style={{ textAlign: 'center' }}>Away Team</th>
                         <th style={{ textAlign: 'center' }}>Shirt Number</th>
