@@ -2,6 +2,9 @@ import '../css/Teams.css';
 import '../css/Buttons.css';
 import {useEffect, useState} from "react";
 import getCountryISO2 from 'country-iso-3-to-2';
+import { SearchBar } from '../components/searchteam';
+import {useHistory} from "react-router-dom";
+
 
 export default function Teams() {
     const [teams, setTeams] = useState([])
@@ -9,12 +12,19 @@ export default function Teams() {
     const [addTrigger, setAddTrigger] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [confederations, setConfederations] = useState([]);
+    const[filteredTeams, setFilteredTeams] = useState([]);
+
+    const updateSearchResults = (results) => {
+        setFilteredTeams(results);
+    };
+
 
     useEffect(() => {
         fetch('http://localhost:5000/tournaments/teams')
             .then(response => response.json())
             .then(data => {
-                setTeams(data)
+                setTeams(data);
+                setFilteredTeams(data);
             })
 
         // Fetch the confederation names from the API
@@ -93,6 +103,7 @@ export default function Teams() {
 
     return (
     <div className='teams'>
+        <SearchBar setResults={updateSearchResults} />
         <button className="add-button" onClick={toggleModal}>+ Add Team</button>
         {modalVisible && (
             <div className="modal">
@@ -130,7 +141,7 @@ export default function Teams() {
                 </div>
             </div>
         )}
-        {teams.map(team => (
+        {filteredTeams.map(team => (
             <Team key={team.team_id} t={team} handleDeleteTeam={deleteTeam} confederations={confederations}/>
         ))}
     </div>
@@ -143,12 +154,18 @@ function Team({t, handleDeleteTeam, confederations}){
     const [isEditing, setIsEditing] = useState(false);
     const iso2 = getCountryISO2(t.team_code);
     const flagUrl = `https://flagsapi.com/${iso2}/flat/64.png`;
+    const history = useHistory();
 
     function editTeam() { setIsEditing(true)}
     
     function deleteTeam() {
         handleDeleteTeam(team)
     }
+
+    function handleOnClick(e) {
+        history.push(`/teams/${team.team_id}`);
+    }
+
 
     function submitTeam(e) {
         e.preventDefault();
@@ -197,7 +214,7 @@ function Team({t, handleDeleteTeam, confederations}){
                 </div>
             ) : (
             <>
-            <h3>
+            <h3 onClick={handleOnClick} style={{cursor: 'pointer'}}>
                 {team.team_name}
             </h3>
             {/* <h3>

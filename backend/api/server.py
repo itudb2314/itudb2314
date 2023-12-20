@@ -18,6 +18,8 @@ from db.models.bookings import BookingsDOA
 from db.models.Player import PlayerDAO
 from db.models.awards import AwardDAO
 from db.models.Player_apperance import Player_apperanceDAO
+from db.models.teamappearances import TeamAppearanceDAO
+from db.models.Teamstats import TeamStatsDAO
 
 
 def create_server(db):
@@ -367,5 +369,11 @@ def create_server(db):
         Player_apperanceDAO.create_player_apperance(db, player_appearance)
         return flask.jsonify({})
     
+    @app.route('/team_stats/<team_id>/<tournament_filter>', methods=['GET'])
+    def get_team_stats_filtered(team_id, tournament_filter):
+        stats = TeamStatsDAO.get_team_stats(db, team_id, tournament_filter)
+        return flask.jsonify(stats)
+    
+        
     return app
 

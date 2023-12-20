@@ -15,6 +15,7 @@ import Players from './js/Players';
 import SingleSquadPage from './js/Squad';
 import Awards from "./js/Awards";
 import Appearances from "./js/appearances";
+import Teamstats from './js/Teamstats';
 
 function App() {
     return (
@@ -26,6 +27,7 @@ function App() {
                 <Route path="/squads" exact component={Squads} />
                 <Route path="/matches/:match_id?" exact component={Matches} />
                 <Route path="/teams" exact component={Teams} />
+                <Route path="/teams/:id" exact component={Teamstats} />
                 <Route path="/groupstandings" exact component={Groupstandings} />
                 <Route path="/managers" exact component={Managers} />
                 <Route path="/players" exact component={Players} />
