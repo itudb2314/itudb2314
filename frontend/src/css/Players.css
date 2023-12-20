@@ -83,7 +83,7 @@
 }
 
 .sort-container {
-    background-color: #fff;
+    background-color: #f4f4f4;
     border: 1px solid #ccc;
     padding: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -91,6 +91,14 @@
     display: flex;
     flex-direction: column;
     max-width: 300px;
+    border-radius: 8px;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 10px;
+    padding-left: 25px;
+    padding-right: 25px;
 }
 
 .icons-container {
@@ -127,7 +135,6 @@
     margin-right: 5px;
 }
 
-/* Style for the filter options container */
 .filter-container div {
     margin-bottom: 15px;
 }
@@ -141,5 +148,67 @@
 }
 
 .filter-icon-container {
+    position: relative;
+}
+
+.sort-container div {
+    margin-bottom: 15px;
+}
+
+.sort-container .options {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    gap: 17px;
+}
+
+.sort-icon-container {
+    position: relative;
+}
+
+
+.sort-container h2 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.sort-container label {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    margin-top: 8px;
+    font-weight: bold;
+}
+
+.sort-container input {
+    margin-top: 5px;
+}
+
+.sort-container input[type="radio"] {
+    margin-right: 5px;
+    transform: scale(1.2);
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+.sort-container label input {
+    margin-right: 5px;
+}
+
+.sort-container div {
+    margin-bottom: 15px;
+}
+
+.sort-container .options {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    gap: 17px;
+}
+
+.sort-icon-container {
     position: relative;
 }

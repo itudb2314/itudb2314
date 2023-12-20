@@ -11,6 +11,13 @@ export default function Players() {
     const [showSort, setShowSort] = useState(false);
     const [results, setResults] = useState([]);
     const [players, setPlayers] = useState([]);
+    const [addTrigger, setAddTrigger] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+
+    const toggleModal = () => {
+        setModalVisible(!modalVisible);
+    };
+
     const [newPlayer, setNewPlayer] = useState({
         given_name: '',
         family_name: '',
@@ -23,6 +30,12 @@ export default function Players() {
         midfielder: 'all',
         forward: 'all',
     });
+    const [sortField, setSortField] = useState(
+        'neither'
+    );
+    const [sortOrder, setSortOrder] = useState(
+        'neither'
+    );
 
     let isFetching = false;
 
@@ -33,7 +46,7 @@ export default function Players() {
     useEffect(() => {
         resetState();
         fetchPlayers();
-    }, [filters]);
+    }, [filters, sortField, sortOrder]);
 
     const resetState = () => {
         setPlayers([]);
@@ -54,7 +67,8 @@ export default function Players() {
         try {
             const { female, goal_keeper, defender, midfielder, forward } = filters;
 
-            const response = await fetch(`http://localhost:5000/playerspaginated?page=${offset}&items_per_page=22&female=${female}&goal_keeper=${goal_keeper}&defender=${defender}&midfielder=${midfielder}&forward=${forward}`);
+            const sortParams = sortField && sortOrder ? `&sortField=${sortField}&sortOrder=${sortOrder}` : '';
+            const response = await fetch(`http://localhost:5000/playerspaginated?page=${offset}&items_per_page=22&female=${female}&goal_keeper=${goal_keeper}&defender=${defender}&midfielder=${midfielder}&forward=${forward}${sortParams}`);
 
             if (!response.ok) {
                 throw new Error('Failed to fetch players');
@@ -89,23 +103,89 @@ export default function Players() {
         setNewPlayer((prevPlayer) => ({ ...prevPlayer, [name]: value }));
     };
 
-    const handleAddPlayer = async () => {
-        try {
-            const response = await fetch('http://localhost:5000/players', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ newPlayer: { ...newPlayer, player_id: null } }),
-            });
+    function handleAddPlayer(e) {
+        e.preventDefault();
+        const player_id = e.target.player_id.value;
+        const given_name = e.target.given_name.value;
+        const family_name = e.target.family_name.value;
+        const birth_date = e.target.birth_date.value;
+        const female = e.target.elements.female.checked;
+        const goal_keeper = e.target.elements.goal_keeper.checked;
+        const defender = e.target.elements.defender.checked;
+        const midfielder = e.target.elements.midfielder.checked;
+        const forward = e.target.elements.forward.checked;
+        const player_wikipedia_link = e.target.player_wikipedia_link.value;
+        const count_tournaments = e.target.count_tournaments.value;
+        const list_tournaments = e.target.list_tournaments.value;
 
-            if (!response.ok) {
-                throw new Error('Failed to add player');
-            }
-            fetchPlayers();
-        } catch (error) {
-            console.error('Error adding player:', error);
+
+        const playerIdRegex = /^P-\d{5}$/;
+        if (!playerIdRegex.test(player_id)) {
+            alert('Invalid Player ID format. It should be in the format P-XXXX where X is a number.');
+            return;
         }
+
+        const nameRegex = /^[A-Za-z\s]+$/;
+
+        if (
+            typeof family_name !== 'string' ||
+            !nameRegex.test(family_name) ||
+            typeof given_name !== 'string' ||
+            !nameRegex.test(given_name)
+        ) {
+            alert('Invalid input types or patterns. Please check your input.');
+            return;
+        }
+
+        const data = {
+            newPlayer: {
+                player_id,
+                given_name,
+                family_name,
+                birth_date,
+                female,
+                goal_keeper,
+                defender,
+                midfielder,
+                forward,
+                player_wikipedia_link,
+                count_tournaments,
+                list_tournaments
+            }
+        };
+
+
+        fetch("http://localhost:5000/players", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(result => {
+                console.log("Success:", result);
+                if (offset > 0) {
+                    setOffset(0);
+                }
+                else {
+                    setAddTrigger(!addTrigger);
+                }
+                toggleModal();
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Error adding data");
+            });
+        setModalVisible(false);
+        if (offset > 0) {
+            setOffset(0);
+        }
+        else {
+            setAddTrigger(!addTrigger);
+        }
+        toggleModal();
+
     };
 
     return (
@@ -315,9 +395,76 @@ export default function Players() {
 
                         {showSort && (
                             <div className="sort-container">
-                                {/* Add your sorting contents here */}
-                                {/* For example, you can use buttons, dropdowns, etc. */}
-                                {/* Update your fetchPlayers function to include sorting parameters */}
+                                <h2>Sort by:</h2>
+                                <div className='options'>
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            name="sortField"
+                                            value="given_name"
+                                            checked={sortField === 'given_name'}
+                                            onChange={() => setSortField('given_name')}
+                                        />
+                                        Given Name
+                                    </label>
+
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            name="sortField"
+                                            value="family_name"
+                                            checked={sortField === 'family_name'}
+                                            onChange={() => setSortField('family_name')}
+                                        />
+                                        Family Name
+                                    </label>
+
+
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            name="sortField"
+                                            value="neither"
+                                            checked={sortField === 'neither'}
+                                            onChange={() => setSortField('neither')}
+                                        />
+                                        Neither
+                                    </label>
+                                </div>
+                                <div className='options'>
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            name="sortOrder"
+                                            value="asc"
+                                            checked={sortOrder === 'asc'}
+                                            onChange={() => setSortOrder('asc')}
+                                        />
+                                        Ascending
+                                    </label>
+
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            name="sortOrder"
+                                            value="desc"
+                                            checked={sortOrder === 'desc'}
+                                            onChange={() => setSortOrder('desc')}
+                                        />
+                                        Descending
+                                    </label>
+
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            name="sortOrder"
+                                            value="neither"
+                                            checked={sortOrder === 'neither'}
+                                            onChange={() => setSortOrder('neither')}
+                                        />
+                                        Neither
+                                    </label>
+                                </div>
                             </div>
                         )}
                     </div>
@@ -357,6 +504,86 @@ export default function Players() {
                     ))
                 }
             </div>
+            <button className={'add-button'} onClick={() => setModalVisible(true)}>+ Add Player</button>
+            {modalVisible && (
+                <div className="modal">
+                    <div className="modal-content">
+                        <span className="close" onClick={toggleModal}>
+                            &times;
+                        </span>
+                        <form onSubmit={(e) => handleAddPlayer(e)} className='abdullah-edit-form'>
+                            <label htmlFor="player_id">Player ID</label>
+                            <input
+                                type="text"
+                                id="player_id"
+                                required
+                            />
+                            <label htmlFor="given_name">Given Name</label>
+                            <input
+                                type="text"
+                                id="given_name"
+                                required
+                            />
+                            <label htmlFor="family_name">Family Name</label>
+                            <input
+                                type="text"
+                                id="family_name"
+                                required
+                            />
+                            <label htmlFor="birth_date">Birth Date</label>
+                            <input
+                                type="date"
+                                id="birth_date"
+                                required
+                            />
+                            <label htmlFor='female'>Female</label>
+                            <input
+                                type='checkbox'
+                                id='female'
+                            />
+                            <label htmlFor='goal_keeper'>Goal Keeper</label>
+                            <input
+                                type='checkbox'
+                                id='goal_keeper'
+                            />
+                            <label htmlFor='defender'>Defender</label>
+                            <input
+                                type='checkbox'
+                                id='defender'
+                            />
+                            <label htmlFor='midfielder'>Midfielder</label>
+                            <input
+                                type='checkbox'
+                                id='midfielder'
+                            />
+                            <label htmlFor='forward'>Forward</label>
+                            <input
+                                type='checkbox'
+                                id='forward'
+                            />
+                            <label htmlFor="count_tournaments">Tournaments Count</label>
+                            <input
+                                type="number"
+                                id="count_tournaments"
+                                required
+                            />
+                            <label htmlFor="list_tournaments">Tournaments List</label>
+                            <input
+                                type="text"
+                                id="list_tournaments"
+                                required
+                            />
+                            <label htmlFor="player_wikipedia_link">Wikipedia Link</label>
+                            <input
+                                type="text"
+                                id="player_wikipedia_link"
+                                required
+                            />
+                            <button type="submit">Add player</button>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
 
     );

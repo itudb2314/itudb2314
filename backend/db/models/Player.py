@@ -127,7 +127,7 @@ class PlayerDAO():
     #         cursor.close()
     #         connection.close()
 
-    def get_all_players_paginated(db: db, page: int, items_per_page: int, female: str, goal_keeper: str, defender: str, midfielder: str, forward: str) -> list:
+    def get_all_players_paginated(db: db, page: int, items_per_page: int, female: str, goal_keeper: str, defender: str, midfielder: str, forward: str, sorting_field: str, sorting_order:str) -> list:
         try:
             connection = db.get_connection()
             offset = page * items_per_page
@@ -144,10 +144,14 @@ class PlayerDAO():
             if forward != 'all':
                 filters.append(f"forward = {forward}")
 
+            if sorting_field == 'neither' or sorting_order == 'neither':
+                sorting_field = 'player_id'
+                sorting_order = 'ASC'
+            
             query = f"""
                 SELECT * FROM players
                 {"WHERE " + " AND ".join(filters) if filters else ""}
-                ORDER BY player_id
+                ORDER BY {sorting_field} {sorting_order}
                 LIMIT %s OFFSET %s
             """
             cursor = connection.cursor()
