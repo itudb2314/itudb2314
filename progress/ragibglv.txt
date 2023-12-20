@@ -8,3 +8,7 @@ Week 9:
     Added "add" and "delete" operations for the teams in frontend
 Week 10:
     Added flag images for each team in 'Teams' page
+Week 11:
+    Added search bar for Teams page
+Week 12:
+    Added Team stats page. Added filter for stats page also
