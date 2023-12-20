@@ -35,16 +35,24 @@ def create_server(db):
 
     @app.route('/tournaments', methods=['GET'])
     def get_all_tournaments_dep():
-        tournaments = TournamentDAO.get_all_tournaments(db, "year", "asc")
+        tournaments = TournamentDAO.get_all_tournaments(db, "year", "asc", "%")
         return flask.jsonify(tournaments)
 
-    @app.route('/tournaments/<sort>/<order>', methods=['GET'])
-    def get_all_tournaments(sort: str, order: str):
+    @app.route('/tournaments/<sort>/<order>/<gender>', methods=['GET'])
+    def get_all_tournaments(sort: str, order: str, gender: str):
         if sort == "none":
             sort = "year"
         if order != "asc" and order != "desc":
             order = "asc"
-        tournaments = TournamentDAO.get_all_tournaments(db, sort, order)
+
+        if gender == "woman":
+            gender = "%FIFA Women%"
+        elif gender == "man":
+            gender = "%FIFA Men%"
+        else:
+            gender = "%"
+
+        tournaments = TournamentDAO.get_all_tournaments(db, sort, order, gender)
         return flask.jsonify(tournaments)
 
     @app.route('/tournaments', methods=['PUT'])

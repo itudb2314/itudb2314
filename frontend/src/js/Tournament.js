@@ -11,15 +11,16 @@ export default function Tournaments() {
     const [modalVisible, setModalVisible] = useState(false);
     const [sort, setSort] = useState('winner')
     const [order, setOrder] = useState('asc')
+    const [gender, setGender] = useState('all')
 
     useEffect(() => {
-        fetch(`http://localhost:5000/tournaments/${sort}/${order}`)
+        fetch(`http://localhost:5000/tournaments/${sort}/${order}/${gender}`)
             .then(response => response.json())
             .then(data => {
                 setTournaments(data)
                 console.log(data)
             })
-    }, [deleteTrigger, addTrigger, sort, order])
+    }, [deleteTrigger, addTrigger, sort, order, gender])
 
     const toggleModal = () => {
         setModalVisible(!modalVisible);
@@ -74,7 +75,6 @@ export default function Tournaments() {
             body: JSON.stringify({newTournament}),
         }).then(response => response.json())
             .then(data => {
-                console.log('Success:', data);
                 setAddTrigger(!addTrigger)
             })
             .catch((error) => {
@@ -100,6 +100,18 @@ export default function Tournaments() {
         setOrder(e.target.value)
     }
 
+    function setWoman() {
+        setGender("woman")
+    }
+
+    function setMan() {
+        setGender("man")
+    }
+
+    function setAll() {
+        setGender("all")
+    }
+
     return (
         <div className="tournament-container" style={{minWidth: "100%",display:"flex", flexDirection: "column", alignItems: "center"}}>
             <h1 style={style}>Tournaments</h1>
@@ -122,6 +134,18 @@ export default function Tournaments() {
                         <option value="asc">Ascending</option>
                         <option value="desc">Descending</option>
                     </select>
+                </div>
+                <div className="filter" style={{flexDirection: "column"}}>
+                    <label htmlFor="all">All Tournaments</label>
+                    <input type="radio" id="all" name="gender" style={{marginLeft: "10px"}} onClick={setAll}/>
+                </div>
+                <div className="filter" style={{flexDirection: "column"}}>
+                    <label htmlFor="woman">Woman's Tournaments</label>
+                    <input type="radio" id="woman" name="gender" style={{marginLeft: "10px"}} onClick={setWoman}/>
+                </div>
+                <div className="filter" style={{flexDirection: "column"}}>
+                    <label htmlFor="man">Men's Tournaments</label>
+                    <input type="radio" id="man" name="gender" style={{marginLeft: "10px"}} onClick={setMan}/>
                 </div>
             </div>
             <div className="tournaments">
