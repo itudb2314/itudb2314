@@ -1,10 +1,40 @@
 import React, { useState } from "react";
 import '../css/Matches.css';
+import '../css/Buttons.css';
 import { useHistory } from "react-router-dom";
 
-export default function Match({ match, goals, setMatchDeleted }) {
+export default function Match({ match, goals, setMatchDeleted, setMatch }) {
     const history = useHistory();
     const [deleting, setDeleting] = useState(false);
+    const [isupdating, setUpdating] = useState(false);
+
+    const handleUpdateMatch = () => setUpdating(true);
+    const handleFormSubmit = (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const updatedMatch = {...match, 
+            replayed: formData.get('replayed'),
+            replay: formData.get('replay'),
+            match_date: formData.get('match_date'),
+            match_time: formData.get('match_time'),
+            extra_time: formData.get('extra-time'),
+        };
+
+        fetch(`http://localhost:5000/matches`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({updatedMatch : updatedMatch}),
+        }).then((response) => response.json())
+            .then(data => {
+                setMatch(data);
+            }).catch((error) => {
+                console.error('Error:', error);
+            });
+
+        setUpdating(false);
+    }
 
     const handleDeleteMatch = () => {
         try {
@@ -65,46 +95,85 @@ export default function Match({ match, goals, setMatchDeleted }) {
             <h2 className="match_header">
                 {capitalizeWords(match.stage_name)}
             </h2>
-            <div className='match_details'>
-                <p className='team_names' onClick={() => handleHomeTeamClick(match)} style={{ cursor: 'pointer' }}>
-                    {match.home_team_name}
-                </p>
-                <p className='team_score'>{match.home_team_score}   -   {match.away_team_score}</p>
-                <p className='team_names' onClick={() => handleAwayTeamClick(match)} style={{ cursor: 'pointer' }}>
-                    {match.away_team_name}
-                </p>
-            </div>
-            <div className='match_statistics'>
-                <div className='match_goals'>
-                    {goals && goals
-                        .filter((goal) => goal.team_id === match.home_team_id)
-                        .map((goal, index) => (
-                            <div key={index}>
-                                <p>{goalIcon()} {goal.minute_label}  {goal.given_name}  {goal.family_name}</p>
-                            </div>
-                        ))}
+            {!isupdating ? (
+                <>
+                <div className='match_details'>
+                    <p className='team_names' onClick={() => handleHomeTeamClick(match)} style={{ cursor: 'pointer' }}>
+                        {match.home_team_name}
+                    </p>
+                    <p className='team_score'>{match.home_team_score}   -   {match.away_team_score}</p>
+                    <p className='team_names' onClick={() => handleAwayTeamClick(match)} style={{ cursor: 'pointer' }}>
+                        {match.away_team_name}
+                    </p>
                 </div>
-                <div className='match_time'>
-                    {match.penalty_shootout ? (
-                        <p className='match_time_item'>({match.home_team_score_penalties} - {match.away_team_score_penalties})</p>
-                    ) : null}
-                    <p className='match_time_item'>{match.match_time}</p>
-                    <p className='match_time_item'>{match.stadium_name}</p>
-                    <p className='match_time_item'>{match.city_name}</p>
+                <div className='match_statistics'>
+                    <div className='match_goals'>
+                        {goals && goals
+                            .filter((goal) => goal.team_id === match.home_team_id)
+                            .map((goal, index) => (
+                                <div key={index}>
+                                    <p>{goalIcon()} {goal.minute_label}  {goal.given_name}  {goal.family_name}</p>
+                                </div>
+                            ))}
+                    </div>
+                    <div className='match_time'>
+                        {match.penalty_shootout ? (
+                            <p className='match_time_item'>({match.home_team_score_penalties} - {match.away_team_score_penalties})</p>
+                        ) : null}
+                        <p className='match_time_item'>{match.match_time}</p>
+                        <p className='match_time_item'>{match.stadium_name}</p>
+                        <p className='match_time_item'>{match.city_name}</p>
+                    </div>
+                    <div className='match_goals'>
+                        {goals && goals
+                            .filter((goal) => goal.team_id === match.away_team_id)
+                            .map((goal, index) => (
+                                <div key={index}>
+                                    <p>{goalIcon()} {goal.minute_label}  {goal.given_name}  {goal.family_name}</p>
+                                </div>
+                            ))}
+                    </div>
                 </div>
-                <div className='match_goals'>
-                    {goals && goals
-                        .filter((goal) => goal.team_id === match.away_team_id)
-                        .map((goal, index) => (
-                            <div key={index}>
-                                <p>{goalIcon()} {goal.minute_label}  {goal.given_name}  {goal.family_name}</p>
-                            </div>
-                        ))}
+                <div>   
+                    <button onClick={handleDeleteMatch} disabled={deleting} className='delete-button-danas'>
+                        {deleting ? 'Deleting...' : 'Delete'}
+                    </button>
+                    <button onClick={handleUpdateMatch} className='edit-button'>
+                        Update
+                    </button>
                 </div>
-            </div>
-            <button onClick={handleDeleteMatch} disabled={deleting} className='delete-button-danas'>
-                {deleting ? 'Deleting...' : 'Delete'}
-            </button>
-        </div>
+                </>
+            ) : (
+                 <div>
+                    <div>
+                        <h2>Update Match</h2> 
+                        <form id = "update-form" onSubmit={handleFormSubmit}>
+                            <label for="match_name"> Match Name </label>
+                            <input id= "match_name" type="text" name="match_name" placeholder='HOMETEAM vs AWAYTEAM' required/>
+                            <label> Replayed </label><br/>
+                            <input type="radio" id="true-replayed" name="replayed" value="1" required/>
+                            <label for="true-replayed" className='radio-label'> True </label>
+                            <input type="radio" id="false-replayed" name="replayed" value="0" required/>
+                            <label for="false-replayed" className='radio-label'> False </label> <br/>
+                            <label> Replay </label><br/>
+                            <input type="radio" id="true-replay" name="replay" value="1" required/>
+                            <label for="true-replay" className='radio-label'> True </label> 
+                            <input type="radio" id="false-replay" name="replay" value="0" required/>
+                            <label for="false-replay" className='radio-label'> False </label> <br/>
+                            <label> Match Date </label>
+                            <input type="text" name="match_date" pattern="\d{4}-\d{2}-\d{2}" placeholder='YYYY-MM-DD' required/>
+                            <label> Match Time </label>
+                            <input type="text" name="match_time" pattern="\d{2}:\d{2}" placeholder='HH:MM' required/>
+                            <label> Extra Time </label><br/>
+                            <input type="radio" id="true" name="extra-time" value="1" required/>
+                            <label for="true" className='radio-label'> True </label>
+                            <input type="radio" id="false" name="extra-time" value="0" required/>
+                            <label for="false" className='radio-label'> False </label> <br/>
+                        </form>
+                        <button type='submit' form='update-form' value='Submit'>Submit</button>
+                    </div>
+                </div>
+            )}
+            </div>        
     );
 }
