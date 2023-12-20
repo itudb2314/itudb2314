@@ -36,8 +36,25 @@ def create_server(db):
 
 
     @app.route('/tournaments', methods=['GET'])
-    def get_all_tournaments():
-        tournaments = TournamentDAO.get_all_tournaments(db)
+    def get_all_tournaments_dep():
+        tournaments = TournamentDAO.get_all_tournaments(db, "year", "asc", "%")
+        return flask.jsonify(tournaments)
+
+    @app.route('/tournaments/<sort>/<order>/<gender>', methods=['GET'])
+    def get_all_tournaments(sort: str, order: str, gender: str):
+        if sort == "none":
+            sort = "year"
+        if order != "asc" and order != "desc":
+            order = "asc"
+
+        if gender == "woman":
+            gender = "%FIFA Women%"
+        elif gender == "man":
+            gender = "%FIFA Men%"
+        else:
+            gender = "%"
+
+        tournaments = TournamentDAO.get_all_tournaments(db, sort, order, gender)
         return flask.jsonify(tournaments)
 
     @app.route('/tournaments', methods=['PUT'])
@@ -184,12 +201,14 @@ def create_server(db):
         MatchDAO.create_match(db, match)
         return flask.jsonify({})
     
+
     @app.route('/matches', methods=['PUT'])
-    def update_match(match_id : str):
-        match = flask.request.get_json()['new_data']
+    def update_matches():
+        match = flask.request.get_json()['updatedMatch']
         match = make_dataclass('Match', match.keys())(**match)
-        match = MatchDAO.update_match(db, match)
-        return flask.jsonify(match)
+        updated_match = MatchDAO.update_match(db, match)
+        return flask.jsonify(updated_match)
+
 
     @app.route('/bookings/<match_id>', methods=['GET'])
     def get_bookings_by_match_id(match_id : str):
@@ -369,11 +388,5 @@ def create_server(db):
         Player_apperanceDAO.create_player_apperance(db, player_appearance)
         return flask.jsonify({})
     
-    @app.route('/team_stats/<team_id>/<tournament_filter>', methods=['GET'])
-    def get_team_stats_filtered(team_id, tournament_filter):
-        stats = TeamStatsDAO.get_team_stats(db, team_id, tournament_filter)
-        return flask.jsonify(stats)
-    
-        
     return app
 

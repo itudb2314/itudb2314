@@ -82,7 +82,7 @@ class TournamentDAO():
     def get_tournament_by_id(db: db, tournament_id: str) -> Tournament:
         try:
             conn = db.get_connection()
-            query = "SELECT * FROM tournaments WHERE tournament_id = %s"
+            query = "SELECT * FROM tournaments WHERE tournament_id = %s LIMIT 1"
             cursor = conn.cursor()
             cursor.execute(query, (tournament_id,))
             rows = cursor.fetchone()
@@ -95,12 +95,17 @@ class TournamentDAO():
             print(f"Error: {err}")
 
     @staticmethod
-    def get_all_tournaments(db) -> list[Tournament]:
+    def get_all_tournaments(db: db, sort: str, order: str, gender: str) -> list[Tournament]:
         try:
             conn = db.get_connection()
-            query = "SELECT * FROM tournaments ORDER BY year DESC"
+            query = f"""SELECT * FROM tournaments 
+                        WHERE tournament_name 
+                        LIKE %s
+                        ORDER BY {sort} {order}
+                    """
             cursor = conn.cursor()
-            cursor.execute(query)
+            cursor.execute(query, (gender,))
+            print(cursor.statement)
             rows = cursor.fetchall()
             cursor.close()
             db.disconnect(conn)

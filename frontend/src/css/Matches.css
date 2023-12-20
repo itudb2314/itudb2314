@@ -164,8 +164,7 @@
     font-weight: lighter;
   }
 
-  input[type="text"],
-  input[type="number"] {
+  .input-text-select {
     text-align: left;
     width: 100%;
     font-size: 12px;

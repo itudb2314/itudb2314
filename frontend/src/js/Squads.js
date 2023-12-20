@@ -322,7 +322,15 @@ export default function Squads() {
                                     // Display squad details
                                     <>
                                         <div className="player-name" onClick={() => handlePlayerClick(squad)} style={{ cursor: 'pointer' }} >
-                                            {squad.given_name} {squad.family_name}
+                                            {squad.given_name !== "not applicable" && (
+                                                <span>{squad.given_name}</span>
+                                            )}
+                                            {squad.given_name !== "not applicable" && squad.family_name !== "not applicable" && (
+                                                <span>&nbsp;</span>
+                                            )}
+                                            {squad.family_name !== "not applicable" && (
+                                                <span>{squad.family_name}</span>
+                                            )}
                                         </div>
                                         <div className="player-image">
                                             <img src={playerIndex % 2 === 0 ? siu : siu2} alt={`Player ${playerIndex + 1}`} />

@@ -1,5 +1,6 @@
 import '../css/Tournament.css';
 import '../css/Buttons.css';
+import '../css/Filters.css';
 import React, {useEffect, useState} from "react";
 import {useHistory} from "react-router-dom";
 
@@ -8,14 +9,18 @@ export default function Tournaments() {
     const [deleteTrigger, setDeleteTrigger] = useState(false)
     const [addTrigger, setAddTrigger] = useState(false)
     const [modalVisible, setModalVisible] = useState(false);
+    const [sort, setSort] = useState('winner')
+    const [order, setOrder] = useState('asc')
+    const [gender, setGender] = useState('all')
 
     useEffect(() => {
-        fetch('http://localhost:5000/tournaments')
+        fetch(`http://localhost:5000/tournaments/${sort}/${order}/${gender}`)
             .then(response => response.json())
             .then(data => {
                 setTournaments(data)
+                console.log(data)
             })
-    }, [deleteTrigger, addTrigger])
+    }, [deleteTrigger, addTrigger, sort, order, gender])
 
     const toggleModal = () => {
         setModalVisible(!modalVisible);
@@ -70,7 +75,6 @@ export default function Tournaments() {
             body: JSON.stringify({newTournament}),
         }).then(response => response.json())
             .then(data => {
-                console.log('Success:', data);
                 setAddTrigger(!addTrigger)
             })
             .catch((error) => {
@@ -84,145 +88,193 @@ export default function Tournaments() {
 
     const style = {
         alignSelf: "center",
-        padding: "0 0 0 2rem"
+        padding: "0 0 0 2rem",
+        textAlign: "center"
+    }
+
+    function sortTournaments(e) {
+        setSort(e.target.value)
+    }
+
+    function orderTournaments(e) {
+        setOrder(e.target.value)
+    }
+
+    function setWoman() {
+        setGender("woman")
+    }
+
+    function setMan() {
+        setGender("man")
+    }
+
+    function setAll() {
+        setGender("all")
     }
 
     return (
-        <div className="tournaments">
+        <div className="tournament-container" style={{minWidth: "100%",display:"flex", flexDirection: "column", alignItems: "center"}}>
             <h1 style={style}>Tournaments</h1>
-            {tournaments.sort((a,b) => {
-                if (a.year < b.year) {
-                    return 1
-                }
-                if (a.year > b.year) {
-                    return -1
-                }
-                return 0
-            }).map(tournament => (
-                <Tournament key={tournament.year} t={tournament} deleteHandle={deleteTournament}/>
-            ))}
-            <button className={'add-button'} onClick={() => setModalVisible(true)}>+ Add Tournament</button>
-            {modalVisible && (
-                <div className="modal">
-                    <div className="modal-content">
+            <div className="filter-block">
+                <div className="filter">
+                    <label>Sort By</label>
+                    <select className="filter_select" onChange={sortTournaments}>
+                        <option value="tournament_name">Tournament Name</option>
+                        <option value="year">Year</option>
+                        <option value="start_date">Start Date</option>
+                        <option value="end_date">End Date</option>
+                        <option value="host_country">Host Country</option>
+                        <option value="winner">Winner</option>
+                        <option value="count_teams">Count Teams</option>
+                    </select>
+                </div>
+                <div className="filter">
+                    <label>Order</label>
+                    <select className="filter_select" onChange={orderTournaments}>
+                        <option value="asc">Ascending</option>
+                        <option value="desc">Descending</option>
+                    </select>
+                </div>
+                <div className="filter" style={{flexDirection: "column"}}>
+                    <label htmlFor="all">All Tournaments</label>
+                    <input type="radio" id="all" name="gender" style={{marginLeft: "10px"}} onClick={setAll}/>
+                </div>
+                <div className="filter" style={{flexDirection: "column"}}>
+                    <label htmlFor="woman">Woman's Tournaments</label>
+                    <input type="radio" id="woman" name="gender" style={{marginLeft: "10px"}} onClick={setWoman}/>
+                </div>
+                <div className="filter" style={{flexDirection: "column"}}>
+                    <label htmlFor="man">Men's Tournaments</label>
+                    <input type="radio" id="man" name="gender" style={{marginLeft: "10px"}} onClick={setMan}/>
+                </div>
+            </div>
+            <div className="tournaments">
+                {tournaments.map(tournament => (
+                    <Tournament key={tournament.year} t={tournament} deleteHandle={deleteTournament}/>
+                ))}
+                <button className={'add-button'} onClick={() => setModalVisible(true)}>+ Add Tournament</button>
+                {modalVisible && (
+                    <div className="modal">
+                        <div className="modal-content">
                         <span className="close" onClick={toggleModal}>
                             &times;
                         </span>
-                        <form onSubmit={addTournament}>
-                            <label htmlFor="tournament_id">Tournament ID</label>
-                            <input
-                                type="text"
-                                id="tournament_id"
-                                required
-                            />
-                            <label htmlFor="tournament_name">Tournament Name</label>
-                            <input
-                                type="text"
-                                id="tournament_name"
-                                required
-                            />
-                            <label htmlFor="year">Year</label>
-                            <input
-                                type="text"
-                                id="year"
-                                required
-                            />
-                            <label htmlFor="start_date">Start Date</label>
-                            <input
-                                type="text"
-                                id="start_date"
-                                required /> <label htmlFor="end_date">End Date</label>
-                            <input
-                                type="text"
-                                id="end_date"
-                                required
-                            />
-                            <label htmlFor="host_country">Host Country</label>
-                            <input
-                                type="text"
-                                id="host_country"
-                                required
-                            />
-                            <label htmlFor="winner">Winner</label>
-                            <input
-                                type="text"
-                                id="winner"
-                                required
-                            />
-                            <label htmlFor="count_teams">Count Teams</label>
-                            <input
-                                type="text"
-                                id="count_teams"
-                                required
-                            />
-                            <div>
-                                <input style={{marginLeft:'0'}}
-                                       type="checkbox"
-                                       id="host_won"
+                            <form onSubmit={addTournament}>
+                                <label htmlFor="tournament_id">Tournament ID</label>
+                                <input
+                                    type="text"
+                                    id="tournament_id"
+                                    required
                                 />
-                                <label htmlFor="host_won">Host Won</label>
-                            </div>
-                            <div>
-                                <input style={{marginLeft:'0'}}
-                                       type="checkbox"
-                                       id="group_stage"
+                                <label htmlFor="tournament_name">Tournament Name</label>
+                                <input
+                                    type="text"
+                                    id="tournament_name"
+                                    required
                                 />
-                                <label htmlFor="group_stage">Group Stage</label>
-                            </div>
-                            <div>
-                                <input style={{marginLeft:'0'}}
-                                       type="checkbox"
-                                       id="second_group_stage"
+                                <label htmlFor="year">Year</label>
+                                <input
+                                    type="text"
+                                    id="year"
+                                    required
                                 />
-                                <label htmlFor="second_group_stage">Second Group Stage</label>
-                            </div>
-                            <div>
-                                <input style={{marginLeft:'0'}}
-                                       type="checkbox"
-                                       id="final_round"
+                                <label htmlFor="start_date">Start Date</label>
+                                <input
+                                    type="text"
+                                    id="start_date"
+                                    required/> <label htmlFor="end_date">End Date</label>
+                                <input
+                                    type="text"
+                                    id="end_date"
+                                    required
                                 />
-                                <label htmlFor="final_round">Final Round</label>
-                            </div>
-                            <div>
-                                <input style={{marginLeft:'0'}}
-                                       type="checkbox"
-                                       id="round_of_16"
+                                <label htmlFor="host_country">Host Country</label>
+                                <input
+                                    type="text"
+                                    id="host_country"
+                                    required
                                 />
-                                <label htmlFor="round_of_16">Round of 16</label>
-                            </div>
-                            <div>
-                                <input style={{marginLeft:'0'}}
-                                       type="checkbox"
-                                       id="quarter_finals"
+                                <label htmlFor="winner">Winner</label>
+                                <input
+                                    type="text"
+                                    id="winner"
+                                    required
                                 />
-                                <label htmlFor="quarter_finals">Quarter Finals</label>
-                            </div>
-                            <div>
-                                <input style={{marginLeft:'0'}}
-                                       type="checkbox"
-                                       id="semi_finals"
+                                <label htmlFor="count_teams">Count Teams</label>
+                                <input
+                                    type="text"
+                                    id="count_teams"
+                                    required
                                 />
-                                <label htmlFor="semi_finals">Semi Finals</label>
-                            </div>
-                            <div>
-                                <input style={{marginLeft:'0'}}
-                                       type="checkbox"
-                                       id="third_place_match"
-                                />
-                                <label htmlFor="third_place_match">Third Place Match</label>
-                            </div>
-                            <div>
-                                <input style={{marginLeft:'0'}}
-                                       type="checkbox"
-                                       id="final"
-                                />
-                                <label htmlFor="final">Final</label>
-                            </div>
-                            <button type="submit">Add Tournament</button>
-                        </form>
+                                <div>
+                                    <input style={{marginLeft: '0'}}
+                                           type="checkbox"
+                                           id="host_won"
+                                    />
+                                    <label htmlFor="host_won">Host Won</label>
+                                </div>
+                                <div>
+                                    <input style={{marginLeft: '0'}}
+                                           type="checkbox"
+                                           id="group_stage"
+                                    />
+                                    <label htmlFor="group_stage">Group Stage</label>
+                                </div>
+                                <div>
+                                    <input style={{marginLeft: '0'}}
+                                           type="checkbox"
+                                           id="second_group_stage"
+                                    />
+                                    <label htmlFor="second_group_stage">Second Group Stage</label>
+                                </div>
+                                <div>
+                                    <input style={{marginLeft: '0'}}
+                                           type="checkbox"
+                                           id="final_round"
+                                    />
+                                    <label htmlFor="final_round">Final Round</label>
+                                </div>
+                                <div>
+                                    <input style={{marginLeft: '0'}}
+                                           type="checkbox"
+                                           id="round_of_16"
+                                    />
+                                    <label htmlFor="round_of_16">Round of 16</label>
+                                </div>
+                                <div>
+                                    <input style={{marginLeft: '0'}}
+                                           type="checkbox"
+                                           id="quarter_finals"
+                                    />
+                                    <label htmlFor="quarter_finals">Quarter Finals</label>
+                                </div>
+                                <div>
+                                    <input style={{marginLeft: '0'}}
+                                           type="checkbox"
+                                           id="semi_finals"
+                                    />
+                                    <label htmlFor="semi_finals">Semi Finals</label>
+                                </div>
+                                <div>
+                                    <input style={{marginLeft: '0'}}
+                                           type="checkbox"
+                                           id="third_place_match"
+                                    />
+                                    <label htmlFor="third_place_match">Third Place Match</label>
+                                </div>
+                                <div>
+                                    <input style={{marginLeft: '0'}}
+                                           type="checkbox"
+                                           id="final"
+                                    />
+                                    <label htmlFor="final">Final</label>
+                                </div>
+                                <button type="submit">Add Tournament</button>
+                            </form>
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
+            </div>
         </div>
     );
 }
@@ -287,6 +339,7 @@ function Tournament({t, deleteHandle}) {
                 {!isEditing ? (
                     <>
                         <h3 onClick={handleClick} style={{cursor: 'pointer'}}>{tournament.tournament_name}</h3>
+                        <p style= {{padding: 0, margin: 0}}>Host: {tournament.host_country}</p>
                         <p>Winner: {tournament.winner}</p>
                         <div className="buttons">
                             <button className="edit-button" onClick={editTournament}>Edit</button>

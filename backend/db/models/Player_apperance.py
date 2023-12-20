@@ -217,3 +217,46 @@ class Player_apperanceDAO():
             cursor.close()
             connection.close()
             
+    @staticmethod
+    def get_all_appearances_paginated(db: db, page: int, items_per_page: int, order_by: str, order: str) -> list:
+        try:
+            connection = db.get_connection()  
+            offset = (page) * items_per_page          
+            query = """
+                SELECT 
+                    pa.tournament_id, 
+                    pa.match_id, 
+                    pa.team_id, 
+                    pa.home_team, 
+                    pa.away_team,
+                   pa.player_id, 
+                   pa.shirt_number, 
+                   pa.position_name, 
+                   pa.position_code,
+                   pa.starter, 
+                   pa.substitute, 
+                   m.match_name,
+                   p.family_name, 
+                   p.given_name, 
+                   t.team_name, 
+                   tr.tournament_name
+                FROM player_appearances pa
+                JOIN players p ON pa.player_id = p.player_id
+                JOIN teams t ON pa.team_id = t.team_id
+                JOIN tournaments tr ON pa.tournament_id = tr.tournament_id
+                JOIN matches m ON pa.match_id = m.match_id
+                ORDER BY %s %s
+                LIMIT %s OFFSET %s
+            """
+            cursor = connection.cursor()
+            cursor.execute(query, (order_by, order, items_per_page, offset))
+            results = cursor.fetchall()
+            if results is None:
+                return None
+            return [Joined_Player_apperance(*result) for result in results]
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+            connection.rollback()
+        finally:
+            cursor.close()
+            connection.close()

@@ -15,13 +15,11 @@ export default function Players() {
     const [modalVisible, setModalVisible] = useState(false);
 
     const toggleModal = () => {
+        setShowFilter(false);
+        setShowSort(false);
         setModalVisible(!modalVisible);
     };
 
-    const [newPlayer, setNewPlayer] = useState({
-        given_name: '',
-        family_name: '',
-    });
     const [offset, setOffset] = useState(0);
     const [filters, setFilters] = useState({
         female: 'all',
@@ -54,10 +52,12 @@ export default function Players() {
     };
 
     const handleFilterClick = () => {
+        setShowSort(false);
         setShowFilter(!showFilter);
     };
 
     const handleSortClick = () => {
+        setShowFilter(false);
         setShowSort(!showSort);
     };
 
@@ -96,11 +96,6 @@ export default function Players() {
 
     const handlePlayerClick = (player) => {
         history.push(`/players/${player.player_id}`);
-    };
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setNewPlayer((prevPlayer) => ({ ...prevPlayer, [name]: value }));
     };
 
     function handleAddPlayer(e) {
@@ -171,12 +166,16 @@ export default function Players() {
                 else {
                     setAddTrigger(!addTrigger);
                 }
+                setShowFilter(false);
+                setShowSort(false);
                 toggleModal();
             })
             .catch(error => {
                 console.error("Error:", error);
                 alert("Error adding data");
             });
+        setShowFilter(false);
+        setShowSort(false);
         setModalVisible(false);
         if (offset > 0) {
             setOffset(0);
@@ -185,8 +184,13 @@ export default function Players() {
             setAddTrigger(!addTrigger);
         }
         toggleModal();
-
     };
+
+    function handleAddButton() {
+        setShowFilter(false);
+        setShowSort(false);
+        setModalVisible(true);
+    }
 
     return (
         <div>
@@ -504,7 +508,7 @@ export default function Players() {
                     ))
                 }
             </div>
-            <button className={'add-button'} onClick={() => setModalVisible(true)}>+ Add Player</button>
+            <button className={'add-button'} onClick={handleAddButton}>+ Add Player</button>
             {modalVisible && (
                 <div className="modal">
                     <div className="modal-content">
