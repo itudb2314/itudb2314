@@ -143,7 +143,7 @@ export default function Matches() {
     }
 
     useEffect(() => {
-        if(chosentournament != 'NULL') {
+        if(chosentournament !== 'NULL') {
             fetch(`http://localhost:5000/tournamentstages/${chosentournament}`)
             .then((response) => response.json())
             .then((data) => {
@@ -162,7 +162,7 @@ export default function Matches() {
     }
 
     useEffect(() => {
-        if(chosentournament != 'NULL' && chosenstage != 'NULL') {
+        if(chosentournament !== 'NULL' && chosenstage !== 'NULL') {
             fetch(`http://localhost:5000/groupnames/${chosentournament}/${chosenstage}`)
             .then((response) => response.json())
             .then((data) => {
@@ -362,15 +362,20 @@ export default function Matches() {
             )}
             {match_id ? (
                 <MatchScoreBoard key={match.match_id}  match={match} goals={goals_by_id} bookings={bookings}/>
-            ) : (
-                matches.map((tournament_matches, i) => (
+            ) :
+                ( matches.length > 0 ?
+                (matches.map((tournament_matches, i) => (
                     <div key={i}>
                         <h2 style={style}>{tournament_matches[0].tournament_name}</h2>
                         {tournament_matches.map((match) => (
                             <Match key={match.match_id}  match={match} goals={goals[match.match_id]}  setMatchDeleted={onMatchDelete}/>
                         ))}
                     </div>
-                )))} 
+                ))) :
+                (
+                    <h2>Loading ...</h2>
+                )
+            )}
         </div>
     );
 }
