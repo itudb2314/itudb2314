@@ -91,7 +91,7 @@ export default function Match({ match, goals, setMatchDeleted, setMatch }) {
     }
 
     function capitalizeWords(str) {
-        return str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        return str ? str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : '';
     }
 
     return (

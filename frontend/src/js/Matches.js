@@ -52,7 +52,7 @@ export default function Matches() {
             ])
 
             .then(([matches_data, goals_data]) => { //converting response to json])
-                if(sort === 'tournament_name') {
+                if(sort === 'tournament_name' && (filter === 'All' || filter === 'tournament')) {
                     //process and set matches
                     const tournament_matches = matches_data.reduce((tournament, match) => {
                         const key = match.tournament_id;  //key based on which matches are grouped
@@ -63,7 +63,7 @@ export default function Matches() {
                     }, {});  //initial value of tournament is an empty object
                     setMatches(Object.values(tournament_matches)); //set matches to array of arrays of matches
                 } else {
-                    setMatches([matches_data]);
+                    setMatches(matches_data);
                 }
 
                 //process and set goals
@@ -461,19 +461,25 @@ export default function Matches() {
             )}
             {match_id ? (
                 <MatchScoreBoard key={match.match_id}  match={match} goals={goals_by_id} bookings={bookings}/>
-            ) :
-                ( matches.length > 0 ?
-                (matches.map((tournament_matches, i) => (
-                    <div key={i}>
-                        {sort == 'tournament_name' ? (<h2 style={style}>{tournament_matches[0].tournament_name}</h2>) : (<></>)}
-                        {tournament_matches.map((match) => (
-                            <Match key={match.match_id}  match={match} goals={goals[match.match_id]}  setMatchDeleted={onMatchDelete} setMatch={setMatch}/>
-                        ))}
-                    </div>
-                ))) :
-                (
-                    <h2>Loading ...</h2>
-                )
+            ) : ( 
+                (sort === 'tournament_name' && (filter === 'All' || filter === 'tournament')) ?
+                    matches.map((tournament_matches, i) => (
+                        Array.isArray(tournament_matches) ?
+                        <div key={i}>
+                            <h2 style={style}>{tournament_matches[0]?.tournament_name}</h2>
+                            {tournament_matches.map((match) => (
+                                <Match key={match.match_id}  match={match} goals={goals[match.match_id]}  setMatchDeleted={onMatchDelete} setMatch={setMatch}/>
+                            ))}
+                        </div>
+                        : <></>
+                    ))
+                : 
+                    Array.isArray(matches) ?
+                    matches.map((match) => (
+                        <Match key={match.match_id}  match={match} goals={goals[match.match_id]}  setMatchDeleted={onMatchDelete} setMatch={setMatch}/>
+                    ))
+                    : <></>
+
             )}
             {matches.length > 0 && (
                 <div ref={divRef} style={{marginTop: "40px"}}>
