@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {Link, useParams} from "react-router-dom";
 import '../css/TournamentDetails.css';
-import '../css/Groupstanding.css'
+import '../css/Groups_and_standing.css'
 import '../css/Awards.css'
 import Match from './Match'
 import Groupstanding_tournament from "./groupstandings_tournament";
