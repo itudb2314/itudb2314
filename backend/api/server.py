@@ -298,7 +298,7 @@ def create_server(db):
         players = PlayerDAO.get_all_players_paginated(db, page, items_per_page, female, goal_keeper, defender, midfielder, forward, sorting_field, sorting_order)
         return flask.jsonify(players)
 
-    @app.route('/players/<player_id>', methods=['GET'])
+    @app.route('/playersdetail/<player_id>', methods=['GET'])
     def get_player(player_id):
         player = PlayerDAO.get_player(db, player_id)
         if player:

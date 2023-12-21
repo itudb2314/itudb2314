@@ -176,7 +176,7 @@ export default function Squads() {
             typeof positionCode !== 'string' ||
             !nameRegex.test(positionCode)
         ) {
-            alert('Invalid input types or patterns for Position Name or Position Code. Please check your input.');
+            alert('Invalid input types or patterns for Position Name or Position Code. Only A-Z letters are allowed.');
             return;
         }
 

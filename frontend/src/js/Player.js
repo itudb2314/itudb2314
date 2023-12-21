@@ -22,7 +22,7 @@ const PlayerPage = () => {
     const fetchPlayer = async () => {
         setIsLoading(true); // Set loading to true before fetching data
         try {
-            const response = await fetch(`http://localhost:5000/players/${playerId}`);
+            const response = await fetch(`http://localhost:5000/playersdetail/${playerId}`);
             const response2 = await fetch(`http://localhost:5000/get_awards_per_player?player_id=${playerId}`);
             const response3 = await fetch(`http://localhost:5000/get_appearances_per_player?player_id=${playerId}`);
             if (!response.ok || !response2.ok || !response3.ok) {

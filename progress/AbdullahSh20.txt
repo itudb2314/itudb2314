@@ -41,3 +41,6 @@ added filtering to players page. Was difficult to implement with pagination :'|
 added appearances page
 added create, update, delete, read "CRUD" capabitlities to appearances page
 bug fixes. Added sorting to players page. Added player addition function and implementation
+added sorting to appearances by clickable headers, added pagination
+added statistics per player for awards and appearances, utilized subqueries "nested queries" and functions and groupby
+added searching and filtering to player appearances

@@ -116,7 +116,7 @@ export default function Players() {
 
         const playerIdRegex = /^P-\d{5}$/;
         if (!playerIdRegex.test(player_id)) {
-            alert('Invalid Player ID format. It should be in the format P-XXXX where X is a number.');
+            alert('Invalid Player ID format. It should be in the format P-XXXXX where X is a number.');
             return;
         }
 
@@ -128,7 +128,7 @@ export default function Players() {
             typeof given_name !== 'string' ||
             !nameRegex.test(given_name)
         ) {
-            alert('Invalid input types or patterns. Please check your input.');
+            alert('Invalid input types or patterns for family_name or given_name. Please check your input.');
             return;
         }
 

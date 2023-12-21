@@ -55,15 +55,28 @@ const SingleSquadPage = () => {
 
         if (
             typeof positionName !== 'string' ||
-            !nameRegex.test(positionName) ||
+            !nameRegex.test(positionName)
+        ) {
+            alert('Invalid Position Name. Please provide a valid string with the correct pattern.');
+            return;
+        }
+
+        if (
             typeof positionCode !== 'string' ||
-            !nameRegex.test(positionCode) ||
+            !nameRegex.test(positionCode)
+        ) {
+            alert('Invalid Position Code. Please provide a valid string with the correct pattern.');
+            return;
+        }
+
+        if (
             isNaN(shirtNumber) ||
             !Number.isInteger(shirtNumber)
         ) {
-            alert('Invalid input types or patterns. Please check your input.');
+            alert('Invalid Shirt Number. Please provide a valid integer.');
             return;
         }
+
 
         const updatedSquad = {
             shirt_number: event.target.shirt_number.value,
