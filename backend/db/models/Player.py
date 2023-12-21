@@ -105,6 +105,32 @@ class PlayerDAO():
             cursor.close()
             connection.close()
 
+    @staticmethod
+    def search_all_players(db: db, name: str) -> list:
+        try:
+            connection = db.get_connection()
+            query = """
+                SELECT * FROM players
+                WHERE given_name LIKE %s OR family_name LIKE %s 
+                OR CONCAT(given_name, ' ', family_name) LIKE %s
+                OR CONCAT(family_name, ' ', given_name) LIKE %s
+                LIMIT 20
+            """
+
+            cursor = connection.cursor()
+            cursor.execute(query, (f"%{name}%", f"%{name}%", f"%{name}%", f"%{name}%"))
+            results = cursor.fetchall()
+            if results is None:
+                return None
+            return [Player(*result) for result in results]
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+            connection.rollback()
+        finally:
+            cursor.close()
+            connection.close()
+
+
     # @staticmethod
     # def get_all_players_paginated(db: db, page: int, items_per_page: int) -> list:
     #     try:

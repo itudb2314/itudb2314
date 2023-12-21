@@ -9,22 +9,20 @@ export const SearchBar = ({ setResults }) => {
     const fetchData = (value) => {
         if (isFetching) return;
         isFetching = true;
-        fetch('http://localhost:5000/players')
+        fetch(`http://localhost:5000/players/${value}`)
             .then((res) => res.json())
             .then((data) => {
-                const results = data.filter((player) => {
-                    return (
-                        value &&
-                        player &&
-                        player.given_name &&
-                        player.given_name.toLowerCase().includes(value.toLowerCase())
-                    );
-                });
-                setResults(results);
+                setResults(data);
+                console.log(data);
             });
     };
 
     const handleChange = (value) => {
+        if(value.replace(' ', '') === '') {
+            setInput('')
+            setResults([]);
+            return
+        }
         setInput(value);
         fetchData(value);
     };

@@ -277,7 +277,13 @@ def create_server(db):
     def get_all_players():
         players = PlayerDAO.get_all_players(db)
         return flask.jsonify(players)
-    
+
+    @app.route('/players/<name>', methods=['GET'])
+    def search_players(name: str):
+        players = PlayerDAO.search_all_players(db, name)
+        return flask.jsonify(players)
+
+
     @app.route('/playerspaginated', methods=['GET'])
     def get_all_players_paginated():
         page = flask.request.args.get('page', default=0, type=int)
