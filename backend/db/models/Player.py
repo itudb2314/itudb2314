@@ -114,11 +114,13 @@ class PlayerDAO():
                 WHERE given_name LIKE %s OR family_name LIKE %s 
                 OR CONCAT(given_name, ' ', family_name) LIKE %s
                 OR CONCAT(family_name, ' ', given_name) LIKE %s
+                OR CONCAT(given_name, family_name) LIKE %s
+                OR CONCAT(family_name, given_name) LIKE %s
                 LIMIT 20
             """
 
             cursor = connection.cursor()
-            cursor.execute(query, (f"%{name}%", f"%{name}%", f"%{name}%", f"%{name}%"))
+            cursor.execute(query, (f"%{name}%", f"%{name}%", f"%{name}%", f"%{name}%", f"%{name}%", f"%{name}%"))
             results = cursor.fetchall()
             if results is None:
                 return None
