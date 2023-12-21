@@ -1,6 +1,6 @@
 .player-details {
     max-width: 750px;
-    margin: 0 auto;
+    margin: 0;
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -80,7 +80,6 @@
 .abdullah-edit-form input[type="checkbox"] {
     margin-right: 0;
     margin-bottom: 0;
-    /* Remove bottom margin for checkboxes */
 }
 
 .abdullah-edit-form button {
@@ -94,4 +93,11 @@
 
 .abdullah-edit-form button:hover {
     background-color: #45a049;
+}
+
+.player-page {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: row;
 }

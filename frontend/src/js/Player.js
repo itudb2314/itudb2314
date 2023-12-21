@@ -11,6 +11,8 @@ const PlayerPage = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [award, setAward] = useState([]);
+    const [Appearances, setAppearances] = useState([]);
 
 
     useEffect(() => {
@@ -21,11 +23,17 @@ const PlayerPage = () => {
         setIsLoading(true); // Set loading to true before fetching data
         try {
             const response = await fetch(`http://localhost:5000/players/${playerId}`);
-            if (!response.ok) {
+            const response2 = await fetch(`http://localhost:5000/get_awards_per_player?player_id=${playerId}`);
+            const response3 = await fetch(`http://localhost:5000/get_appearances_per_player?player_id=${playerId}`);
+            if (!response.ok || !response2.ok || !response3.ok) {
                 throw new Error('Failed to fetch player');
             }
             const data = await response.json();
             setPlayer(data);
+            const data2 = await response2.json();
+            setAward(data2);
+            const data3 = await response3.json();
+            setAppearances(data3);
         } catch (error) {
             console.error('Error fetching player:', error);
         } finally {
@@ -161,156 +169,179 @@ const PlayerPage = () => {
     }
 
     return (
-        <div className="player-details">
-            <h1 className="player-details-title">Player Details</h1>
-            <div className="player-info">
-                <div className="player-image-p">
-                    <img src={player.player_id % 2 === 0 ? siu : siu2} alt={`Player ${player.player_id}`} />
-                </div>
-                {!isEditing ? (
-                    <div className="player-data">
-                        <p>
-                            <label>Player Name:</label>
-                            {player.given_name !== "not applicable" && (
-                                <span>{player.given_name}</span>
-                            )}
-                            {player.given_name !== "not applicable" && player.family_name !== "not applicable" && (
-                                <span>&nbsp;</span>
-                            )}
-                            {player.family_name !== "not applicable" && (
-                                <span>{player.family_name}</span>
-                            )}
-                        </p>
-                        <p>
-                            <label>Birth Date:</label> {new Date(player.birth_date).toLocaleDateString()}
-                        </p>
-                        <p>
-                            <label>Female:</label> {player.female ? 'Yes' : 'No'}
-                        </p>
-                        <p>
-                            <label>Goal Keeper:</label> {player.goal_keeper ? 'Yes' : 'No'}
-                        </p>
-                        <p>
-                            <label>Defender:</label> {player.defender ? 'Yes' : 'No'}
-                        </p>
-                        <p>
-                            <label>Midfielder:</label> {player.midfielder ? 'Yes' : 'No'}
-                        </p>
-                        <p>
-                            <label>Forward:</label> {player.forward ? 'Yes' : 'No'}
-                        </p>
-                        <p>
-                            <label>Tournaments Played:</label> {player.count_tournaments}
-                        </p>
-                        <p>
-                            <label>List of Tournaments:</label> {player.list_tournaments}
-                        </p>
-                        <p>
-                            <label>Wikipedia Link:</label> <a href={player.player_wikipedia_link}>{player.player_wikipedia_link}</a>
-                        </p>
-                        <button className="edit-button" onClick={() => updatePlayer(player)}>Edit</button>
-                        <button className="delete-button-danas" onClick={() => deletePlayer(player.player_id)}>Delete</button>
+        <div className="player-page">
+            <div className="player-details">
+                <h1 className="player-details-title">Player Details</h1>
+                <div className="player-info">
+                    <div className="player-image-p">
+                        <img src={player.player_id % 2 === 0 ? siu : siu2} alt={`Player ${player.player_id}`} />
                     </div>
-                ) : (
+                    {!isEditing ? (
+                        <div className="player-data">
+                            <p>
+                                <label>Player Name:</label>
+                                {player.given_name !== "not applicable" && (
+                                    <span>{player.given_name}</span>
+                                )}
+                                {player.given_name !== "not applicable" && player.family_name !== "not applicable" && (
+                                    <span>&nbsp;</span>
+                                )}
+                                {player.family_name !== "not applicable" && (
+                                    <span>{player.family_name}</span>
+                                )}
+                            </p>
+                            <p>
+                                <label>Birth Date:</label> {new Date(player.birth_date).toLocaleDateString()}
+                            </p>
+                            <p>
+                                <label>Female:</label> {player.female ? 'Yes' : 'No'}
+                            </p>
+                            <p>
+                                <label>Goal Keeper:</label> {player.goal_keeper ? 'Yes' : 'No'}
+                            </p>
+                            <p>
+                                <label>Defender:</label> {player.defender ? 'Yes' : 'No'}
+                            </p>
+                            <p>
+                                <label>Midfielder:</label> {player.midfielder ? 'Yes' : 'No'}
+                            </p>
+                            <p>
+                                <label>Forward:</label> {player.forward ? 'Yes' : 'No'}
+                            </p>
+                            <p>
+                                <label>Tournaments Played:</label> {player.count_tournaments}
+                            </p>
+                            <p>
+                                <label>List of Tournaments:</label> {player.list_tournaments}
+                            </p>
+                            <p>
+                                <label>Wikipedia Link:</label> <a href={player.player_wikipedia_link}>{player.player_wikipedia_link}</a>
+                            </p>
+                            <button className="edit-button" onClick={() => updatePlayer(player)}>Edit</button>
+                            <button className="delete-button-danas" onClick={() => deletePlayer(player.player_id)}>Delete</button>
+                        </div>
+                    ) : (
 
-                    <form className="abdullah-edit-form" onSubmit={(e) => submitForm(e, player)}>
-                        <div>
-                            <label htmlFor="family_name">Family Name</label>
-                            <input
-                                type="text"
-                                id="family_name"
-                                defaultValue={player.family_name}
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="given_name">Given Name</label>
-                            <input
-                                type="text"
-                                id="given_name"
-                                defaultValue={player.given_name}
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="birth_date">Birth Date</label>
-                            <input
-                                type="date"
-                                id="birth_date"
-                                defaultValue={player.birth_date}
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="female">Female</label>
-                            <input
-                                type="checkbox"
-                                id="female"
-                                defaultChecked={player.female}
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="goalkeeper">Goalkeeper</label>
-                            <input
-                                type="checkbox"
-                                id="goalkeeper"
-                                defaultChecked={player.goal_keeper}
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="defender">Defender</label>
-                            <input
-                                type="checkbox"
-                                id="defender"
-                                defaultChecked={player.defender}
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="midfielder">Midfielder</label>
-                            <input
-                                type="checkbox"
-                                id="midfielder"
-                                defaultChecked={player.midfielder}
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="forward">Forward</label>
-                            <input
-                                type="checkbox"
-                                id="forward"
-                                defaultChecked={player.forward}
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="count_tournaments">Tournaments Played</label>
-                            <input
-                                type="number"
-                                id="count_tournaments"
-                                defaultValue={player.count_tournaments}
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="list_tournaments">List of Tournaments</label>
-                            <input
-                                type="text"
-                                id="list_tournaments"
-                                defaultValue={player.list_tournaments}
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="player_wikipedia_link">Wikipedia Link</label>
-                            <input
-                                type="text"
-                                id="player_wikipedia_link"
-                                defaultValue={player.player_wikipedia_link}
-                                required
-                            />
-                        </div>
-                        <button className="save-button" type="submit">Save</button>
-                    </form>
-                )}
+                        <form className="abdullah-edit-form" onSubmit={(e) => submitForm(e, player)}>
+                            <div>
+                                <label htmlFor="family_name">Family Name</label>
+                                <input
+                                    type="text"
+                                    id="family_name"
+                                    defaultValue={player.family_name}
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="given_name">Given Name</label>
+                                <input
+                                    type="text"
+                                    id="given_name"
+                                    defaultValue={player.given_name}
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="birth_date">Birth Date</label>
+                                <input
+                                    type="date"
+                                    id="birth_date"
+                                    defaultValue={player.birth_date}
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="female">Female</label>
+                                <input
+                                    type="checkbox"
+                                    id="female"
+                                    defaultChecked={player.female}
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="goalkeeper">Goalkeeper</label>
+                                <input
+                                    type="checkbox"
+                                    id="goalkeeper"
+                                    defaultChecked={player.goal_keeper}
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="defender">Defender</label>
+                                <input
+                                    type="checkbox"
+                                    id="defender"
+                                    defaultChecked={player.defender}
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="midfielder">Midfielder</label>
+                                <input
+                                    type="checkbox"
+                                    id="midfielder"
+                                    defaultChecked={player.midfielder}
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="forward">Forward</label>
+                                <input
+                                    type="checkbox"
+                                    id="forward"
+                                    defaultChecked={player.forward}
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="count_tournaments">Tournaments Played</label>
+                                <input
+                                    type="number"
+                                    id="count_tournaments"
+                                    defaultValue={player.count_tournaments}
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="list_tournaments">List of Tournaments</label>
+                                <input
+                                    type="text"
+                                    id="list_tournaments"
+                                    defaultValue={player.list_tournaments}
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="player_wikipedia_link">Wikipedia Link</label>
+                                <input
+                                    type="text"
+                                    id="player_wikipedia_link"
+                                    defaultValue={player.player_wikipedia_link}
+                                    required
+                                />
+                            </div>
+                            <button className="save-button" type="submit">Save</button>
+                        </form>
+                    )}
+                </div>
+            </div>
+            <div className="player-details">
+                <h1 className="player-stats-title">Player Stats</h1>
+                <div className="player-stats-info">
+                    <p>
+                        <label>Awards:</label> {award > 0 ? award : 0}
+                    </p>
+                    <p>
+                        <label>Match Appearances:</label> {Appearances > 0 ? Appearances : 0}
+                    </p>
+                    <p>
+                        <label>Goals:</label> {player.minutes_played}
+                    </p>
+                    <p>
+                        <label>Penalties:</label> {player.minutes_per_goal}
+                    </p>
+                    <p>
+                        <label>Minutes Per Goal or Assist:</label> {player.minutes_per_goal_or_assist}
+                    </p>
+                </div>
+
             </div>
         </div>
     );

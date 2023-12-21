@@ -410,5 +410,17 @@ def create_server(db):
         appearances = Player_apperanceDAO.get_all_appearances_paginated(db, page, items_per_page, order_by, order)
         return flask.jsonify(appearances)
     
+    @app.route('/get_awards_per_player', methods=['GET'])
+    def get_awards_per_player():
+        player_id = flask.request.args.get('player_id', type=str)
+        awards = PlayerDAO.get_awards_per_player(db, player_id)
+        return flask.jsonify(awards)
+    
+    @app.route('/get_appearances_per_player', methods=['GET'])
+    def get_appearances_per_player():
+        player_id = flask.request.args.get('player_id', type=str)
+        appearances = PlayerDAO.get_appearances_per_player(db, player_id)
+        return flask.jsonify(appearances)
+    
     return app
 

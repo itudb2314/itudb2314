@@ -227,3 +227,65 @@ class PlayerDAO():
         finally:
             cursor.close()
             connection.close()
+
+    @staticmethod
+    def get_awards_per_player(db: db, player_id) -> int:
+        try:
+            connection = db.get_connection()
+            query = """
+            SELECT
+                    total_awards_won
+                FROM
+                    (SELECT
+                        player_id,
+                        COUNT(*) AS total_awards_won
+                    FROM
+                        award_winners
+                    GROUP BY
+                        player_id) AS blah
+                WHERE
+                    player_id = %s;
+            """
+            cursor = connection.cursor()
+            cursor.execute(query, (player_id,))
+            result = cursor.fetchone()
+            if result is None:
+                return None
+            return result
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+            connection.rollback()
+        finally:
+            cursor.close()
+            connection.close()
+
+    @staticmethod
+    def get_appearances_per_player(db: db, player_id) -> int:
+        try:
+            connection = db.get_connection()
+            query = """
+            SELECT
+                    total_appearances
+                FROM
+                    (SELECT
+                        player_id,
+                        COUNT(*) AS total_appearances
+                    FROM
+                        player_appearances
+                    GROUP BY
+                        player_id) AS blah
+                WHERE
+                    player_id = %s;
+            """
+            cursor = connection.cursor()
+            cursor.execute(query, (player_id,))
+            result = cursor.fetchone()
+            if result is None:
+                return None
+            return result
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+            connection.rollback()
+        finally:
+            cursor.close()
+            connection.close()
