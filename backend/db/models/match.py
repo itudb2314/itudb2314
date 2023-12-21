@@ -120,14 +120,14 @@ class MatchDAO():
             connection.close()
 
     @staticmethod
-    def get_all_matches(db: db, sort: str, order: str, offset: int, limit: int) -> list[Match]:
+    def get_all_matches(db: db, sort: str, order: str, offset: int, limit: int, filter: str, filter_value : str) -> list[Match]:
         try:
             matches = []
             connection = db.get_connection()
             if sort == 'tournament_name' or sort == 'year':
-                sort = 'm.tournament_id'
+                sort = f'm.tournament_id {order}'
             elif sort == 'Stage':
-                sort = '''
+                sort = f'''
                         CASE
                             WHEN m.stage_name = 'group stage' THEN 1
                             WHEN m.stage_name = 'first round' THEN 2
@@ -140,6 +140,7 @@ class MatchDAO():
                             WHEN m.stage_name = 'final round' THEN 9
                             WHEN m.stage_name = 'final' THEN 10
                         END
+                        {order}
                         '''
             elif sort == 'Score-margin':
                 sort = f'ABS(m.home_team_score - m.away_team_score) {order}'
@@ -148,6 +149,13 @@ class MatchDAO():
             else: 
                 sort = f'm.tournament_id {order}'
 
+            if filter == 'All':
+                filter = '1 = 1'
+            elif filter == 'team':
+                filter = f'thome.team_id = "{filter_value}" OR taway.team_id = "{filter_value}"'
+            elif filter == 'tournament':
+                filter = f'm.tournament_id= "{filter_value}"'
+
             query = f"""
                     SELECT m.*, s.stadium_name, s.city_name, thome.team_name, taway.team_name, t.tournament_name 
                     FROM matches m 
@@ -155,6 +163,7 @@ class MatchDAO():
                     LEFT JOIN teams thome ON m.home_team_id = thome.team_id
                     LEFT JOIN teams taway ON m.away_team_id = taway.team_id
                     LEFT JOIN tournaments t ON m.tournament_id = t.tournament_id
+                    WHERE {filter}
                     ORDER BY {sort},  m.match_id DESC
                     LIMIT {offset}, {limit}
                     """

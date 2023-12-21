@@ -26,6 +26,10 @@ export default function Matches() {
     const [limit, setLimit] = useState(20);
     const [offset, setOffset] = useState(0);
     const divRef = useRef(null);
+    const [filter, setFilter] = useState('All');
+    const [allteams, setAllTeams] = useState([]);
+    const [alltournaments, setAllTournaments] = useState([]);
+    const [filter_value, setFilterValue] = useState('All');
 
     function handleScroll() {
         const {scrollTop, scrollHeight, clientHeight} = document.documentElement;
@@ -43,7 +47,7 @@ export default function Matches() {
     useEffect(() => {
         if(!match_id) {
             Promise.all([ //fetching data from backend
-                fetch(`http://localhost:5000/matches/${sort}/${order}/${offset}/${limit}`).then((response) => response.json()),
+                fetch(`http://localhost:5000/matches/${sort}/${order}/${offset}/${limit}/${filter}/${filter_value}`).then((response) => response.json()),
                 fetch('http://localhost:5000/goals').then((response) => response.json()),
             ])
 
@@ -95,7 +99,7 @@ export default function Matches() {
                 console.error('Error fetching data:', error);
             }); 
         }
-    }, [match_id, matchAdded, matchDeleted, sort, order, offset]);
+    }, [match_id, matchAdded, matchDeleted, sort, order, offset, filter_value]);
     const style = {
         margin: '2rem 0 2rem 0',
         color: 'reds',
@@ -239,6 +243,40 @@ export default function Matches() {
         setOrder(e.target.value)
     }
 
+    function filterMatches(e) {
+        setFilter(e.target.value)
+    }
+
+    function filterValue(e) {
+        setFilterValue(e.target.value)
+    }
+
+    useEffect(() => {
+        if(filter === 'team') {
+            fetch(`http://localhost:5000/tournaments/teams`)
+            .then((response) => response.json())
+            .then((data) => {
+                setAllTeams(data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+    }, [filter]);
+
+    useEffect(() => {
+        if(filter === 'tournament') {
+            fetch(`http://localhost:5000/tournaments`)
+            .then((response) => response.json())
+            .then((data) => {
+                setAllTournaments(data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+    }, [filter]);
+
     return (
         <div className="matches">
             {/*filter*/}
@@ -259,6 +297,30 @@ export default function Matches() {
                         <option value="asc">Ascending</option>
                     </select>
                 </div>
+                <div className="filter">
+                    <label>Filter</label>
+                    <select className="filter_select" onChange={filterMatches}>
+                        <option value="team">Teams</option>
+                        <option value="tournament">Tournaments</option>
+                    </select>
+                </div>         
+                <div className="filter">
+                <label>Options</label>
+                {filter === 'team' ? (
+                            <select className="filter_select" onChange={filterValue}>
+                            {allteams.map((team) => (
+                                <option value={team.team_id}>{team.team_name}</option>
+                            ))}
+                            </select>
+                    ) : (<></>)}
+                {filter === 'tournament' ? (
+                            <select className="filter_select" onChange={filterValue}>
+                            {alltournaments.map((tournament) => (
+                                <option value={tournament.tournament_id}>{tournament.tournament_name}</option>
+                            ))}
+                            </select>
+                    ) : (<></>)}
+                </div>       
             </div>
             {/*button to toggle insert form*/}
             {match_id ?  (<></>): (<button onClick={toggleInsertForm} className='insert-button'>Insert Match</button>)}
@@ -271,28 +333,9 @@ export default function Matches() {
                             <label for="Tournament"> Tournament ID </label> <br/>
                             <select id="Tournament" className='input-text-select' name="Tournament" value={chosentournament} onChange={handleTournamentChange}>
                                 <option value='NULL' disabled>select</option>
-                                <option value="WC-1930">World Cup 1930</option>
-                                <option value="WC-1934">World Cup 1934</option>
-                                <option value="WC-1938">World Cup 1938</option>
-                                <option value="WC-1950">World Cup 1950</option>
-                                <option value="WC-1954">World Cup 1954</option>
-                                <option value="WC-1958">World Cup 1958</option>
-                                <option value="WC-1962">World Cup 1962</option>
-                                <option value="WC-1966">World Cup 1966</option>
-                                <option value="WC-1970">World Cup 1970</option>
-                                <option value="WC-1974">World Cup 1974</option>
-                                <option value="WC-1978">World Cup 1978</option>
-                                <option value="WC-1982">World Cup 1982</option>
-                                <option value="WC-1986">World Cup 1986</option>
-                                <option value="WC-1990">World Cup 1990</option>
-                                <option value="WC-1994">World Cup 1994</option>
-                                <option value="WC-1998">World Cup 1998</option>
-                                <option value="WC-2002">World Cup 2002</option>
-                                <option value="WC-2006">World Cup 2006</option>
-                                <option value="WC-2010">World Cup 2010</option>
-                                <option value="WC-2014">World Cup 2014</option>
-                                <option value="WC-2018">World Cup 2018</option>
-                                <option value="WC-2022">World Cup 2022</option>
+                                {Array.isArray(alltournaments) && alltournaments.map((tournament) => (
+                                    <option value={tournament['tournament_id']}>{tournament['tournament_name']}</option>
+                                ))}
                             </select>
                             <label for="matchid"> Match ID </label>
                             <input id="matchid" type="text" className='input-text-select' name="match_id" pattern="^M-\d{4}-\d{2,}$" placeholder='M-YEAR-MATCHNUMBER' required/>

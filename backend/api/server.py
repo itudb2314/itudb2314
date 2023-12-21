@@ -163,10 +163,13 @@ def create_server(db):
         else:
             return flask.jsonify({'message': 'Squad not found'}), 404
         
-    @app.route('/matches', methods=['GET'])
-    def get_all_matches():
-        matches = MatchDAO.get_all_matches(db, 'tournament_id', 'desc')
-        return flask.jsonify(matches)
+    @app.route('/matches/<sort>/<order>/<offset>/<limit>/<filter>/<filter_value>', methods=['GET'])
+    def get_all_matches(sort : str, order : str, offset: int, limit: int, filter : str, filter_value : str):
+        match = MatchDAO.get_all_matches(db, sort, order, int(offset), limit, filter, filter_value)
+        if match:
+            return flask.jsonify(match), 200
+        else:
+            return flask.jsonify({'message': 'Match not found'}), 404
     
     @app.route('/goals', methods=['GET'])
     def get_all_goals():
@@ -176,14 +179,6 @@ def create_server(db):
     @app.route('/matches/<match_id>', methods=['GET'])
     def get_match_by_id(match_id : str):
         match = MatchDAO.get_match_by_id(db, match_id)
-        if match:
-            return flask.jsonify(match), 200
-        else:
-            return flask.jsonify({'message': 'Match not found'}), 404
-        
-    @app.route('/matches/<sort>/<order>/<offset>/<limit>', methods=['GET'])
-    def get_sorted_matches(sort : str, order : str, offset: int, limit: int):
-        match = MatchDAO.get_all_matches(db, sort, order, int(offset), limit)
         if match:
             return flask.jsonify(match), 200
         else:
