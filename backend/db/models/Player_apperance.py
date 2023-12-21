@@ -222,34 +222,52 @@ class Player_apperanceDAO():
         try:
             connection = db.get_connection()  
             offset = (page) * items_per_page          
-            query = """
+            if order_by == "tournament_name":
+                order_by = "tr.tournament_name"
+            elif order_by == "match_name":
+                order_by = "m.match_name"
+            elif order_by == "family_name":
+                order_by = "p.family_name"
+            elif order_by == "given_name":
+                order_by = "p.given_name"
+            elif order_by == "team_name":
+                order_by = "t.team_name"
+            else:
+                order_by = "tournament_id"
+
+            if order == "asc":
+                order = "asc"
+            else:
+                order = "desc"
+
+            query = f"""
                 SELECT 
-                    pa.tournament_id, 
-                    pa.match_id, 
-                    pa.team_id, 
-                    pa.home_team, 
-                    pa.away_team,
-                   pa.player_id, 
-                   pa.shirt_number, 
-                   pa.position_name, 
-                   pa.position_code,
-                   pa.starter, 
-                   pa.substitute, 
-                   m.match_name,
-                   p.family_name, 
-                   p.given_name, 
-                   t.team_name, 
-                   tr.tournament_name
+                pa.tournament_id, 
+                pa.match_id, 
+                pa.team_id, 
+                pa.home_team, 
+                pa.away_team,
+                pa.player_id, 
+                pa.shirt_number, 
+                pa.position_name, 
+                pa.position_code,
+                pa.starter, 
+                pa.substitute, 
+                m.match_name,
+                p.family_name, 
+                p.given_name, 
+                t.team_name,
+                tr.tournament_name
                 FROM player_appearances pa
                 JOIN players p ON pa.player_id = p.player_id
                 JOIN teams t ON pa.team_id = t.team_id
                 JOIN tournaments tr ON pa.tournament_id = tr.tournament_id
                 JOIN matches m ON pa.match_id = m.match_id
-                ORDER BY %s %s
+                ORDER BY {order_by} {order}
                 LIMIT %s OFFSET %s
             """
             cursor = connection.cursor()
-            cursor.execute(query, (order_by, order, items_per_page, offset))
+            cursor.execute(query, (items_per_page, offset))
             results = cursor.fetchall()
             if results is None:
                 return None

@@ -11,8 +11,12 @@ export default function Appearances() {
     const [isEditing, setIsEditing] = useState(null);
     const [tournaments, setTournaments] = useState([])
     const [offset, setOffset] = useState(0);
-    const [order, setOrder] = useState('asc');
-    const [orderBy, setOrderBy] = useState('tournament_name');
+    const [ordering, setOrdering] = useState(
+        {
+            orderBy: "tournament",
+            order: "asc"
+        }
+    )
     let isFetching = false;
 
     useEffect(() => {
@@ -20,40 +24,36 @@ export default function Appearances() {
             setAppearances([]);
         }
         fetchAppearances();
-    }, [deleteTrigger, editTrigger, addTrigger, offset]);
+    }, [deleteTrigger, editTrigger, addTrigger, offset, ordering]);
 
-    useEffect(() => {
-        resetState();
-        fetchAppearances();
-    }, [orderBy, order]);
-
-    const resetState = () => {
-        setAppearances([]);
-        setOffset(0);
-    };
-
-    const handleHeaderClick = (columnName) => {
-        if (columnName === orderBy) {
-            setOrder(order === 'asc' ? 'desc' : 'asc');
+    const handleHeaderClick = async (columnName) => {
+        if (columnName === ordering.orderBy) {
+            setOrdering({
+                orderBy: columnName,
+                order: ordering.order === 'asc' ? 'desc' : 'asc'
+            });
+        } else {
+            setOrdering({
+                orderBy: columnName,
+                order: 'asc'
+            });
         }
-        else {
-            setOrderBy(columnName);
-            setOrder('asc');
-        }
+
         if (offset !== 0) {
             setOffset(0);
-        }
-        else {
+        } else {
             setAppearances([]);
-            fetchAppearances();
         }
     }
 
+
     const fetchAppearances = async () => {
-        if (isFetching) return;
+        if (isFetching) {
+            return;
+        }
         isFetching = true;
         try {
-            const response = await fetch(`http://localhost:5000/appearancespaginated?page=${offset}&items_per_page=20&order_by=${orderBy}&order=${order}`)
+            const response = await fetch(`http://localhost:5000/appearancespaginated?page=${offset}&items_per_page=20&order_by=${ordering.orderBy}&order=${ordering.order}`)
             if (!response.ok) {
                 throw new Error('Failed to fetch appearances');
             }
@@ -291,11 +291,11 @@ export default function Appearances() {
             <table>
                 <thead>
                     <tr>
-                        <th style={{ textAlign: 'center' }} onClick={() => handleHeaderClick('tournament_name')}>Tournament Name</th>
-                        <th style={{ textAlign: 'center' }} onClick={() => handleHeaderClick('match_name')}>Match</th>
-                        <th style={{ textAlign: 'center' }} onClick={() => handleHeaderClick('team_name')}>Team Name</th>
-                        <th style={{ textAlign: 'center' }} onClick={() => handleHeaderClick('given_name')}>Given Name</th>
-                        <th style={{ textAlign: 'center' }} onClick={() => handleHeaderClick('family_name')}>Family Name</th>
+                        <th style={{ textAlign: 'center', cursor: 'pointer' }} onClick={() => { handleHeaderClick('tournament_name'); }}>Tournament Name</th>
+                        <th style={{ textAlign: 'center', cursor: 'pointer' }} onClick={() => { handleHeaderClick('match_name'); }}>Match</th>
+                        <th style={{ textAlign: 'center', cursor: 'pointer' }} onClick={() => { handleHeaderClick('team_name'); }}>Team Name</th>
+                        <th style={{ textAlign: 'center', cursor: 'pointer' }} onClick={() => { handleHeaderClick('given_name'); }}>Given Name</th>
+                        <th style={{ textAlign: 'center', cursor: 'pointer' }} onClick={() => { handleHeaderClick('family_name'); }}>Family Name</th>
                         <th style={{ textAlign: 'center' }}>Home Team</th>
                         <th style={{ textAlign: 'center' }}>Away Team</th>
                         <th style={{ textAlign: 'center' }}>Shirt Number</th>
