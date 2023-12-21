@@ -92,7 +92,7 @@
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
-    max-width: 400px;
+    max-width: 500px;
     width: 100%;
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
     position: relative;
@@ -115,7 +115,7 @@
     padding-right: 10px;
     margin-top: 20px;
     display: flex;
-    height: 400px;
+    height: 600px;
     flex-direction: column;
     overflow-y: auto;
     overflow-x: hidden;
@@ -127,12 +127,16 @@
 }
 
 .modal input {
-    font-size: 1em;
+    font-size: 1rem;
     height: 1rem;
     border: 1px solid black;
+    border-radius: 10px;
     width: inherit;
     margin-left: 0;
     margin-top: 0;
+    min-height: 1.5rem;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 .modal {

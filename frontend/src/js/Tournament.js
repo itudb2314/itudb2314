@@ -9,8 +9,8 @@ export default function Tournaments() {
     const [deleteTrigger, setDeleteTrigger] = useState(false)
     const [addTrigger, setAddTrigger] = useState(false)
     const [modalVisible, setModalVisible] = useState(false);
-    const [sort, setSort] = useState('winner')
-    const [order, setOrder] = useState('asc')
+    const [sort, setSort] = useState('tournament_name')
+    const [order, setOrder] = useState('desc')
     const [gender, setGender] = useState('all')
 
     useEffect(() => {
@@ -131,8 +131,8 @@ export default function Tournaments() {
                 <div className="filter">
                     <label>Order</label>
                     <select className="filter_select" onChange={orderTournaments}>
-                        <option value="asc">Ascending</option>
                         <option value="desc">Descending</option>
+                        <option value="asc">Ascending</option>
                     </select>
                 </div>
                 <div className="filter" style={{flexDirection: "column"}}>
@@ -164,6 +164,10 @@ export default function Tournaments() {
                                 <input
                                     type="text"
                                     id="tournament_id"
+                                    placeholder="WC-XXXX"
+                                    pattern="WC-[0-9]{4}"
+                                    inputMode="text"
+                                    title={"Please enter a valid tournament ID: WC-XXXX"}
                                     required
                                 />
                                 <label htmlFor="tournament_name">Tournament Name</label>
@@ -174,17 +178,20 @@ export default function Tournaments() {
                                 />
                                 <label htmlFor="year">Year</label>
                                 <input
-                                    type="text"
+                                    type="month"
                                     id="year"
+                                    pattern="[0-9]{4}"
+                                    inputMode="numeric"
+                                    title={"Please enter a valid year"}
                                     required
                                 />
                                 <label htmlFor="start_date">Start Date</label>
                                 <input
-                                    type="text"
+                                    type="date"
                                     id="start_date"
                                     required/> <label htmlFor="end_date">End Date</label>
                                 <input
-                                    type="text"
+                                    type="date"
                                     id="end_date"
                                     required
                                 />
@@ -202,8 +209,11 @@ export default function Tournaments() {
                                 />
                                 <label htmlFor="count_teams">Count Teams</label>
                                 <input
-                                    type="text"
+                                    type="number"
                                     id="count_teams"
+                                    pattern="[0-9]"
+                                    inputMode="numeric"
+                                    title={"Please enter a valid number"}
                                     required
                                 />
                                 <div>

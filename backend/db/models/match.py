@@ -120,7 +120,7 @@ class MatchDAO():
             connection.close()
 
     @staticmethod
-    def get_all_matches(db : db, sort : str, order : str) -> list[Match]:
+    def get_all_matches(db: db, sort: str, order: str, offset: int, limit: int) -> list[Match]:
         try:
             matches = []
             connection = db.get_connection()
@@ -156,6 +156,7 @@ class MatchDAO():
                     LEFT JOIN teams taway ON m.away_team_id = taway.team_id
                     LEFT JOIN tournaments t ON m.tournament_id = t.tournament_id
                     ORDER BY {sort} {order}, m.match_id DESC
+                    LIMIT {offset}, {limit}
                     """
             cursor = connection.cursor()
             cursor.execute(query)
