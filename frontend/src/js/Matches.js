@@ -279,49 +279,51 @@ export default function Matches() {
 
     return (
         <div className="matches">
-            {/*filter*/}
-            <div className="filter-block">
-                <div className="filter">
-                    <label>Sort By</label>
-                    <select className="filter_select" onChange={sortMatches}>
-                        <option value="tournament_name">Tournament</option>
-                        <option value="Stage">Stage</option>
-                        <option value="Score-margin">Score Margin</option>
-                        <option value="Goals-Scored">Goals Scored</option>
-                    </select>
+            {/*Filters and sorting */}
+            {match_id ?  (<></>):
+                <div className="filter-block">
+                    <div className="filter">
+                        <label>Sort By</label>
+                        <select className="filter_select" onChange={sortMatches}>
+                            <option value="tournament_name">Tournament</option>
+                            <option value="Stage">Stage</option>
+                            <option value="Score-margin">Score Margin</option>
+                            <option value="Goals-Scored">Goals Scored</option>
+                        </select>
+                    </div>
+                    <div className="filter">
+                        <label>Order</label>
+                        <select className="filter_select" onChange={orderMatches}>
+                            <option value="desc">Descending</option>
+                            <option value="asc">Ascending</option>
+                        </select>
+                    </div>
+                    <div className="filter">
+                        <label>Filter</label>
+                        <select className="filter_select" onChange={filterMatches}>
+                            <option value="team">Teams</option>
+                            <option value="tournament">Tournaments</option>
+                        </select>
+                    </div>         
+                    <div className="filter">
+                    <label>Options</label>
+                    {filter === 'team' ? (
+                                <select className="filter_select" onChange={filterValue}>
+                                {allteams.map((team) => (
+                                    <option value={team.team_id}>{team.team_name}</option>
+                                ))}
+                                </select>
+                        ) : (<></>)}
+                    {filter === 'tournament' ? (
+                                <select className="filter_select" onChange={filterValue}>
+                                {alltournaments.map((tournament) => (
+                                    <option value={tournament.tournament_id}>{tournament.tournament_name}</option>
+                                ))}
+                                </select>
+                        ) : (<></>)}
+                    </div>       
                 </div>
-                <div className="filter">
-                    <label>Order</label>
-                    <select className="filter_select" onChange={orderMatches}>
-                        <option value="desc">Descending</option>
-                        <option value="asc">Ascending</option>
-                    </select>
-                </div>
-                <div className="filter">
-                    <label>Filter</label>
-                    <select className="filter_select" onChange={filterMatches}>
-                        <option value="team">Teams</option>
-                        <option value="tournament">Tournaments</option>
-                    </select>
-                </div>         
-                <div className="filter">
-                <label>Options</label>
-                {filter === 'team' ? (
-                            <select className="filter_select" onChange={filterValue}>
-                            {allteams.map((team) => (
-                                <option value={team.team_id}>{team.team_name}</option>
-                            ))}
-                            </select>
-                    ) : (<></>)}
-                {filter === 'tournament' ? (
-                            <select className="filter_select" onChange={filterValue}>
-                            {alltournaments.map((tournament) => (
-                                <option value={tournament.tournament_id}>{tournament.tournament_name}</option>
-                            ))}
-                            </select>
-                    ) : (<></>)}
-                </div>       
-            </div>
+            }
             {/*button to toggle insert form*/}
             {match_id ?  (<></>): (<button onClick={toggleInsertForm} className='insert-button'>Insert Match</button>)}
             {/*conditional rendering for insertion form*/}
@@ -573,6 +575,9 @@ function MatchScoreBoard({match, goals, bookings}) {
             </div>
           </div>
           <div className="match-info">
+            {match.penalty_shootout ? (
+                <p className='match_time_item'>({match.home_team_score_penalties} - {match.away_team_score_penalties})</p>
+            ) : null}
             <p>{match.city_name}</p>
             <p>{match.stadium_name}</p>
             <p>{match.match_time}</p>
