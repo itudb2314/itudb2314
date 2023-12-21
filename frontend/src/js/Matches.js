@@ -137,14 +137,14 @@ export default function Matches() {
 
         setMatchAdded(!matchAdded);
     };
-
+ 
     //tournament stage validation
     const handleTournamentChange = (event) => {
         setChosenTournament(event.target.value);
     }
 
     useEffect(() => {
-        if(chosentournament !== 'NULL') {
+        if(chosentournament !== 'NULL' && showInsertForm) {
             fetch(`http://localhost:5000/tournamentstages/${chosentournament}`)
             .then((response) => response.json())
             .then((data) => {
@@ -163,7 +163,7 @@ export default function Matches() {
     }
 
     useEffect(() => {
-        if(chosentournament !== 'NULL' && chosenstage !== 'NULL') {
+        if(chosentournament !== 'NULL' && chosenstage !== 'NULL' && showInsertForm) {
             fetch(`http://localhost:5000/groupnames/${chosentournament}/${chosenstage}`)
             .then((response) => response.json())
             .then((data) => {
@@ -177,30 +177,34 @@ export default function Matches() {
 
     //stadiums validation
     useEffect(() => {
-        fetch(`http://localhost:5000/stadiums/${chosentournament}`)
-        .then((response) => response.json())
-        .then((data) => {
-            setStadiums(data);
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
+        if(showInsertForm) {
+            fetch(`http://localhost:5000/stadiums/${chosentournament}`)
+            .then((response) => response.json())
+            .then((data) => {
+                setStadiums(data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
     }, [chosentournament]);
 
 
     //teams validation
     useEffect(() => {
-        Promise.all([ //fetching data from backend
-            fetch(`http://localhost:5000/tournament_home_teams/${chosentournament}`).then((response) => response.json()),
-            fetch(`http://localhost:5000/tournament_away_teams/${chosentournament}`).then((response) => response.json()),
-        ])
-        .then(([hometeam_data, awayteam_data]) => {
-            setHomeTeams(hometeam_data);
-            setAwayTeams(awayteam_data);
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
+        if(showInsertForm) {
+            Promise.all([ //fetching data from backend
+                fetch(`http://localhost:5000/tournament_home_teams/${chosentournament}`).then((response) => response.json()),
+                fetch(`http://localhost:5000/tournament_away_teams/${chosentournament}`).then((response) => response.json()),
+            ])
+            .then(([hometeam_data, awayteam_data]) => {
+                setHomeTeams(hometeam_data);
+                setAwayTeams(awayteam_data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
     }, [chosentournament]);
 
     return (
@@ -438,7 +442,7 @@ function MatchScoreBoard({match, goals, bookings}) {
                   .map((event, index) => (
                     <li key={index}>
                       <p onClick={() => handlePlayerClick(event)} style={{cursor:'pointer'}}>
-                            {renderEvent(event)} {event.minute_label} {event.given_name} {event.family_name}
+                            {renderEvent(event)} {event.minute_label} {event.given_name} {event.family_name}{event.penalty ? (<span>(P)</span>) : (<></>)}
                       </p>                   
                     </li>
                 ))}
@@ -457,7 +461,7 @@ function MatchScoreBoard({match, goals, bookings}) {
                   .map((event, index) => (
                     <li key={index}>
                       <p onClick={() => handlePlayerClick(event)} style={{cursor:'pointer'}}>
-                            {renderEvent(event)} {event.minute_label} {event.given_name} {event.family_name}
+                            {renderEvent(event)} {event.minute_label} {event.given_name} {event.family_name}{event.penalty ? (<span>(P)</span>) : (<></>)}
                       </p>
                     </li>
                 ))}

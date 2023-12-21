@@ -112,7 +112,7 @@ export default function Match({ match, goals, setMatchDeleted, setMatch }) {
                             .filter((goal) => goal.team_id === match.home_team_id)
                             .map((goal, index) => (
                                 <div key={index}>
-                                    <p>{goalIcon()} {goal.minute_label}  {goal.given_name}  {goal.family_name}</p>
+                                    <p>{goalIcon()} {goal.minute_label}  {goal.given_name}  {goal.family_name}{goal.penalty ? (<span>(P)</span>) : (<></>)}</p>
                                 </div>
                             ))}
                     </div>
@@ -129,7 +129,7 @@ export default function Match({ match, goals, setMatchDeleted, setMatch }) {
                             .filter((goal) => goal.team_id === match.away_team_id)
                             .map((goal, index) => (
                                 <div key={index}>
-                                    <p>{goalIcon()} {goal.minute_label}  {goal.given_name}  {goal.family_name}</p>
+                                    <p>{goalIcon()} {goal.minute_label}  {goal.given_name}  {goal.family_name}{goal.penalty ? (<span>(P)</span>) : (<></>)}</p>
                                 </div>
                             ))}
                     </div>
