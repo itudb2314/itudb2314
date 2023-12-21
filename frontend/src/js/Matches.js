@@ -294,7 +294,7 @@ export default function Matches() {
                                 <select id="stadium_name" className='input-text-select' name="stadium_name" required>
                                     <option value='NULL' disabled>select</option>
                                     {stadiums.map((stadium) => (
-                                        <option value={stadium}>{stadium}</option>
+                                        <option value={stadium['stadium_id']}>{stadium['stadium_name']}</option>
                                     ))}
                                 </select>
                             )}
@@ -309,7 +309,7 @@ export default function Matches() {
                             )}
                             <label> Away Team </label>
                             {Array.isArray(awayteams) && (
-                                <select id="awayteam_name"className='input-text-select' name="hometeam_name" required>
+                                <select id="awayteam_name"className='input-text-select' name="awayteam_name" required>
                                     <option value='NULL' disabled>select</option>
                                     {awayteams.map((awayteam) => (
                                         <option value={awayteam["team_id"]}>{awayteam["team_name"]}</option>
@@ -429,8 +429,8 @@ function MatchScoreBoard({match, goals, bookings}) {
 
     return (
         <div className="match-scoreboard">
-          <div className="teams">
-            <div className="team">
+          <div className="teams-div">
+            <div className="team-name">
               <h2 onClick={() => handleTeamClick(match)} style={{ cursor: 'pointer' }}>
                 {match.home_team_name}
               </h2>
@@ -449,7 +449,7 @@ function MatchScoreBoard({match, goals, bookings}) {
               </ul>
             </div>
             <div className="vs">{match.home_team_score} - {match.away_team_score}</div>
-            <div className="team">
+            <div className="team-name">
               <h2 onClick={() => handleTeamClick(match)} style={{cursor:'pointer'}}>
                 {match.away_team_name}
               </h2>

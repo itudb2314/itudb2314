@@ -302,7 +302,7 @@ class MatchDAO():
         try:
             connection = db.get_connection()
             query = """
-                    SELECT DISTINCT stadium_name 
+                    SELECT DISTINCT stadium_name, stadium_id 
                     FROM matches LEFT JOIN stadiums 
                     USING(stadium_id)
                     WHERE tournament_id = %s
@@ -312,7 +312,8 @@ class MatchDAO():
             results = cursor.fetchall()
             if results:
                 for result in results:
-                    stadiums.append(result[0])
+                    print(result)
+                    stadiums.append({'stadium_name': result[0], 'stadium_id': result[1]})
                 return stadiums
             else:
                 return None

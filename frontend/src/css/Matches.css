@@ -81,14 +81,14 @@
     align-items: center;
   }
 
-  .teams {
+  .teams-div {
     display: flex;
     justify-content: space-between;
     width: 100%;
     margin-bottom: 20px;
   }
 
-  .team {
+  .team-name {
     flex: 1;
     text-align: center;
     align-self: flex-start;
@@ -102,7 +102,7 @@
   .goals {
     list-style: none;
     padding-left: 100px;
-    padding-top: 600px;
+    padding-top: 20px;
     margin: 0;
     position: absolute;
     text-align: left;
@@ -115,7 +115,7 @@
   }
 
   .vs {
-    font-size: 36px;
+    font-size: 26px;
     font-weight: bold;
     margin: 10 20px;
     padding-top: 15px;

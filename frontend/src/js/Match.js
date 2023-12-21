@@ -5,7 +5,6 @@ import { useHistory } from "react-router-dom";
 
 export default function Match({ match, goals, setMatchDeleted, setMatch }) {
     const history = useHistory();
-    const [deleting, setDeleting] = useState(false);
     const [isupdating, setUpdating] = useState(false);
 
     const handleUpdateMatch = () => setUpdating(true);
@@ -38,13 +37,13 @@ export default function Match({ match, goals, setMatchDeleted, setMatch }) {
 
     const handleDeleteMatch = () => {
         try {
-            setDeleting(true);
+            setMatchDeleted();
             deleteMatchbyID(match.match_id);
-            setDeleting(false);
+            setMatchDeleted();
         }
         catch (error) {
             console.error('Error:', error);
-            setDeleting(false);
+            setMatchDeleted();
         }
     }
 
@@ -135,8 +134,8 @@ export default function Match({ match, goals, setMatchDeleted, setMatch }) {
                     </div>
                 </div>
                 <div>   
-                    <button onClick={handleDeleteMatch} disabled={deleting} className='delete-button-danas'>
-                        {deleting ? 'Deleting...' : 'Delete'}
+                    <button onClick={handleDeleteMatch} className='delete-button-danas'>
+                        {'Delete'}
                     </button>
                     <button onClick={handleUpdateMatch} className='edit-button'>
                         Update
