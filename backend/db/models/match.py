@@ -142,11 +142,11 @@ class MatchDAO():
                         END
                         '''
             elif sort == 'Score-margin':
-                sort = 'ABS(m.home_team_score - m.away_team_score)'
+                sort = f'ABS(m.home_team_score - m.away_team_score) {order}'
             elif sort == 'Goals-Scored':
-                sort = 'm.home_team_score + m.away_team_score, home_team_score'
+                sort = f'm.home_team_score + m.away_team_score {order}, m.home_team_score'
             else: 
-                sort = 'm.tournament_id'
+                sort = f'm.tournament_id {order}'
 
             query = f"""
                     SELECT m.*, s.stadium_name, s.city_name, thome.team_name, taway.team_name, t.tournament_name 
@@ -155,7 +155,7 @@ class MatchDAO():
                     LEFT JOIN teams thome ON m.home_team_id = thome.team_id
                     LEFT JOIN teams taway ON m.away_team_id = taway.team_id
                     LEFT JOIN tournaments t ON m.tournament_id = t.tournament_id
-                    ORDER BY {sort} {order}, m.match_id DESC
+                    ORDER BY {sort},  m.match_id DESC
                     LIMIT {offset}, {limit}
                     """
             cursor = connection.cursor()
