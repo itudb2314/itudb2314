@@ -120,18 +120,42 @@ class MatchDAO():
             connection.close()
 
     @staticmethod
-    def get_all_matches(db : db) -> list[Match]:
+    def get_all_matches(db : db, sort : str, order : str) -> list[Match]:
         try:
             matches = []
             connection = db.get_connection()
-            query = """
+            if sort == 'tournament_name' or sort == 'year':
+                sort = 'm.tournament_id'
+            elif sort == 'Stage':
+                sort = '''
+                        CASE
+                            WHEN m.stage_name = 'group stage' THEN 1
+                            WHEN m.stage_name = 'first round' THEN 2
+                            WHEN m.stage_name = 'first group stage' THEN 3
+                            WHEN m.stage_name = 'second group stage' THEN 4
+                            WHEN m.stage_name = 'round of 16' THEN 5
+                            WHEN m.stage_name = 'quarter-finals' OR m.stage_name = 'quarter-final' THEN 6
+                            WHEN m.stage_name = 'semi-finals' OR m.stage_name = 'semi-final' THEN 7
+                            WHEN m.stage_name = 'third-place match' THEN 8
+                            WHEN m.stage_name = 'final round' THEN 9
+                            WHEN m.stage_name = 'final' THEN 10
+                        END
+                        '''
+            elif sort == 'Score-margin':
+                sort = 'ABS(m.home_team_score - m.away_team_score)'
+            elif sort == 'Goals-Scored':
+                sort = 'm.home_team_score + m.away_team_score, home_team_score'
+            else: 
+                sort = 'm.tournament_id'
+
+            query = f"""
                     SELECT m.*, s.stadium_name, s.city_name, thome.team_name, taway.team_name, t.tournament_name 
                     FROM matches m 
                     LEFT JOIN stadiums s ON m.stadium_id = s.stadium_id 
                     LEFT JOIN teams thome ON m.home_team_id = thome.team_id
                     LEFT JOIN teams taway ON m.away_team_id = taway.team_id
                     LEFT JOIN tournaments t ON m.tournament_id = t.tournament_id
-                    ORDER BY m.tournament_id DESC, m.match_id DESC
+                    ORDER BY {sort} {order}, m.match_id DESC
                     """
             cursor = connection.cursor()
             cursor.execute(query)

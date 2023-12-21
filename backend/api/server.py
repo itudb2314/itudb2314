@@ -165,7 +165,7 @@ def create_server(db):
         
     @app.route('/matches', methods=['GET'])
     def get_all_matches():
-        matches = MatchDAO.get_all_matches(db)
+        matches = MatchDAO.get_all_matches(db, 'tournament_id', 'desc')
         return flask.jsonify(matches)
     
     @app.route('/goals', methods=['GET'])
@@ -176,6 +176,14 @@ def create_server(db):
     @app.route('/matches/<match_id>', methods=['GET'])
     def get_match_by_id(match_id : str):
         match = MatchDAO.get_match_by_id(db, match_id)
+        if match:
+            return flask.jsonify(match), 200
+        else:
+            return flask.jsonify({'message': 'Match not found'}), 404
+        
+    @app.route('/matches/<sort>/<order>', methods=['GET'])
+    def get_sorted_matches(sort : str, order : str):
+        match = MatchDAO.get_all_matches(db, sort, order)
         if match:
             return flask.jsonify(match), 200
         else:

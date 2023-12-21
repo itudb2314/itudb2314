@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import '../css/Matches.css';
+import '../css/Filters.css';
 import Match from "./Match";
 import { useHistory } from 'react-router-dom';
 
@@ -20,24 +21,30 @@ export default function Matches() {
     const [stadiums, setStadiums] = useState([]);
     const [hometeams, setHomeTeams] = useState([]);
     const [awayteams, setAwayTeams] = useState([]);
+    const [sort, setSort] = useState('tournament_name');
+    const [order, setOrder] = useState('desc');
 
     useEffect(() => {
         if(!match_id) {
             Promise.all([ //fetching data from backend
-                fetch('http://localhost:5000/matches').then((response) => response.json()),
+                fetch(`http://localhost:5000/matches/${sort}/${order}`).then((response) => response.json()),
                 fetch('http://localhost:5000/goals').then((response) => response.json()),
             ])
 
             .then(([matches_data, goals_data]) => { //converting response to json])
-                //process and set matches
-                const tournament_matches = matches_data.reduce((tournament, match) => {
-                    const key = match.tournament_id;  //key based on which matches are grouped
-                    if(!tournament[key])   //check if array exits
-                        tournament[key] = [];
-                    tournament[key].push(match);
-                    return tournament;
-                }, {});  //initial value of tournament is an empty object
-                setMatches(Object.values(tournament_matches)); //set matches to array of arrays of matches
+                if(sort === 'tournament_name') {
+                    //process and set matches
+                    const tournament_matches = matches_data.reduce((tournament, match) => {
+                        const key = match.tournament_id;  //key based on which matches are grouped
+                        if(!tournament[key])   //check if array exits
+                            tournament[key] = [];
+                        tournament[key].push(match);
+                        return tournament;
+                    }, {});  //initial value of tournament is an empty object
+                    setMatches(Object.values(tournament_matches)); //set matches to array of arrays of matches
+                } else {
+                    setMatches([matches_data]);
+                }
 
                 //process and set goals
                 const match_goals = goals_data.reduce((match, goal) => {
@@ -72,7 +79,7 @@ export default function Matches() {
                 console.error('Error fetching data:', error);
             }); 
         }
-    }, [match_id, matchAdded, matchDeleted]);
+    }, [match_id, matchAdded, matchDeleted, sort, order]);
     const style = {
         margin: '2rem 0 2rem 0',
         color: 'reds',
@@ -207,8 +214,36 @@ export default function Matches() {
         }
     }, [chosentournament]);
 
+    //filters
+    function sortMatches(e) {
+        setSort(e.target.value)
+    }
+
+    function orderMatches(e) {
+        setOrder(e.target.value)
+    }
+
     return (
         <div className="matches">
+            {/*filter*/}
+            <div className="filter-block">
+                <div className="filter">
+                    <label>Sort By</label>
+                    <select className="filter_select" onChange={sortMatches}>
+                        <option value="tournament_name">Tournament</option>
+                        <option value="Stage">Stage</option>
+                        <option value="Score-margin">Score Margin</option>
+                        <option value="Goals-Scored">Goals Scored</option>
+                    </select>
+                </div>
+                <div className="filter">
+                    <label>Order</label>
+                    <select className="filter_select" onChange={orderMatches}>
+                        <option value="asc">Ascending</option>
+                        <option value="desc">Descending</option>
+                    </select>
+                </div>
+            </div>
             {/*button to toggle insert form*/}
             {match_id ?  (<></>): (<button onClick={toggleInsertForm} className='insert-button'>Insert Match</button>)}
             {/*conditional rendering for insertion form*/}
@@ -371,7 +406,7 @@ export default function Matches() {
                 ( matches.length > 0 ?
                 (matches.map((tournament_matches, i) => (
                     <div key={i}>
-                        <h2 style={style}>{tournament_matches[0].tournament_name}</h2>
+                        {sort == 'tournament_name' ? (<h2 style={style}>{tournament_matches[0].tournament_name}</h2>) : (<></>)}
                         {tournament_matches.map((match) => (
                             <Match key={match.match_id}  match={match} goals={goals[match.match_id]}  setMatchDeleted={onMatchDelete} setMatch={setMatch}/>
                         ))}
