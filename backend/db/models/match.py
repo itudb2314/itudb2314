@@ -149,12 +149,13 @@ class MatchDAO():
             else: 
                 sort = f'm.tournament_id {order}'
 
-            if filter == 'All':
-                filter = '1 = 1'
-            elif filter == 'team':
+
+            if filter == 'team' and filter_value != 'All':
                 filter = f'thome.team_id = "{filter_value}" OR taway.team_id = "{filter_value}"'
-            elif filter == 'tournament':
+            elif filter == 'tournament' and filter_value != 'All':
                 filter = f'm.tournament_id= "{filter_value}"'
+            else:
+                filter = '1 = 1'
 
             query = f"""
                     SELECT m.*, s.stadium_name, s.city_name, thome.team_name, taway.team_name, t.tournament_name 

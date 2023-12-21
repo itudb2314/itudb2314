@@ -462,7 +462,7 @@ export default function Matches() {
             {match_id ? (
                 <MatchScoreBoard key={match.match_id}  match={match} goals={goals_by_id} bookings={bookings}/>
             ) : ( 
-                (sort === 'tournament_name' && (filter === 'All' || filter === 'tournament')) ?
+                (sort === 'tournament_name' && (filter === 'All' || filter === 'tournament' || (filter === 'team' && filter_value === 'All'))) ?
                     matches.map((tournament_matches, i) => (
                         Array.isArray(tournament_matches) ?
                         <div key={i}>
