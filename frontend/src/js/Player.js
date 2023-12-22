@@ -13,6 +13,8 @@ const PlayerPage = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [award, setAward] = useState([]);
     const [Appearances, setAppearances] = useState([]);
+    const [goals, setGoals] = useState([]);
+    const [penalties, setPenalties] = useState([]);
 
 
     useEffect(() => {
@@ -25,7 +27,9 @@ const PlayerPage = () => {
             const response = await fetch(`http://localhost:5000/playersdetail/${playerId}`);
             const response2 = await fetch(`http://localhost:5000/get_awards_per_player?player_id=${playerId}`);
             const response3 = await fetch(`http://localhost:5000/get_appearances_per_player?player_id=${playerId}`);
-            if (!response.ok || !response2.ok || !response3.ok) {
+            const response4 = await fetch(`http://localhost:5000/get_goals_per_player/${playerId}`);
+            const response5 = await fetch(`http://localhost:5000/get_player_penalties/${playerId}`);
+            if (!response.ok || !response2.ok || !response3.ok || !response4.ok || !response5.ok) {
                 throw new Error('Failed to fetch player');
             }
             const data = await response.json();
@@ -34,6 +38,10 @@ const PlayerPage = () => {
             setAward(data2);
             const data3 = await response3.json();
             setAppearances(data3);
+            const data4 = await response4.json();
+            setGoals(data4);
+            const data5 = await response5.json();
+            setPenalties(data5);
         } catch (error) {
             console.error('Error fetching player:', error);
         } finally {
@@ -332,13 +340,13 @@ const PlayerPage = () => {
                         <label>Match Appearances:</label> {Appearances > 0 ? Appearances : 0}
                     </p>
                     <p>
-                        <label>Goals:</label> {player.minutes_played}
+                        <label>Goals:</label> {goals > 0 ? goals : 0}
                     </p>
                     <p>
-                        <label>Penalties:</label> {player.minutes_per_goal}
+                        <label>Penalties:</label> {penalties > 0 ? penalties : 0}
                     </p>
                     <p>
-                        <label>Minutes Per Goal or Assist:</label> {player.minutes_per_goal_or_assist}
+                        <label>Goals Per Match:</label> {goals > 0 && Appearances > 0 ? (goals / Appearances).toFixed(2) : 0}
                     </p>
                 </div>
 

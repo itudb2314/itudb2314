@@ -52,7 +52,7 @@ export default function Matches() {
             ])
 
             .then(([matches_data, goals_data]) => { //converting response to json])
-                if(sort === 'tournament_name') {
+                if(sort === 'tournament_name' && (filter === 'All' || filter === 'tournament')) {
                     //process and set matches
                     const tournament_matches = matches_data.reduce((tournament, match) => {
                         const key = match.tournament_id;  //key based on which matches are grouped
@@ -63,7 +63,7 @@ export default function Matches() {
                     }, {});  //initial value of tournament is an empty object
                     setMatches(Object.values(tournament_matches)); //set matches to array of arrays of matches
                 } else {
-                    setMatches([matches_data]);
+                    setMatches(matches_data);
                 }
 
                 //process and set goals
@@ -279,49 +279,51 @@ export default function Matches() {
 
     return (
         <div className="matches">
-            {/*filter*/}
-            <div className="filter-block">
-                <div className="filter">
-                    <label>Sort By</label>
-                    <select className="filter_select" onChange={sortMatches}>
-                        <option value="tournament_name">Tournament</option>
-                        <option value="Stage">Stage</option>
-                        <option value="Score-margin">Score Margin</option>
-                        <option value="Goals-Scored">Goals Scored</option>
-                    </select>
+            {/*Filters and sorting */}
+            {match_id ?  (<></>):
+                <div className="filter-block">
+                    <div className="filter">
+                        <label>Sort By</label>
+                        <select className="filter_select" onChange={sortMatches}>
+                            <option value="tournament_name">Tournament</option>
+                            <option value="Stage">Stage</option>
+                            <option value="Score-margin">Score Margin</option>
+                            <option value="Goals-Scored">Goals Scored</option>
+                        </select>
+                    </div>
+                    <div className="filter">
+                        <label>Order</label>
+                        <select className="filter_select" onChange={orderMatches}>
+                            <option value="desc">Descending</option>
+                            <option value="asc">Ascending</option>
+                        </select>
+                    </div>
+                    <div className="filter">
+                        <label>Filter</label>
+                        <select className="filter_select" onChange={filterMatches}>
+                            <option value="team">Teams</option>
+                            <option value="tournament">Tournaments</option>
+                        </select>
+                    </div>         
+                    <div className="filter">
+                    <label>Options</label>
+                    {filter === 'team' ? (
+                                <select className="filter_select" onChange={filterValue}>
+                                {allteams.map((team) => (
+                                    <option value={team.team_id}>{team.team_name}</option>
+                                ))}
+                                </select>
+                        ) : (<></>)}
+                    {filter === 'tournament' ? (
+                                <select className="filter_select" onChange={filterValue}>
+                                {alltournaments.map((tournament) => (
+                                    <option value={tournament.tournament_id}>{tournament.tournament_name}</option>
+                                ))}
+                                </select>
+                        ) : (<></>)}
+                    </div>       
                 </div>
-                <div className="filter">
-                    <label>Order</label>
-                    <select className="filter_select" onChange={orderMatches}>
-                        <option value="desc">Descending</option>
-                        <option value="asc">Ascending</option>
-                    </select>
-                </div>
-                <div className="filter">
-                    <label>Filter</label>
-                    <select className="filter_select" onChange={filterMatches}>
-                        <option value="team">Teams</option>
-                        <option value="tournament">Tournaments</option>
-                    </select>
-                </div>         
-                <div className="filter">
-                <label>Options</label>
-                {filter === 'team' ? (
-                            <select className="filter_select" onChange={filterValue}>
-                            {allteams.map((team) => (
-                                <option value={team.team_id}>{team.team_name}</option>
-                            ))}
-                            </select>
-                    ) : (<></>)}
-                {filter === 'tournament' ? (
-                            <select className="filter_select" onChange={filterValue}>
-                            {alltournaments.map((tournament) => (
-                                <option value={tournament.tournament_id}>{tournament.tournament_name}</option>
-                            ))}
-                            </select>
-                    ) : (<></>)}
-                </div>       
-            </div>
+            }
             {/*button to toggle insert form*/}
             {match_id ?  (<></>): (<button onClick={toggleInsertForm} className='insert-button'>Insert Match</button>)}
             {/*conditional rendering for insertion form*/}
@@ -461,19 +463,25 @@ export default function Matches() {
             )}
             {match_id ? (
                 <MatchScoreBoard key={match.match_id}  match={match} goals={goals_by_id} bookings={bookings}/>
-            ) :
-                ( matches.length > 0 ?
-                (matches.map((tournament_matches, i) => (
-                    <div key={i}>
-                        {sort == 'tournament_name' ? (<h2 style={style}>{tournament_matches[0].tournament_name}</h2>) : (<></>)}
-                        {tournament_matches.map((match) => (
-                            <Match key={match.match_id}  match={match} goals={goals[match.match_id]}  setMatchDeleted={onMatchDelete} setMatch={setMatch}/>
-                        ))}
-                    </div>
-                ))) :
-                (
-                    <h2>Loading ...</h2>
-                )
+            ) : ( 
+                (sort === 'tournament_name' && (filter === 'All' || filter === 'tournament' || (filter === 'team' && filter_value === 'All'))) ?
+                    matches.map((tournament_matches, i) => (
+                        Array.isArray(tournament_matches) ?
+                        <div key={i}>
+                            <h2 style={style}>{tournament_matches[0]?.tournament_name}</h2>
+                            {tournament_matches.map((match) => (
+                                <Match key={match.match_id}  match={match} goals={goals[match.match_id]}  setMatchDeleted={onMatchDelete} setMatch={setMatch}/>
+                            ))}
+                        </div>
+                        : <></>
+                    ))
+                : 
+                    Array.isArray(matches) ?
+                    matches.map((match) => (
+                        <Match key={match.match_id}  match={match} goals={goals[match.match_id]}  setMatchDeleted={onMatchDelete} setMatch={setMatch}/>
+                    ))
+                    : <></>
+
             )}
             {matches.length > 0 && (
                 <div ref={divRef} style={{marginTop: "40px"}}>
@@ -567,6 +575,9 @@ function MatchScoreBoard({match, goals, bookings}) {
             </div>
           </div>
           <div className="match-info">
+            {match.penalty_shootout ? (
+                <p className='match_time_item'>({match.home_team_score_penalties} - {match.away_team_score_penalties})</p>
+            ) : null}
             <p>{match.city_name}</p>
             <p>{match.stadium_name}</p>
             <p>{match.match_time}</p>

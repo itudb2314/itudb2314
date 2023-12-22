@@ -451,5 +451,15 @@ def create_server(db):
         appearances = PlayerDAO.get_appearances_per_player(db, player_id)
         return flask.jsonify(appearances)
     
+    @app.route('/get_goals_per_player/<player_id>', methods=['GET'])
+    def get_goals_per_player(player_id):
+        goals = GoalDAO.get_player_goals(db, player_id)
+        return flask.jsonify(goals)
+    
+    @app.route('/get_player_penalties/<player_id>', methods=['GET'])
+    def get_player_penalties(player_id):
+        penalties = GoalDAO.get_penalties(db, player_id)
+        return flask.jsonify(penalties)
+    
     return app
 

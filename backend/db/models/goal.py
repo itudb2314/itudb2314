@@ -72,6 +72,7 @@ class GoalDAO():
             connection.commit()
         except mysql.connector.Error as error:
             connection.rollback()
+            print("MySQL Error:", error)
         finally:
             cursor.close()
             connection.close()
@@ -101,6 +102,7 @@ class GoalDAO():
                 return None
         except mysql.connector.Error as error:
             connection.rollback()
+            print("MySQL Error:", error)
         finally:
             cursor.close()
             connection.close()
@@ -122,7 +124,7 @@ class GoalDAO():
                 return None
         except mysql.connector.Error as error:
             connection.rollback()
-
+            print("MySQL Error:", error)
         finally:
             cursor.close()
             connection.close()
@@ -153,7 +155,7 @@ class GoalDAO():
                 return None
         except mysql.connector.Error as error:
             connection.rollback()
-
+            print("MySQL Error:", error)
         finally:
             cursor.close()
             connection.close()
@@ -179,31 +181,49 @@ class GoalDAO():
                 return None
         except mysql.connector.Error as error:
             connection.rollback()   
+            print("MySQL Error:", error)
         finally:
             cursor.close()
             connection.close()
 
     @staticmethod
-    def get_player_goals(db: db, tournament_id: str, player_id: str) -> list[Goal]:
-        goals = []
+    def get_player_goals(db: db, player_id: str) -> int:
         try:
             connection = db.get_connection()
             query = """
-                    SELECT * FROM goals WHERE tournament_id = %s AND player_id = %s 
+                    SELECT count(player_id) FROM goals WHERE player_id = %s 
                     """
             cursor = connection.cursor()
-            cursor.execute(query, (tournament_id, player_id))
-            results = cursor.fetchall()
+            cursor.execute(query, (player_id,))
+            results = cursor.fetchone()
             if results:
-                for result in results:
-                    goal =  Goal(result[0], result[1], result[2], result[3], result[4], result[5], result[6], result[7],
-                                result[8], result[9], result[10], result[11], result[12], result[13], result[14])
-                    goals.append(goal)
-                return goals
+                return results[0]
             else:
-                return None
+                return 0
         except mysql.connector.Error as error:
             connection.rollback()
+            print("MySQL Error:", error)
+        finally:
+            cursor.close()
+            connection.close()
+
+    @staticmethod
+    def get_penalties(db: db, player_id: str) -> int:
+        try:
+            connection = db.get_connection()
+            query = """
+                    SELECT count(player_id) FROM goals WHERE player_id = %s AND penalty = 1
+                    """
+            cursor = connection.cursor()
+            cursor.execute(query, (player_id,))
+            results = cursor.fetchone()
+            if results:
+                return results[0]
+            else:
+                return 0
+        except mysql.connector.Error as error:
+            connection.rollback()
+            print("MySQL Error:", error)
         finally:
             cursor.close()
             connection.close()
@@ -250,6 +270,7 @@ class GoalDAO():
             connection.commit()
         except mysql.connector.Error as error:
             connection.rollback()
+            print("MySQL Error:", error)
         finally:
             cursor.close()
             connection.close()
@@ -266,6 +287,7 @@ class GoalDAO():
             connection.commit()
         except mysql.connector.Error as error:
             connection.rollback()
+            print("MySQL Error:", error)
         finally:
             cursor.close()
             connection.close()
