@@ -13,6 +13,7 @@ export default function Managers() {
         fetch('http://localhost:5000/managers')
             .then(response => response.json())
             .then(data => {
+                console.log(data)
                 setManagers(data)
                 console.log(managers)
             })
@@ -77,8 +78,11 @@ export default function Managers() {
     }
 
     return (
-        <div className='managers'>
+    
+        <div className='genel'>
             <h1 style={style}>Managers</h1>
+        <div className='managers'>
+            
             {managers.map(manager => (
                 <Manager key={manager.manager_id} m={manager} deleteHandle={deleteManager} />
             ))}
@@ -108,6 +112,7 @@ export default function Managers() {
                     </div>
                 </div>
             )}
+        </div>
         </div>
     );
 }

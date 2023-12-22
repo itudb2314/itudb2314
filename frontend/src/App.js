@@ -9,6 +9,7 @@ import Squads from './js/Squads'; // Assuming you have a Squads component
 import Matches from './js/Matches';
 import Teams from './js/Teams';
 import Groupstandings from './js/Groups_and_standing';
+import Group_standings from './js/group_standings';
 import Managers from './js/Managers';
 import PlayerPage from './js/Player';
 import Players from './js/Players';
@@ -29,6 +30,7 @@ function App() {
                 <Route path="/teams" exact component={Teams} />
                 <Route path="/teams/:id" exact component={Teamstats} />
                 <Route path="/groups_and_standings" exact component={Groupstandings} />
+                <Route path="/group_standings" exact component={Group_standings} />
                 <Route path="/managers" exact component={Managers} />
                 <Route path="/players" exact component={Players} />
                 <Route path="/players/:playerId" exact component={PlayerPage} />

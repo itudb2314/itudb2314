@@ -12,6 +12,7 @@ export default function Header() {
                 <li><Link className="menu_item" to="/matches">Matches</Link></li>
                 <li><Link className="menu_item" to="/teams">Teams</Link></li>
                 <li><Link className="menu_item" to="/groups_and_standings">Groups and Standings</Link></li>
+                <li><Link className="menu_item" to="/group_standings">Group Standings</Link></li>
                 <li><Link className="menu_item" to="/managers">Managers</Link></li>
                 <li><Link className="menu_item" to="/awards">Awards</Link></li>
                 <li><Link className="menu_item" to="/appearances">Appearances</Link></li>
