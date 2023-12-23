@@ -30,6 +30,7 @@ export default function Matches() {
     const [allteams, setAllTeams] = useState([]);
     const [alltournaments, setAllTournaments] = useState([]);
     const [filter_value, setFilterValue] = useState('All');
+    const [updateTrigger, setUpdateTrigger] = useState(false);
 
     function handleScroll() {
         if(matches.length < 10)
@@ -104,14 +105,14 @@ export default function Matches() {
                 console.error('Error fetching data:', error);
             }); 
         }
-    }, [match_id, matchAdded, matchDeleted, sort, order, offset, filter_value]);
+    }, [match_id, matchAdded, matchDeleted, sort, order, offset, filter_value, updateTrigger]);
     const style = {
         margin: '2rem 0 2rem 0',
         color: 'reds',
     };
 
-    function onMatchDelete() {
-        setMatchDeleted(!matchDeleted);
+    function onMatchDelete(state) {
+        setMatchDeleted(state);
     }
 
     //insert function
@@ -161,13 +162,15 @@ export default function Matches() {
         .then((response) => response.json())
         .then((data) => {
             toggleInsertForm();
-            setMatchAdded(!matchAdded);
+            setMatchAdded(true);
         })
         .catch((error) => {
             console.error('Error:', error);
         });
-
-        setMatchAdded(!matchAdded);
+        if(offset > 0) {
+            setOffset(0);
+        }
+        setMatchAdded(false);
     };
  
     //tournament stage validation
@@ -509,7 +512,7 @@ export default function Matches() {
                         <div key={i}>
                             <h2 style={style}>{tournament_matches[0]?.tournament_name}</h2>
                             {tournament_matches.map((match) => (
-                                <Match key={match.match_id}  match={match} goals={goals[match.match_id]}  setMatchDeleted={onMatchDelete} setMatch={setMatch}/>
+                                <Match key={match.match_id}  match={match} goals={goals[match.match_id]}  setMatchDeleted={onMatchDelete} setMatch={setMatch} setUpdate={setUpdateTrigger}/>
                             ))}
                         </div>
                         : <></>

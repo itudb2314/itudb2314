@@ -27,6 +27,30 @@ class Tournament:
     final: bool
 
 
+@dataclass 
+class TournamentWithPlaces:
+    tournament_id: str
+    tournament_name: str
+    year: int
+    start_date: datetime.date
+    end_date: datetime.date
+    host_country: str
+    winner: str
+    host_won: bool
+    count_teams: int
+    group_stage: bool
+    second_group_stage: bool
+    final_round: bool
+    round_of_16: bool
+    quarter_finals: bool
+    semi_finals: bool
+    third_place_match: bool
+    final: bool
+    second: str
+    third: str
+    fourth: str
+
+
 class TournamentDAO():
     @staticmethod
     def create_tournament(db: db, tournament: Tournament) -> None:
@@ -95,10 +119,16 @@ class TournamentDAO():
             print(f"Error: {err}")
 
     @staticmethod
-    def get_all_tournaments(db: db, sort: str, order: str, gender: str) -> list[Tournament]:
+    def get_all_tournaments(db: db, sort: str, order: str, gender: str) -> list[TournamentWithPlaces]:
         try:
             conn = db.get_connection()
-            query = f"""SELECT * FROM tournaments 
+            query = f"""WITH second AS (SELECT tournament_id, team_name AS second from tournament_standings LEFT JOIN teams using(team_id) WHERE position = 2),
+                        third AS (SELECT tournament_id, team_name AS third from tournament_standings LEFT JOIN teams using(team_id) WHERE position = 3),
+                        fourth AS (SELECT tournament_id, team_name AS fourth from tournament_standings LEFT JOIN teams using(team_id) WHERE position = 4)
+                        select * from tournaments
+                            LEFT JOIN second using(tournament_id)
+                            LEFT JOIN third using(tournament_id)
+                            LEFT JOIN fourth using(tournament_id)
                         WHERE tournament_name 
                         LIKE %s
                         ORDER BY {sort} {order}
@@ -109,7 +139,8 @@ class TournamentDAO():
             rows = cursor.fetchall()
             cursor.close()
             db.disconnect(conn)
-            return [Tournament(*row) for row in rows]
+            tournaments = [TournamentWithPlaces(*row) for row in rows]
+            return tournaments
         except mysql.connector.Error as err:
             print(f"Error: {err}")
             conn.rollback()

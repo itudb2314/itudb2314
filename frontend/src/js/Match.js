@@ -3,7 +3,7 @@ import '../css/Matches.css';
 import '../css/Buttons.css';
 import { useHistory } from "react-router-dom";
 
-export default function Match({ match, goals, setMatchDeleted, setMatch }) {
+export default function Match({ match, goals, setMatchDeleted, setMatch, setUpdate }) {
     const history = useHistory();
     const [isupdating, setUpdating] = useState(false);
 
@@ -29,23 +29,24 @@ export default function Match({ match, goals, setMatchDeleted, setMatch }) {
         }).then((response) => response.json())
             .then(data => {
                 setMatch(data);
+                setUpdate(true);
             }).catch((error) => {
                 console.error('Error:', error);
             });
 
         setUpdating(false);
+        setUpdate(false);
     }
 
     const handleDeleteMatch = () => {
         try {
-            setMatchDeleted();
             deleteMatchbyID(match.match_id);
-            setMatchDeleted();
         }
         catch (error) {
             console.error('Error:', error);
-            setMatchDeleted();
+            setMatchDeleted(false);
         }
+        setMatchDeleted(false);
     }
 
     const deleteMatchbyID = async (match_id) => {
@@ -57,12 +58,12 @@ export default function Match({ match, goals, setMatchDeleted, setMatch }) {
             body: JSON.stringify({ match_id }),
         }).then((response) => response.json())
             .then(() => {
-                setMatchDeleted();
+                setMatchDeleted(true);
             })
             .catch((error) => {
                 console.error('Error:', error);
             });
-        setMatchDeleted();
+        setMatchDeleted(false);
     };
 
     const match_style = {

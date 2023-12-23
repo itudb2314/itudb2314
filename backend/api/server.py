@@ -159,11 +159,6 @@ def create_server(db):
         squads = SquadDAO.get_all_squads(db)
         return flask.jsonify(squads)
     
-    # @app.route('/squadsJOINED', methods=['GET'])
-    # def get_all_squads_joined():
-    #     squads = SquadAppearancePlayerDAO.get_all_squads(db)
-    #     return flask.jsonify(squads)
-    
     @app.route('/squadsJOINED', methods=['GET'])
     def get_all_squads_joined():
         page = flask.request.args.get('page', default=0, type=int)
@@ -277,16 +272,6 @@ def create_server(db):
         return flask.jsonify({})
 
 
-    @app.route('/tournaments/teams/images', methods=['PUT'])
-    def add_image():
-        team_id = flask.request.get_json()['team_id']
-        team_image = flask.request.get_json()['team_image']
-        team_image = base64.b64decode(team_image.encode('utf-8'))
-
-        TeamsDAO.add_image(db, team_id, team_image)
-
-        return flask.jsonify({})
-
     @app.route('/confederations', methods=['GET'])
     def get_confederation_names():
         confederations = ConfederationDAO.get_confederation_names(db)
@@ -348,7 +333,7 @@ def create_server(db):
 
     @app.route('/awards', methods=['GET'])
     def get_all_awards():
-        awards = AwardDAO.get_all_awards(db)
+        awards = AwardDAO.get_all_awards(db, "all", "all", "all")
         return flask.jsonify(awards)
 
     @app.route('/awards', methods=['PUT'])
