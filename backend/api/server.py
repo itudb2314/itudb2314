@@ -74,6 +74,7 @@ def create_server(db):
     @app.route('/managers', methods=['GET'])
     def api_all_managers():
         managers = ManagerDAO.get_all_managers(db)
+        print(managers)
         return flask.jsonify(managers)
     
     @app.route('/managers', methods=['POST'])
@@ -110,6 +111,33 @@ def create_server(db):
         group_standings = GroupStandingDAO.get_all_group_standings_on_tournament_joined(db, tournament_id)
         return flask.jsonify(group_standings)
 
+    @app.route('/group_standings', methods=['GET'])
+    def get_all_group_standings():
+        group_standings = GroupStandingDAO.get_all_standings(db)
+        return flask.jsonify(group_standings)
+    
+    @app.route('/group_standings', methods=['DELETE'])
+    def delete_group_standings():
+        tournament_id = flask.request.get_json()['tournament_id']
+        stage_number= flask.request.get_json()['stage_number']
+        group_name = flask.request.get_json()['group_name']
+        position = flask.request.get_json()['position']
+        GroupStandingDAO.delete_group_standing(db, tournament_id, stage_number, group_name,position)
+        return flask.jsonify({})
+    
+    @app.route('/group_standings', methods=['PUT'])
+    def update_group_standings():
+        group_standing = flask.request.get_json()['updated']
+        group_standing = make_dataclass('GroupStanding', group_standing.keys())(**group_standing)
+        GroupStandingDAO.update_group_standing(db, group_standing)
+        return flask.jsonify({})
+    
+    @app.route('/group_standings', methods=['POST'])
+    def create_group_standings():
+        group_standing = flask.request.get_json()['newGroup_standings']
+        group_standing = make_dataclass('GroupStanding', group_standing.keys())(**group_standing)
+        GroupStandingDAO.insert_group_standing(db, group_standing)
+        return flask.jsonify({})
 
     @app.route('/groupstandings', methods=['GET'])
     def api_all_group_standings():

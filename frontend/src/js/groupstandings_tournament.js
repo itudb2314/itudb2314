@@ -1,4 +1,4 @@
-import "../css/Groupstanding.css";
+import "../css/Groups_and_standing.css";
 import {Link, useParams} from "react-router-dom";
 
 import React, { useEffect, useState } from 'react';

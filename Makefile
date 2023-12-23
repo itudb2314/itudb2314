@@ -25,6 +25,10 @@ server:
 	cd backend/ && \
 	python3 main.py
 
+frontend:
+	cd ./frontend && \
+    npm start
+
 frontend-build:
 	cd ./frontend && \
 	docker build -t fifa-frontend .
@@ -40,4 +44,9 @@ remove-frontend-docker:
 	docker stop fifa-frontend && \
 	docker rm fifa-frontend
 
-.PHONY: mysql mysql-start mysql-stop mysql-remove frontend-build frontend-start frontend-stop remove-frontend-docker
+start-servers:
+	make mysql-start & \
+    make frontend-start & \
+    make server && fg
+
+.PHONY: mysql mysql-start mysql-stop mysql-remove frontend-build frontend-start frontend-stop remove-frontend-docker frontend

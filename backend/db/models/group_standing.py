@@ -197,6 +197,22 @@ class GroupStandingDAO():
             conn.close()
 
 
+    @staticmethod
+    def get_all_standings(db:db) -> list[GroupStanding]:
+        try:
+            conn = db.get_connection()
+            query="""
+                SELECT * FROM group_standings ORDER BY tournament_id DESC, stage_number ASC, group_name ASC, position ASC
+                """
+            cursor = conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchall()
+            return [GroupStanding(*row) for row in result]
+        except mysql.connector.Error as err:
+            conn.rollback()
+        finally:
+            cursor.close()
+            conn.close()
    
 
     @staticmethod
@@ -441,3 +457,4 @@ class GroupStandingDAO():
         finally:
             cursor.close()
             conn.close()
+
