@@ -24,10 +24,10 @@ export default function Matches() {
     const [awayteams, setAwayTeams] = useState([]);
     const [sort, setSort] = useState('tournament_name');
     const [order, setOrder] = useState('desc');
-    const [filter, setFilter] = useState('tournament_name');
+    const [filter, setFilter] = useState('tournament');
     const [allteams, setAllTeams] = useState([]);
     const [alltournaments, setAllTournaments] = useState([]);
-    const [filter_value, setFilterValue] = useState('WC-2022');
+    const [filter_value, setFilterValue] = useState('WC-1930');
     const [updateTrigger, setUpdateTrigger] = useState(false);
 
 
@@ -39,19 +39,8 @@ export default function Matches() {
             ])
 
             .then(([matches_data, goals_data]) => { //converting response to json])
-                if(sort === 'tournament_name' && (filter_value === 'All' || filter_value === 'none') && (filter === 'All' || filter === 'none')) {
-                    //process and set matches
-                    const tournament_matches = matches_data.reduce((tournament, match) => {
-                        const key = match.tournament_id;  //key based on which matches are grouped
-                        if(!tournament[key])   //check if array exits
-                            tournament[key] = [];
-                        tournament[key].push(match);
-                        return tournament;
-                    }, {});  //initial value of tournament is an empty object
-                    setMatches(Object.values(tournament_matches)); //set matches to array of arrays of matches
-                } else {
-                    setMatches(matches_data);
-                }
+                //set matches
+                setMatches(matches_data);
 
                 //process and set goals
                 const match_goals = goals_data.reduce((match, goal) => {
@@ -296,11 +285,6 @@ export default function Matches() {
         }
     }, [filter, showInsertForm]);
 
-    useEffect(() => {
-        if (sort === 'tournament_name' && (filter === 'All' || filter === 'none' || filter === 'tournament' || filter_value === 'none')) {
-            console.log("Sort:", sort, "Filter:", filter, "Filter Value:", filter_value);
-        }
-    }, [sort, filter, filter_value]);
     
     
 
@@ -312,8 +296,8 @@ export default function Matches() {
                 <div className="filter-block">
                     <div className="filter">
                         <label>Sort By</label>
-                        <select className="filter_select" onChange={sortMatches}>
-                            <option value="tournament_name">Tournament</option>
+                        <select className="filter_select" defaultValue='none' onChange={sortMatches}>
+                            <option value='none'>None</option>
                             <option value="Stage">Stage</option>
                             <option value="Score-margin">Score Margin</option>
                             <option value="Goals-Scored">Goals Scored</option>
@@ -328,10 +312,9 @@ export default function Matches() {
                     </div>
                     <div className="filter">
                         <label>Filter</label>
-                        <select className="filter_select" defaultValue="none" onChange={filterMatches}>
-                            <option value="none" disabled> None </option>
-                            <option value="team">Teams</option>
+                        <select className="filter_select" defaultValue="tournament" onChange={filterMatches}>
                             <option value="tournament">Tournaments</option>
+                            <option value="team">Teams</option>
                         </select>
                     </div>         
                     <div className="filter">
@@ -345,8 +328,7 @@ export default function Matches() {
                                 </select>
                         ) : (<></>)}
                     {filter === 'tournament' ? (
-                                <select className="filter_select" defaultValue="none" onChange={filterValue}>
-                                <option value="none" disabled> None </option>
+                                <select className="filter_select" defaultValue="WC-1930" onChange={filterValue}>
                                 {alltournaments.map((tournament) => (
                                     <option value={tournament.tournament_id}>{tournament.tournament_name}</option>
                                 ))}
@@ -499,23 +481,12 @@ export default function Matches() {
             ) : ( 
                 matches.length === 0 ? (<h2>Loading...</h2>)
                 :
-                (sort === 'tournament_name' && (filter_value === 'none' || filter_value === 'All')) ?
-                    matches.map((tournament_matches, i) => (
-                        Array.isArray(tournament_matches) ?
-                        <div key={i}>
-                            <h2 style={style}>{tournament_matches[0]?.tournament_name}</h2>
-                            {tournament_matches.map((match) => (
-                                <Match key={match.match_id}  match={match} goals={goals[match.match_id]}  setMatchDeleted={onMatchDelete} setMatch={setMatch} setUpdate={setUpdateTrigger}/>
-                            ))}
-                        </div>
-                        : <></>
-                    ))
-                : 
-                matches.length === 0 ? (<h2>Loading...</h2>)
-                :
                     Array.isArray(matches) ?
                     matches.map((match) => (
-                        <Match key={match.match_id}  match={match} goals={goals[match.match_id]}  setMatchDeleted={onMatchDelete} setMatch={setMatch}/>
+                        <div>
+                            <h2>{match.tournament_name}</h2>
+                            <Match key={match.match_id}  match={match} goals={goals[match.match_id]}  setMatchDeleted={onMatchDelete} setMatch={setMatch}/>
+                        </div>
                     ))
                     : <></>
 
