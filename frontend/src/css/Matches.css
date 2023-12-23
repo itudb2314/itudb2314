@@ -2,8 +2,8 @@
     text-align: center;
 }
 .match_header {
-    background-color: cadetblue;
-    color: black;
+    background-color: #282C34;
+    color: white;
     text-align: center;
     margin: 0;
     border-top-left-radius: 50px;
@@ -166,7 +166,7 @@
 
   .input-text-select {
     text-align: left;
-    width: 100%;
+    width: 95%;
     font-size: 12px;
     padding: 5px;
     border-radius: 5px;

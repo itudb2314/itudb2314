@@ -32,6 +32,8 @@ export default function Matches() {
     const [filter_value, setFilterValue] = useState('All');
 
     function handleScroll() {
+        if(matches.length < 10)
+            return
         const {scrollTop, scrollHeight, clientHeight} = document.documentElement;
         if(scrollTop + clientHeight >= scrollHeight - 5) {
             setOffset(offset + 10);
@@ -43,6 +45,9 @@ export default function Matches() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, [offset]);
 
+    useEffect(() => {
+        setOffset(0);
+    }, [filter, sort, order]);
 
     useEffect(() => {
         if(!match_id) {
@@ -386,13 +391,15 @@ export default function Matches() {
                             )}
                             {Array.isArray(groupnames) && <label for="group_name"> Group Name </label>}
                             {Array.isArray(groupnames) && (
-                                <select id="group_name" name="group_name" className='input-text-select' required>
+                                <select id="group_name" name="group_name" className='input-text-select'>
                                     <option value='NULL' disabled>select</option>
+                                    {groupnames.length === 0 && <option value='not applicable'>not applicable</option>}
                                     {groupnames.map((groupname) => (
                                         <option value={groupname}>{groupname}</option>
                                     ))}
                                 </select>
-                            )}
+                            )
+                            }
                             <label> Group Stage </label><br/>
                             <input type="radio" id="group_stage_true" name="group-stage" value="1" checked={isgroupstage} disabled required/>
                             <label for="group_stage_true" className='radio-label'> True </label> 
