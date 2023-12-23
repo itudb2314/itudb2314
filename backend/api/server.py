@@ -74,7 +74,6 @@ def create_server(db):
     @app.route('/managers', methods=['GET'])
     def api_all_managers():
         managers = ManagerDAO.get_all_managers(db)
-        print(managers)
         return flask.jsonify(managers)
     
     @app.route('/managers', methods=['POST'])
@@ -86,14 +85,18 @@ def create_server(db):
     
     @app.route('/managers', methods=['PUT'])
     def update_manager():
-        manager_data = flask.request.get_json()['managerData']
+        manager_data = flask.request.get_json()['manager']
         manager_data = make_dataclass('Manager', manager_data.keys())(**manager_data)
+        print(manager_data)
+
         ManagerDAO.update_manager(db, manager_data)
+        print(manager_data)
+
         return flask.jsonify(manager_data)
     
     @app.route('/managers', methods=['DELETE'])
     def delete_manager():
-        manager_id = flask.request.get_json()['manager_id']
+        manager_id = flask.request.get_json()
         ManagerDAO.delete_manager(db, manager_id)
         return flask.jsonify({})
 

@@ -6,6 +6,7 @@ export default function Group_standings() {
     const [group_standings, setGroup_standings] = useState([])
     const [deleteTrigger, setDeleteTrigger] = useState(false)
     const [addTrigger, setAddTrigger] = useState(false);
+    const [editTrigger, setEditTrigger] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [ tournaments, setTournaments ] = useState([]);
@@ -19,7 +20,7 @@ export default function Group_standings() {
                 setGroup_standings(data)
                 console.log(group_standings)
             })
-    }, [deleteTrigger, addTrigger])
+    }, [deleteTrigger, addTrigger, editTrigger])
 
     useEffect(() => {
         fetch('http://localhost:5000/tournaments')
@@ -57,6 +58,7 @@ export default function Group_standings() {
             stage_number: e.target.elements.stage_number,
             stage_name: e.target.elements.stage_name,
             group_name: e.target.elements.group_name,
+            position: e.target.elements.position,
             team_id: e.target.elements.team_id.value,
             played: e.target.elements.played.value,
             wins: e.target.elements.wins.value,
@@ -66,7 +68,6 @@ export default function Group_standings() {
             goals_against: e.target.elements.goals_against.value,
             goal_difference: e.target.elements.goal_difference.value,
             points: e.target.elements.points.value,
-            position: e.target.elements.position,
             advanced: e.target.elements.advanced,
         }
 
@@ -80,7 +81,7 @@ export default function Group_standings() {
             .then(response => response.json())
             .then(data => {
                 console.log('Success:', data);
-                setAddTrigger(!addTrigger);
+                setEditTrigger(!editTrigger);
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -104,7 +105,7 @@ export default function Group_standings() {
             goal_difference: e.target.elements.goal_difference.value,
             points: e.target.elements.points.value,
             position: e.target.elements.position.value,
-            advanced: 1,
+            advanced: e.target.elements.advanced,
         }
 
         fetch('http://localhost:5000/group_standings', {
@@ -281,3 +282,4 @@ export default function Group_standings() {
 
     );
 }
+

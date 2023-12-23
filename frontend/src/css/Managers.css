@@ -8,24 +8,25 @@
     height: 100%;
 }
 
-.manager{
+
+.manager {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     margin: 10px;
-    padding: 10px;
-    padding-top: 20px;
+    padding: 20px; /* Increase padding to create more space inside the box */
     background-color: #fff;
     box-shadow: 0 0 2px #ccc;
-    width: 200px;
-    height: 200px;
+    width: 250px; /* Increase width */
+    height: 300px; /* Increase height */
     border-radius: 8px;
     transition: box-shadow 0.3s;
-    &:hover{
+    &:hover {
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8);
     }
 }
+
 
 .manager-info{
     width: 100%;
