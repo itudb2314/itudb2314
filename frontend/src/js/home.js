@@ -1,11 +1,18 @@
 import React from "react";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import messi from '../assets/messi.jpg';
 
 const Home = () => {
+    const history = useHistory();
+
+    function handleClick() {
+        history.push("/tournaments");
+    }
+
     return (
         <div style={styles.container}>
             <div style={styles.overlay}>
-                <h1 style={styles.title}>FIFA WORLD CUP</h1>
+                <h1 style={styles.title} onClick={handleClick}>FIFA WORLD CUP</h1>
             </div>
             <img src={messi} alt="Messi" style={styles.image} />
         </div>

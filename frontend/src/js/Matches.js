@@ -34,8 +34,10 @@ export default function Matches() {
     const [updateTrigger, setUpdateTrigger] = useState(false);
 
     function handleScroll() {
-        if(matches.length < 10)
-            return
+        console.log(matches.length)
+        if(matches.length % 10 !== 0) {
+            return;
+        }
         const {scrollTop, scrollHeight, clientHeight} = document.documentElement;
         if(scrollTop + clientHeight >= scrollHeight - 5) {
             setOffset(offset + 10);
@@ -575,10 +577,11 @@ function MatchScoreBoard({match, goals, bookings}) {
     }
 
     function handleTeamClick(match) {
-        if(match.home_team_id)
             history.push(`/squads/${match.tournament_id}/${match.home_team_id}`);
-        else 
-            history.push(`/squads/${match.tournament_id}/${match.away_team_id}`);
+    }
+
+    function handleAwayTeamClick(match) {
+        history.push(`/squads/${match.tournament_id}/${match.away_team_id}`);
     }
 
     function handlePlayerClick(goal){
@@ -610,7 +613,7 @@ function MatchScoreBoard({match, goals, bookings}) {
             <div className="vs">{match.home_team_score} - {match.away_team_score}</div>
             <div className="team-name">
               <img src={awayflagUrl} alt={`${match.away_team_name} Flag`} style={{ width: '64px', height: 'auto' }} />
-              <h2 onClick={() => handleTeamClick(match)} style={{cursor:'pointer'}}>
+              <h2 onClick={() => handleAwayTeamClick(match)} style={{cursor:'pointer'}}>
                 {match.away_team_name}
               </h2>
               <ul className="goals">

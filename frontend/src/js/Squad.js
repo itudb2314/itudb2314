@@ -154,8 +154,7 @@ const SingleSquadPage = () => {
     return (
         <div className="squad-group">
             <h1 className="Title">
-                <span style={{cursor:"pointer"}} onClick={handleTournamentClick}>{squad.tournament_name}</span> / 
-                <span style={{cursor:"pointer"}} onClick={handleTeamClick}>{squad.team_name}</span>
+                <span style={{cursor:"pointer"}} onClick={handleTournamentClick}>{squad.tournament_name}</span> /<span style={{cursor:"pointer"}} onClick={handleTeamClick}> {squad.team_name}</span>
             </h1>
             {squad.squad &&
                 squad.squad.map((squadMember, playerIndex) => (
