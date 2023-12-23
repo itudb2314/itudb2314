@@ -2,6 +2,7 @@ import React, {useRef, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import '../css/Matches.css';
 import '../css/Filters.css';
+import getCountryISO2 from 'country-iso-3-to-2';
 import Match from "./Match";
 import { useHistory } from 'react-router-dom';
 
@@ -48,7 +49,7 @@ export default function Matches() {
 
     useEffect(() => {
         setOffset(0);
-    }, [filter, sort, order]);
+    }, [filter_value, sort, order]);
 
     useEffect(() => {
         if(!match_id) {
@@ -292,7 +293,7 @@ export default function Matches() {
     }
 
     useEffect(() => {
-        if(filter === 'team') {
+        if(filter === 'team' || filter === 'All') {
             fetch(`http://localhost:5000/tournaments/teams`)
             .then((response) => response.json())
             .then((data) => {
@@ -316,6 +317,7 @@ export default function Matches() {
             });
         }
     }, [filter, showInsertForm]);
+
 
     return (
         <div className="matches">
@@ -341,14 +343,16 @@ export default function Matches() {
                     <div className="filter">
                         <label>Filter</label>
                         <select className="filter_select" onChange={filterMatches}>
+                            <option value="select" default disabled> Select </option>
                             <option value="team">Teams</option>
                             <option value="tournament">Tournaments</option>
                         </select>
                     </div>         
                     <div className="filter">
                     <label>Options</label>
-                    {filter === 'team' ? (
+                    {(filter === 'team' || filter == 'All') ? (
                                 <select className="filter_select" onChange={filterValue}>
+                                <option value="select" default disabled> Select </option>
                                 {allteams.map((team) => (
                                     <option value={team.team_id}>{team.team_name}</option>
                                 ))}
@@ -356,6 +360,7 @@ export default function Matches() {
                         ) : (<></>)}
                     {filter === 'tournament' ? (
                                 <select className="filter_select" onChange={filterValue}>
+                                <option value="select" default disabled> Select </option>
                                 {alltournaments.map((tournament) => (
                                     <option value={tournament.tournament_id}>{tournament.tournament_name}</option>
                                 ))}
@@ -535,6 +540,11 @@ export default function Matches() {
 
 
 function MatchScoreBoard({match, goals, bookings}) {
+    //images
+    const home_iso2 = getCountryISO2(match.home_team_code);
+    const away_iso2 = getCountryISO2(match.away_team_code);
+    const homeflagUrl = `https://flagsapi.com/${home_iso2}/flat/64.png`;
+    const awayflagUrl = `https://flagsapi.com/${away_iso2}/flat/64.png`;
     const history = useHistory();
 
     function renderEvent(event) {
@@ -579,6 +589,7 @@ function MatchScoreBoard({match, goals, bookings}) {
         <div className="match-scoreboard">
           <div className="teams-div">
             <div className="team-name">
+              <img src={homeflagUrl} alt={`${match.home_team_name} Flag`} style={{ width: '64px', height: 'auto' }} />
               <h2 onClick={() => handleTeamClick(match)} style={{ cursor: 'pointer' }}>
                 {match.home_team_name}
               </h2>
@@ -598,6 +609,7 @@ function MatchScoreBoard({match, goals, bookings}) {
             </div>
             <div className="vs">{match.home_team_score} - {match.away_team_score}</div>
             <div className="team-name">
+              <img src={awayflagUrl} alt={`${match.away_team_name} Flag`} style={{ width: '64px', height: 'auto' }} />
               <h2 onClick={() => handleTeamClick(match)} style={{cursor:'pointer'}}>
                 {match.away_team_name}
               </h2>

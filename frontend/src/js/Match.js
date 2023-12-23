@@ -69,7 +69,7 @@ export default function Match({ match, goals, setMatchDeleted, setMatch, setUpda
     const match_style = {
         border: '1px solid black',
         margin: '1rem',
-        borderRadius: '50px',
+        borderRadius: '10px',
         width: '75%',
     }
 
@@ -97,7 +97,7 @@ export default function Match({ match, goals, setMatchDeleted, setMatch, setUpda
 
     return (
         <div style={match_style} className='center_div'>
-            <h2 className="match_header">
+            <h2 className="match_header" onClick={()=>{history.push(`/matches/${match.match_id}`)}} style={{ cursor: 'pointer' }}>
                 {capitalizeWords(match.stage_name)} / {match.match_name}
             </h2>
             {!isupdating ? (
@@ -117,7 +117,7 @@ export default function Match({ match, goals, setMatchDeleted, setMatch, setUpda
                             .filter((goal) => goal.team_id === match.home_team_id)
                             .map((goal, index) => (
                                 <div key={index}>
-                                    <p onClick={() => handlePlayerClick(goal)}>{goalIcon()} {goal.minute_label}  {goal.given_name}  {goal.family_name}{goal.penalty ? (<span>(P)</span>) : (<></>)}</p>
+                                    <p onClick={() => handlePlayerClick(goal)} style={{ cursor: 'pointer' }}>{goalIcon()} {goal.minute_label}  {goal.given_name}  {goal.family_name}{goal.penalty ? (<span>(P)</span>) : (<></>)}</p>
                                 </div>
                             ))}
                     </div>
@@ -134,17 +134,17 @@ export default function Match({ match, goals, setMatchDeleted, setMatch, setUpda
                             .filter((goal) => goal.team_id === match.away_team_id)
                             .map((goal, index) => (
                                 <div key={index}>
-                                    <p onClick={() => handlePlayerClick(goal)}>{goalIcon()} {goal.minute_label}  {goal.given_name}  {goal.family_name}{goal.penalty ? (<span>(P)</span>) : (<></>)}</p>
+                                    <p onClick={() => handlePlayerClick(goal)} style={{ cursor: 'pointer' }}>{goalIcon()} {goal.minute_label}  {goal.given_name}  {goal.family_name}{goal.penalty ? (<span>(P)</span>) : (<></>)}</p>
                                 </div>
                             ))}
                     </div>
                 </div>
-                <div>   
-                    <button onClick={handleDeleteMatch} className='delete-button-danas'>
-                        {'Delete'}
-                    </button>
+                <div style={{gap:'200px'}}>   
                     <button onClick={handleUpdateMatch} className='edit-button'>
                         Update
+                    </button>
+                    <button onClick={handleDeleteMatch} style={{paddingRight: '5px'}}className='delete-button-danas'>
+                        Delete
                     </button>
                 </div>
                 </>
