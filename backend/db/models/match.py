@@ -122,7 +122,7 @@ class MatchDAO():
             connection.close()
 
     @staticmethod
-    def get_all_matches(db: db, sort: str, order: str, offset: int, limit: int, filter: str, filter_value : str) -> list[Match]:
+    def get_all_matches(db: db, sort: str, order: str, filter: str, filter_value : str) -> list[Match]:
         try:
             matches = []
             connection = db.get_connection()
@@ -147,7 +147,7 @@ class MatchDAO():
             elif sort == 'Score-margin':
                 sort = f'ABS(m.home_team_score - m.away_team_score) {order}'
             elif sort == 'Goals-Scored':
-                sort = f'm.home_team_score + m.away_team_score {order}, m.home_team_score'
+                sort = f'm.home_team_score + m.away_team_score {order}, m.home_team_score DESC'
             else: 
                 sort = f'm.tournament_id {order}'
 
@@ -168,7 +168,6 @@ class MatchDAO():
                     LEFT JOIN tournaments t ON m.tournament_id = t.tournament_id
                     WHERE {filter}
                     ORDER BY {sort},  m.match_id DESC
-                    LIMIT {offset}, {limit}
                     """
             cursor = connection.cursor()
             cursor.execute(query)

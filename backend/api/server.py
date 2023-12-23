@@ -183,9 +183,9 @@ def create_server(db):
         else:
             return flask.jsonify({'message': 'Squad not found'}), 404
         
-    @app.route('/matches/<sort>/<order>/<offset>/<limit>/<filter>/<filter_value>', methods=['GET'])
-    def get_all_matches(sort : str, order : str, offset: int, limit: int, filter : str, filter_value : str):
-        match = MatchDAO.get_all_matches(db, sort, order, int(offset), limit, filter, filter_value)
+    @app.route('/matches/<sort>/<order>/<filter>/<filter_value>', methods=['GET'])
+    def get_all_matches(sort : str, order : str, filter : str, filter_value : str):
+        match = MatchDAO.get_all_matches(db, sort, order, filter, filter_value)
         if match:
             return flask.jsonify(match), 200
         else:

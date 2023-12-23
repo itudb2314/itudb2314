@@ -1,5 +1,5 @@
 import React, {useRef, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { renderMatches, useParams } from 'react-router-dom';
 import '../css/Matches.css';
 import '../css/Filters.css';
 import getCountryISO2 from 'country-iso-3-to-2';
@@ -24,61 +24,33 @@ export default function Matches() {
     const [awayteams, setAwayTeams] = useState([]);
     const [sort, setSort] = useState('tournament_name');
     const [order, setOrder] = useState('desc');
-    const [limit, setLimit] = useState(20);
-    const [offset, setOffset] = useState(0);
-    const divRef = useRef(null);
-    const [filter, setFilter] = useState('All');
+    const [filter, setFilter] = useState('tournament_name');
     const [allteams, setAllTeams] = useState([]);
     const [alltournaments, setAllTournaments] = useState([]);
-    const [filter_value, setFilterValue] = useState('All');
+    const [filter_value, setFilterValue] = useState('WC-2022');
     const [updateTrigger, setUpdateTrigger] = useState(false);
 
-
-    function handleScroll() {
-        const {scrollTop, scrollHeight, clientHeight} = document.documentElement;
-        if(scrollTop + clientHeight >= scrollHeight - 5) {
-            setOffset(offset + 10);
-        }
-    }
-
-    useEffect(() => {
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, [offset]);
-
-    useEffect(() => {
-        setOffset(0);
-    }, [filter_value, sort, order]);
 
     useEffect(() => {
         if(!match_id) {
             Promise.all([ //fetching data from backend
-                fetch(`http://localhost:5000/matches/${sort}/${order}/${offset}/${limit}/${filter}/${filter_value}`).then((response) => response.json()),
+                fetch(`http://localhost:5000/matches/${sort}/${order}/${filter}/${filter_value}`).then((response) => response.json()),
                 fetch('http://localhost:5000/goals').then((response) => response.json()),
             ])
 
             .then(([matches_data, goals_data]) => { //converting response to json])
-                if(sort === 'tournament_name' && (filter === 'All' || filter === 'tournament')) {
-                    //convert existing matches to an object with tournament_id as its key
-                    const prevMatches = matches.reduce((acc, curr) => {
-                        acc[curr[0].tournament_id] = curr;
-                        return acc;
-                    }, {});
-
-                    //appennd new matches to appropriate tournament
-                    matches_data.forEach(match => {
-                        const key = match.tournament_id;
-                        if(!prevMatches[key]) {
-                            prevMatches[key] = [];
-                        }
-                        prevMatches[key].push(match);
-                    })
-                
-                    setMatches(Object.values(prevMatches)); //set matches to array of arrays of matches
+                if(sort === 'tournament_name' && (filter_value === 'All' || filter_value === 'none') && (filter === 'All' || filter === 'none')) {
+                    //process and set matches
+                    const tournament_matches = matches_data.reduce((tournament, match) => {
+                        const key = match.tournament_id;  //key based on which matches are grouped
+                        if(!tournament[key])   //check if array exits
+                            tournament[key] = [];
+                        tournament[key].push(match);
+                        return tournament;
+                    }, {});  //initial value of tournament is an empty object
+                    setMatches(Object.values(tournament_matches)); //set matches to array of arrays of matches
                 } else {
-                    if(Array.isArray(matches_data) && matches_data.length !== 0) {
-                        setMatches((prevMatches) => [...prevMatches, ...matches_data]);
-                    }
+                    setMatches(matches_data);
                 }
 
                 //process and set goals
@@ -114,7 +86,7 @@ export default function Matches() {
                 console.error('Error fetching data:', error);
             }); 
         }
-    }, [match_id, matchAdded, matchDeleted, sort, order, offset, filter_value, updateTrigger]);
+    }, [match_id, matchAdded, matchDeleted, sort, order, filter_value, updateTrigger]);
     const style = {
         margin: '2rem 0 2rem 0',
         color: 'reds',
@@ -176,9 +148,6 @@ export default function Matches() {
         .catch((error) => {
             console.error('Error:', error);
         });
-        if(offset > 0) {
-            setOffset(0);
-        }
         setMatchAdded(false);
     };
  
@@ -285,21 +254,19 @@ export default function Matches() {
 
     //filters
     function sortMatches(e) {
-        setMatches([]);
         setSort(e.target.value)
     }
 
     function orderMatches(e) {
-        setMatches([]);
         setOrder(e.target.value)
     }
 
     function filterMatches(e) {
         setFilter(e.target.value)
+        setFilterValue('none')
     }
 
     function filterValue(e) {
-        setMatches([]);
         setFilterValue(e.target.value)
     }
 
@@ -329,6 +296,14 @@ export default function Matches() {
         }
     }, [filter, showInsertForm]);
 
+    useEffect(() => {
+        if (sort === 'tournament_name' && (filter === 'All' || filter === 'none' || filter === 'tournament' || filter_value === 'none')) {
+            console.log("Sort:", sort, "Filter:", filter, "Filter Value:", filter_value);
+        }
+    }, [sort, filter, filter_value]);
+    
+    
+
 
     return (
         <div className="matches">
@@ -353,8 +328,8 @@ export default function Matches() {
                     </div>
                     <div className="filter">
                         <label>Filter</label>
-                        <select className="filter_select" onChange={filterMatches}>
-                            <option value="select" default disabled> Select </option>
+                        <select className="filter_select" defaultValue="none" onChange={filterMatches}>
+                            <option value="none" disabled> None </option>
                             <option value="team">Teams</option>
                             <option value="tournament">Tournaments</option>
                         </select>
@@ -362,16 +337,16 @@ export default function Matches() {
                     <div className="filter">
                     <label>Options</label>
                     {(filter === 'team' || filter == 'All') ? (
-                                <select className="filter_select" onChange={filterValue}>
-                                <option value="select" default disabled> Select </option>
+                                <select className="filter_select" defaultValue="none" onChange={filterValue}>
+                                <option value="none" disabled> None </option>
                                 {allteams.map((team) => (
                                     <option value={team.team_id}>{team.team_name}</option>
                                 ))}
                                 </select>
                         ) : (<></>)}
                     {filter === 'tournament' ? (
-                                <select className="filter_select" onChange={filterValue}>
-                                <option value="select" default disabled> Select </option>
+                                <select className="filter_select" defaultValue="none" onChange={filterValue}>
+                                <option value="none" disabled> None </option>
                                 {alltournaments.map((tournament) => (
                                     <option value={tournament.tournament_id}>{tournament.tournament_name}</option>
                                 ))}
@@ -522,7 +497,9 @@ export default function Matches() {
             {match_id ? (
                 <MatchScoreBoard key={match.match_id}  match={match} goals={goals_by_id} bookings={bookings}/>
             ) : ( 
-                (sort === 'tournament_name' && (filter === 'All' || filter === 'tournament' || (filter === 'team' && filter_value === 'All'))) ?
+                matches.length === 0 ? (<h2>Loading...</h2>)
+                :
+                (sort === 'tournament_name' && (filter_value === 'none' || filter_value === 'All')) ?
                     matches.map((tournament_matches, i) => (
                         Array.isArray(tournament_matches) ?
                         <div key={i}>
@@ -534,16 +511,14 @@ export default function Matches() {
                         : <></>
                     ))
                 : 
+                matches.length === 0 ? (<h2>Loading...</h2>)
+                :
                     Array.isArray(matches) ?
                     matches.map((match) => (
                         <Match key={match.match_id}  match={match} goals={goals[match.match_id]}  setMatchDeleted={onMatchDelete} setMatch={setMatch}/>
                     ))
                     : <></>
 
-            )}
-            {matches.length > 0 && (
-                <div ref={divRef} style={{marginTop: "40px"}}>
-                </div>
             )}
         </div>
     );
