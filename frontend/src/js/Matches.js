@@ -34,7 +34,6 @@ export default function Matches() {
     const [updateTrigger, setUpdateTrigger] = useState(false);
 
     function handleScroll() {
-        console.log(matches.length)
         if(matches.length % 10 !== 0) {
             return;
         }
