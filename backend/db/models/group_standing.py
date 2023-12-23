@@ -99,7 +99,7 @@ class GroupStandingDAO():
                     goal_difference,
                     points,
                     advanced
-                ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+                ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,1)"""
             
             cursor = conn.cursor()
             cursor.execute(query, (
@@ -116,8 +116,7 @@ class GroupStandingDAO():
                 group_standing.goals_for,
                 group_standing.goals_against,
                 group_standing.goal_difference,
-                group_standing.points,
-                group_standing.advanced
+                group_standing.points
                 ))
             conn.commit()
 
@@ -286,6 +285,7 @@ class GroupStandingDAO():
             conn = db.get_connection()
             query="""
                 UPDATE group_standings SET
+                    team_id=%s,
                     played=%s,
                     wins=%s,
                     draws=%s,
@@ -294,11 +294,12 @@ class GroupStandingDAO():
                     goals_against=%s,
                     goal_difference=%s,
                     points=%s,
-                    advanced=%s
+                    advanced=1,
                     WHERE tournament_id=%s AND stage_number=%s AND group_name=%s AND position=%s
                     """
             cursor = conn.cursor()
             cursor.execute(query, (
+                group_standing.team_id,
                 group_standing.played,
                 group_standing.wins,
                 group_standing.draws,
@@ -307,11 +308,10 @@ class GroupStandingDAO():
                 group_standing.goals_against,
                 group_standing.goal_difference,
                 group_standing.points,
-                group_standing.advanced,
                 group_standing.tournament_id,
                 group_standing.stage_number,
                 group_standing.group_name,
-                group_standing.position
+                group_standing.position,
                 ))
             conn.commit()
             print("Group_standing updated")
