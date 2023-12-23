@@ -30,8 +30,11 @@ export default function Matches() {
     const [allteams, setAllTeams] = useState([]);
     const [alltournaments, setAllTournaments] = useState([]);
     const [filter_value, setFilterValue] = useState('All');
+    const [updateTrigger, setUpdateTrigger] = useState(false);
 
     function handleScroll() {
+        if(matches.length < 10)
+            return
         const {scrollTop, scrollHeight, clientHeight} = document.documentElement;
         if(scrollTop + clientHeight >= scrollHeight - 5) {
             setOffset(offset + 10);
@@ -43,6 +46,9 @@ export default function Matches() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, [offset]);
 
+    useEffect(() => {
+        setOffset(0);
+    }, [filter, sort, order]);
 
     useEffect(() => {
         if(!match_id) {
@@ -99,14 +105,14 @@ export default function Matches() {
                 console.error('Error fetching data:', error);
             }); 
         }
-    }, [match_id, matchAdded, matchDeleted, sort, order, offset, filter_value]);
+    }, [match_id, matchAdded, matchDeleted, sort, order, offset, filter_value, updateTrigger]);
     const style = {
         margin: '2rem 0 2rem 0',
         color: 'reds',
     };
 
-    function onMatchDelete() {
-        setMatchDeleted(!matchDeleted);
+    function onMatchDelete(state) {
+        setMatchDeleted(state);
     }
 
     //insert function
@@ -156,13 +162,15 @@ export default function Matches() {
         .then((response) => response.json())
         .then((data) => {
             toggleInsertForm();
-            setMatchAdded(!matchAdded);
+            setMatchAdded(true);
         })
         .catch((error) => {
             console.error('Error:', error);
         });
-
-        setMatchAdded(!matchAdded);
+        if(offset > 0) {
+            setOffset(0);
+        }
+        setMatchAdded(false);
     };
  
     //tournament stage validation
@@ -184,9 +192,24 @@ export default function Matches() {
     }, [chosentournament]);
 
 
+    const [isgroupstage, setIsGroupStage] = useState(false);
+    const [isknockoutstage, setIsKnockoutStage] = useState(false);
+
     //group number validation
     const handleStageChange = (event) => {
-        setChosenStage(event.target.value);
+        const select_stage = event.target.value;
+        setChosenStage(select_stage);
+            //stage validation
+
+        const group_stages = ['group stage', 'first round', 'first group stage', 'second group stage', 'final round']
+
+        if(group_stages.includes(select_stage.toLowerCase())) {
+            setIsGroupStage(true);
+            setIsKnockoutStage(false);
+        } else {
+            setIsGroupStage(false);
+            setIsKnockoutStage(true);            
+        }
     }
 
     useEffect(() => {
@@ -234,6 +257,23 @@ export default function Matches() {
         }
     }, [chosentournament]);
 
+
+    //wins validation
+    const [home_score, setHomeScore] = useState(0);
+    const [away_score, setAwayScore] = useState(0);
+    const [match_outcome, setMatchOutcome] = useState({home_win: false, away_win: false, draw: false});
+
+    useEffect(()=> {
+        if(home_score > away_score) {
+            setMatchOutcome({home_win: true, away_win: false, draw: false})
+        }else if(away_score > home_score) {
+            setMatchOutcome({home_win: false, away_win: true, draw: false})
+        }else {
+            setMatchOutcome({home_win: false, away_win: false, draw: true})
+        }
+    }, [home_score, away_score])
+
+
     //filters
     function sortMatches(e) {
         setSort(e.target.value)
@@ -265,7 +305,7 @@ export default function Matches() {
     }, [filter]);
 
     useEffect(() => {
-        if(filter === 'tournament') {
+        if(filter === 'tournament' || showInsertForm) {
             fetch(`http://localhost:5000/tournaments`)
             .then((response) => response.json())
             .then((data) => {
@@ -275,7 +315,7 @@ export default function Matches() {
                 console.error('Error:', error);
             });
         }
-    }, [filter]);
+    }, [filter, showInsertForm]);
 
     return (
         <div className="matches">
@@ -354,23 +394,25 @@ export default function Matches() {
                             )}
                             {Array.isArray(groupnames) && <label for="group_name"> Group Name </label>}
                             {Array.isArray(groupnames) && (
-                                <select id="group_name" name="group_name" className='input-text-select' required>
+                                <select id="group_name" name="group_name" className='input-text-select'>
                                     <option value='NULL' disabled>select</option>
+                                    {groupnames.length === 0 && <option value='not applicable'>not applicable</option>}
                                     {groupnames.map((groupname) => (
                                         <option value={groupname}>{groupname}</option>
                                     ))}
                                 </select>
-                            )}
+                            )
+                            }
                             <label> Group Stage </label><br/>
-                            <input type="radio" id="true" name="group-stage" value="1" required/>
-                            <label for="true" className='radio-label'> True </label> 
-                            <input type="radio" id="false" name="group-stage" value="0" required/>
-                            <label for="false" className='radio-label'> False </label> <br/>
+                            <input type="radio" id="group_stage_true" name="group-stage" value="1" checked={isgroupstage} disabled required/>
+                            <label for="group_stage_true" className='radio-label'> True </label> 
+                            <input type="radio" id="group_stage_false" name="group-stage" value="0" checked={!isgroupstage} disabled required/>
+                            <label for="group_stage_false" className='radio-label'> False </label> <br/>
                             <label> Knockout Stage </label><br/>
-                            <input type="radio" id="true" name="knockout" value="1" required/>
-                            <label for="true" className='radio-label'> True </label>
-                            <input type="radio" id="false" name="knockout" value="0" required/>
-                            <label for="false" className='radio-label'> False </label> <br/>
+                            <input type="radio" id="knockout_true" name="knockout" value="1" checked={isknockoutstage} disabled required/>
+                            <label for="knockout_true" className='radio-label'> True </label>
+                            <input type="radio" id="knockout_false" name="knockout" value="0" checked={!isknockoutstage} disabled required/>
+                            <label for="knockout_false" className='radio-label'> False </label> <br/>
                             <label> Replayed </label><br/>
                             <input type="radio" id="true" name="replayed" value="1" required/>
                             <label for="true" className='radio-label'> True </label>
@@ -415,9 +457,9 @@ export default function Matches() {
                             <label> Score </label>
                             <input type="text" name="score" pattern="\b\d{1,2}-\d{1,2}\b" placeholder='HomeTeamScore - AwayTeamScore' className='input-text-select' required/>
                             <label> Home Team Score </label>
-                            <input type="number" min="0" step="1" className='input-text-select' name="home_team_score" required/>
+                            <input type="number" min="0" step="1" className='input-text-select' name="home_team_score" onChange={(event) => setHomeScore(parseInt(event.target.value, 10))} required/>
                             <label> Away Team Score </label>
-                            <input type="number" min="0" step="1" className='input-text-select' name="away_team_score" required/>
+                            <input type="number" min="0" step="1" className='input-text-select' name="away_team_score"  onChange={(event) => setAwayScore(parseInt(event.target.value, 10))} required/>
                             <label> Home Team Score Margin </label>
                             <input type="number" name="home_team_score_margin" className='input-text-select' placeholder='HomeTeamScoreMargin = HomeTeamScore - AwayTeamScore' required/>
                             <label> Away Team Score Margin </label>
@@ -441,20 +483,20 @@ export default function Matches() {
                             <label> Result </label>
                             <input type="text" name="result" className='input-text-select' placeholder='HomeTeamWin or AwayTeamWin or Draw' required/>
                             <label> Home Team Win </label><br/>
-                            <input type="radio" id="true" name="home_team_win" value="1" required/>
-                            <label for="true" className='radio-label'> True </label>
-                            <input type="radio" id="false" name="home_team_win" value="0" required/>
-                            <label for="false" className='radio-label'> False </label> <br/>
+                            <input type="radio" id="home_team_win_true" name="home_team_win" value="1" checked={match_outcome.home_win} disabled/>
+                            <label for="home_team_win_true" className='radio-label'> True </label>
+                            <input type="radio" id="home_team_win_false" name="home_team_win" value="0" checked={!match_outcome.home_win} required disabled/>
+                            <label for="home_team_win_false" className='radio-label'> False </label> <br/>
                             <label> Away Team Win </label><br/>
-                            <input type="radio" id="true" name="away_team_win" value="1" required/>
-                            <label for="true" className='radio-label'> True </label>
-                            <input type="radio" id="false" name="away_team_win" value="0" required/>
-                            <label for="false" className='radio-label'> False </label> <br/>
+                            <input type="radio" id="away_team_win_true" name="away_team_win" value="1" checked={match_outcome.away_win} disabled/>
+                            <label for="away_team_win_true" className='radio-label'> True </label>
+                            <input type="radio" id="away_team_win_false" name="away_team_win" value="0" checked={!match_outcome.away_win} required disabled/>
+                            <label for="away_team_win_false" className='radio-label'> False </label> <br/>
                             <label> Draw </label><br/>
-                            <input type="radio" id="true" name="draw" value="1" required/>
-                            <label for="true" className='radio-label'> True </label>
-                            <input type="radio" id="false" name="draw" value="0" required/>
-                            <label for="false" className='radio-label'> False </label> <br/>
+                            <input type="radio" id="draw_true" name="draw" value="1" checked={match_outcome.draw} required disabled/>
+                            <label for="draw_true" className='radio-label'> True </label>
+                            <input type="radio" id="draw_false" name="draw" value="0"  checked={!match_outcome.draw} disabled/>
+                            <label for="draw_false" className='radio-label'> False </label> <br/>
                         </form>
                         <button onClick={toggleInsertForm}>Close</button>
                         <button type='submit' form='insert-form' value='Submit'>Submit</button>
@@ -470,7 +512,7 @@ export default function Matches() {
                         <div key={i}>
                             <h2 style={style}>{tournament_matches[0]?.tournament_name}</h2>
                             {tournament_matches.map((match) => (
-                                <Match key={match.match_id}  match={match} goals={goals[match.match_id]}  setMatchDeleted={onMatchDelete} setMatch={setMatch}/>
+                                <Match key={match.match_id}  match={match} goals={goals[match.match_id]}  setMatchDeleted={onMatchDelete} setMatch={setMatch} setUpdate={setUpdateTrigger}/>
                             ))}
                         </div>
                         : <></>

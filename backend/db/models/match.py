@@ -347,7 +347,6 @@ class MatchDAO():
             results = cursor.fetchall()
             if results:
                 for result in results:
-                    print(result)
                     stadiums.append({'stadium_name': result[0], 'stadium_id': result[1]})
                 return stadiums
             else:
