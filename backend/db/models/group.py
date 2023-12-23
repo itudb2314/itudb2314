@@ -36,7 +36,6 @@ class GroupDAO:
                 group.count_team
             ))
             conn.commit()
-            print("Group created successfully.")
         except mysql.connector.Error as err:
             conn.rollback()
         finally:
@@ -133,7 +132,6 @@ class GroupDAO:
                 group.group_name
             ))
             conn.commit()
-            print("Group updated successfully.")
         except mysql.connector.Error as err:
             conn.rollback()
         finally:
@@ -150,7 +148,6 @@ class GroupDAO:
             cursor = conn.cursor()
             cursor.execute(query, (tournament_id, stage_number, group_name))
             conn.commit()
-            print("Group deleted successfully.")
         except mysql.connector.Error as err:
             conn.rollback()
         finally:

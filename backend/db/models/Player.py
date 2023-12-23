@@ -57,7 +57,6 @@ class PlayerDAO():
                 player.player_wikipedia_link
             ))
             connection.commit()
-            print("Player created successfully.")
         except mysql.connector.Error as err:
             print(f"Error: {err}")
             connection.rollback()
@@ -155,6 +154,7 @@ class PlayerDAO():
     #         cursor.close()
     #         connection.close()
 
+    @staticmethod
     def get_all_players_paginated(db: db, page: int, items_per_page: int, female: str, goal_keeper: str, defender: str, midfielder: str, forward: str, sorting_field: str, sorting_order:str) -> list:
         try:
             connection = db.get_connection()
@@ -230,7 +230,6 @@ class PlayerDAO():
                 player.player_id
             ))
             connection.commit()
-            print("Player updated successfully.")
         except mysql.connector.Error as err:
             print(f"Error: {err}")
             connection.rollback()
@@ -248,7 +247,6 @@ class PlayerDAO():
             cursor = connection.cursor()
             cursor.execute(query, (player_id,))
             connection.commit()
-            print("Player deleted successfully.")
         except mysql.connector.Error as err:
             print(f"Error: {err}")
             connection.rollback()

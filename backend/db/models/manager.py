@@ -108,7 +108,7 @@ class ManagerDAO():
             ))
             conn.commit()
         except mysql.connector.Error as err:
-            print(err)
+            print("Mysql Error:", err)
             conn.rollback()
         finally:
             cursor.close()
@@ -124,7 +124,6 @@ class ManagerDAO():
             cursor = conn.cursor()
             cursor.execute(query, (manager_id,))
             conn.commit()
-            print("Manager deleted.")
         except mysql.connector.Error as err:
             conn.rollback()
         finally:
