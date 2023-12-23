@@ -33,10 +33,8 @@ export default function Matches() {
     const [filter_value, setFilterValue] = useState('All');
     const [updateTrigger, setUpdateTrigger] = useState(false);
 
+
     function handleScroll() {
-        if(matches.length % 10 !== 0) {
-            return;
-        }
         const {scrollTop, scrollHeight, clientHeight} = document.documentElement;
         if(scrollTop + clientHeight >= scrollHeight - 5) {
             setOffset(offset + 10);
@@ -71,7 +69,9 @@ export default function Matches() {
                     }, {});  //initial value of tournament is an empty object
                     setMatches(Object.values(tournament_matches)); //set matches to array of arrays of matches
                 } else {
-                    setMatches(matches_data);
+                    if(Array.isArray(matches_data) && matches_data.length !== 0) {
+                        setMatches((prevMatches) => [...prevMatches, ...matches_data]);
+                    }
                 }
 
                 //process and set goals
@@ -290,6 +290,7 @@ export default function Matches() {
     }
 
     function filterValue(e) {
+        setMatches([]);
         setFilterValue(e.target.value)
     }
 
