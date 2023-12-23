@@ -163,11 +163,6 @@ const PlayerPage = () => {
         setIsEditing(null);
     };
 
-    const style = {
-        alignSelf: 'center',
-        padding: '2rem 0 0 2rem',
-    };
-
     if (!player) {
         return <div>Loading...</div>;
     }
@@ -332,7 +327,7 @@ const PlayerPage = () => {
             </div>
             <div className="player-details">
                 <h1 className="player-stats-title">Player Stats</h1>
-                <div className="player-stats-info">
+                <div className="player-data">
                     <p>
                         <label>Awards:</label> {award > 0 ? award : 0}
                     </p>

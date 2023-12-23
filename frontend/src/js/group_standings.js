@@ -69,7 +69,7 @@ export default function Group_standings() {
             position: e.target.elements.position,
             advanced: e.target.elements.advanced,
         }
-
+        console.log(e)
         fetch('http://localhost:5000/group_standings', {
             method: 'PUT',
             headers: {
@@ -254,7 +254,7 @@ export default function Group_standings() {
                 </thead>
                 <tbody>
                     {group_standings.map(group_standing => (
-                        <tr key={group_standing.group_name / group_standing.tournament_id / group_standing.stage_number / group_standing.position}>
+                        <tr key={group_standing.group_name + group_standing.tournament_id + group_standing.stage_number + group_standing.position}>
                             <td>{group_standing.tournament_id}</td>
                             <td>{group_standing.stage_name}</td>
                             <td>{group_standing.group_name}</td>
