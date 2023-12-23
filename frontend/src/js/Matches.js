@@ -59,15 +59,22 @@ export default function Matches() {
 
             .then(([matches_data, goals_data]) => { //converting response to json])
                 if(sort === 'tournament_name' && (filter === 'All' || filter === 'tournament')) {
-                    //process and set matches
-                    const tournament_matches = matches_data.reduce((tournament, match) => {
-                        const key = match.tournament_id;  //key based on which matches are grouped
-                        if(!tournament[key])   //check if array exits
-                            tournament[key] = [];
-                        tournament[key].push(match);
-                        return tournament;
-                    }, {});  //initial value of tournament is an empty object
-                    setMatches(Object.values(tournament_matches)); //set matches to array of arrays of matches
+                    //convert existing matches to an object with tournament_id as its key
+                    const prevMatches = matches.reduce((acc, curr) => {
+                        acc[curr[0].tournament_id] = curr;
+                        return acc;
+                    }, {});
+
+                    //appennd new matches to appropriate tournament
+                    matches_data.forEach(match => {
+                        const key = match.tournament_id;
+                        if(!prevMatches[key]) {
+                            prevMatches[key] = [];
+                        }
+                        prevMatches[key].push(match);
+                    })
+                
+                    setMatches(Object.values(prevMatches)); //set matches to array of arrays of matches
                 } else {
                     if(Array.isArray(matches_data) && matches_data.length !== 0) {
                         setMatches((prevMatches) => [...prevMatches, ...matches_data]);
@@ -278,10 +285,12 @@ export default function Matches() {
 
     //filters
     function sortMatches(e) {
+        setMatches([]);
         setSort(e.target.value)
     }
 
     function orderMatches(e) {
+        setMatches([]);
         setOrder(e.target.value)
     }
 
