@@ -3,11 +3,11 @@ import '../css/Matches.css';
 import '../css/Buttons.css';
 import { useHistory } from "react-router-dom";
 
-export default function Match({ match, goals, setMatchDeleted, setMatch }) {
+export default function Match({ match, goals, setMatchDeleted, setMatch, setUpdate }) {
     const history = useHistory();
     const [isupdating, setUpdating] = useState(false);
 
-    const handleUpdateMatch = () => setUpdating(true);
+    const handleUpdateMatch = () => setUpdating(!isupdating);
     const handleFormSubmit = (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
@@ -29,23 +29,24 @@ export default function Match({ match, goals, setMatchDeleted, setMatch }) {
         }).then((response) => response.json())
             .then(data => {
                 setMatch(data);
+                setUpdate(true);
             }).catch((error) => {
                 console.error('Error:', error);
             });
 
         setUpdating(false);
+        setUpdate(false);
     }
 
     const handleDeleteMatch = () => {
         try {
-            setMatchDeleted();
             deleteMatchbyID(match.match_id);
-            setMatchDeleted();
         }
         catch (error) {
             console.error('Error:', error);
-            setMatchDeleted();
+            setMatchDeleted(false);
         }
+        setMatchDeleted(false);
     }
 
     const deleteMatchbyID = async (match_id) => {
@@ -57,18 +58,18 @@ export default function Match({ match, goals, setMatchDeleted, setMatch }) {
             body: JSON.stringify({ match_id }),
         }).then((response) => response.json())
             .then(() => {
-                setMatchDeleted();
+                setMatchDeleted(true);
             })
             .catch((error) => {
                 console.error('Error:', error);
             });
-        setMatchDeleted();
+        setMatchDeleted(false);
     };
 
     const match_style = {
         border: '1px solid black',
         margin: '1rem',
-        borderRadius: '50px',
+        borderRadius: '10px',
         width: '75%',
     }
 
@@ -96,8 +97,8 @@ export default function Match({ match, goals, setMatchDeleted, setMatch }) {
 
     return (
         <div style={match_style} className='center_div'>
-            <h2 className="match_header">
-                {capitalizeWords(match.stage_name)}
+            <h2 className="match_header" onClick={()=>{history.push(`/matches/${match.match_id}`)}} style={{ cursor: 'pointer' }}>
+                {capitalizeWords(match.stage_name)} / {match.match_name}
             </h2>
             {!isupdating ? (
                 <>
@@ -116,7 +117,7 @@ export default function Match({ match, goals, setMatchDeleted, setMatch }) {
                             .filter((goal) => goal.team_id === match.home_team_id)
                             .map((goal, index) => (
                                 <div key={index}>
-                                    <p onClick={() => handlePlayerClick(goal)}>{goalIcon()} {goal.minute_label}  {goal.given_name}  {goal.family_name}{goal.penalty ? (<span>(P)</span>) : (<></>)}</p>
+                                    <p onClick={() => handlePlayerClick(goal)} style={{ cursor: 'pointer' }}>{goalIcon()} {goal.minute_label}  {goal.given_name}  {goal.family_name}{goal.penalty ? (<span>(P)</span>) : (<></>)}</p>
                                 </div>
                             ))}
                     </div>
@@ -133,17 +134,17 @@ export default function Match({ match, goals, setMatchDeleted, setMatch }) {
                             .filter((goal) => goal.team_id === match.away_team_id)
                             .map((goal, index) => (
                                 <div key={index}>
-                                    <p onClick={() => handlePlayerClick(goal)}>{goalIcon()} {goal.minute_label}  {goal.given_name}  {goal.family_name}{goal.penalty ? (<span>(P)</span>) : (<></>)}</p>
+                                    <p onClick={() => handlePlayerClick(goal)} style={{ cursor: 'pointer' }}>{goalIcon()} {goal.minute_label}  {goal.given_name}  {goal.family_name}{goal.penalty ? (<span>(P)</span>) : (<></>)}</p>
                                 </div>
                             ))}
                     </div>
                 </div>
-                <div>   
-                    <button onClick={handleDeleteMatch} className='delete-button-danas'>
-                        {'Delete'}
-                    </button>
+                <div style={{gap:'200px'}}>   
                     <button onClick={handleUpdateMatch} className='edit-button'>
                         Update
+                    </button>
+                    <button onClick={handleDeleteMatch} style={{paddingRight: '5px'}}className='delete-button-danas'>
+                        Delete
                     </button>
                 </div>
                 </>
@@ -153,7 +154,7 @@ export default function Match({ match, goals, setMatchDeleted, setMatch }) {
                         <h2>Update Match</h2> 
                         <form id = "update-form" onSubmit={handleFormSubmit}>
                             <label for="match_name"> Match Name </label>
-                            <input id= "match_name" type="text" name="match_name" placeholder='HOMETEAM vs AWAYTEAM' required/>
+                            <input id= "match_name" type="text" name="match_name" className="input-text-select" placeholder='HOMETEAM vs AWAYTEAM' required/>
                             <label> Replayed </label><br/>
                             <input type="radio" id="true-replayed" name="replayed" value="1" required/>
                             <label for="true-replayed" className='radio-label'> True </label>
@@ -165,9 +166,9 @@ export default function Match({ match, goals, setMatchDeleted, setMatch }) {
                             <input type="radio" id="false-replay" name="replay" value="0" required/>
                             <label for="false-replay" className='radio-label'> False </label> <br/>
                             <label> Match Date </label>
-                            <input type="text" name="match_date" pattern="\d{4}-\d{2}-\d{2}" placeholder='YYYY-MM-DD' required/>
+                            <input type="text" name="match_date" pattern="\d{4}-\d{2}-\d{2}" placeholder='YYYY-MM-DD'  className="input-text-select" required/>
                             <label> Match Time </label>
-                            <input type="text" name="match_time" pattern="\d{2}:\d{2}" placeholder='HH:MM' required/>
+                            <input type="text" name="match_time" pattern="\d{2}:\d{2}" placeholder='HH:MM' className="input-text-select" required/>
                             <label> Extra Time </label><br/>
                             <input type="radio" id="true" name="extra-time" value="1" required/>
                             <label for="true" className='radio-label'> True </label>
@@ -175,6 +176,7 @@ export default function Match({ match, goals, setMatchDeleted, setMatch }) {
                             <label for="false" className='radio-label'> False </label> <br/>
                         </form>
                         <button type='submit' form='update-form' value='Submit'>Submit</button>
+                        <button onClick={handleUpdateMatch}>close</button>
                     </div>
                 </div>
             )}

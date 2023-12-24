@@ -11,3 +11,29 @@ week 6 commits:
         Group_standing
             added get_all_group_standings_on_group(db: db, tournament_id: str, stage_number: int, group_name: str) -> list[GroupStanding]
             addedget_all_group_standings_on_stage(db: db, tournament_id: str, stage_number: int) -> list[GroupStanding]
+
+week 7 commits:
+    updated all models with db usage in week 6 lecture. (except: conn.rollback, finally: conn.close)
+
+week 8 commits:
+    groupstandings page added
+    group and groupstandings table made in frontend
+
+week 9 commits:
+    created manager page with only select operations
+    maked managers frontend
+
+week 10 commits:
+    added all crud functions with a few bugs (fixed in week 12)
+
+week 11 commits:
+    added groupstandings to tournamnet details
+    fixed groupstandings for tournamentd details page
+
+week 12 commits:
+    all bugs fixed
+    groupstandings table crud operations finished with frontend
+    managers table crud operations finished with frontend
+    group and standings table name changed
+
+

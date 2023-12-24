@@ -1,11 +1,13 @@
 import '../css/Managers.css'
 import '../css/Buttons.css'
+
 import {useEffect, useState} from "react";
 
 export default function Managers() {
     const [managers, setManagers] = useState([])
     const [deleteTrigger, setDeleteTrigger] = useState(false)
     const [addTrigger, setAddTrigger] = useState(false);
+    const [editTrigger, setEditTrigger] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
 
@@ -13,10 +15,11 @@ export default function Managers() {
         fetch('http://localhost:5000/managers')
             .then(response => response.json())
             .then(data => {
+                console.log(data)
                 setManagers(data)
                 console.log(managers)
             })
-    }, [deleteTrigger, addTrigger])
+    }, [deleteTrigger, addTrigger, editTrigger])
 
     const toggleModal = () => {
         setModalVisible(!modalVisible);
@@ -25,12 +28,12 @@ export default function Managers() {
     function addManager(e) {
         e.preventDefault();
         const newManager = {
-            manager_id: e.target.manager_id.value,
-            family_name: e.target.family_name.value,
-            given_name: e.target.given_name.value,
-            female : e.target.female.value,
-            country_name: e.target.country_name.value,
-            manager_wikipedia_link: e.target.manager_wikipedia_link.value,
+            manager_id: e.target.elements.manager_id.value,
+            family_name: e.target.elements.family_name.value,
+            given_name: e.target.elements.given_name.value,
+            female : e.target.elements.female.value,
+            country_name: e.target.elements.country_name.value,
+            manager_wikipedia_link: e.target.elements.manager_wikipedia_link.value,
         }
 
         fetch('http://localhost:5000/managers', {
@@ -71,48 +74,95 @@ export default function Managers() {
             });
     }
 
-    const style = {
-        alignSelf: "center",
-        padding: "0 0 0 2rem"
+    function editManager(manager) {
+        fetch('http://localhost:5000/managers', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({manager}),
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                setEditTrigger(!editTrigger);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
     }
 
-    return (
-        <div className='managers'>
-            <h1 style={style}>Managers</h1>
-            {managers.map(manager => (
-                <Manager key={manager.manager_id} m={manager} deleteHandle={deleteManager} />
-            ))}
+    const style = {
+        alignSelf: "center",
+        alignText: "center",
+        padding: "0 0 0 2rem"
+    }
+        
 
-            <button className="add-button" onClick={() => setModalVisible(true)}>+ Add Manager</button>
-            {modalVisible && (
-                <div className='modal'>
-                    <div className='modal-content'>
-                        <span className='close' onClick={toggleModal}>
-                            &times;    
-                        </span>
-                        <form onSubmit={addManager}>
-                            <label htmlFor='manager_id'>Manager ID</label>
-                            <input id='manager_id' type='text' required/> 
-                            <label htmlFor='family_name'>Family Name</label>
-                            <input id='family_name' type='text' required/>
-                            <label htmlFor='given_name'>Given Name</label>
-                            <input id='given_name' type='text' required/>   
-                            <label htmlFor='female'>Is Female (true or false)</label>
-                            <input id='female' type='text' required/>
-                            <label htmlFor='country_name'>Country Name</label>
-                            <input id='country_name' type='text' required/>
-                            <label htmlFor='manager_wikipedia_link'>Manager Wikipedia Link</label>
-                            <input id='manager_wikipedia_link' type='text' required/>
-                            <button type='submit'>Add Manager</button>
-                        </form>
+    return (
+    
+        <div className="manager-container" style={{minWidth: "100%",display:"flex", flexDirection: "column", alignItems: "center"}}>
+
+            <h1 style={style}>Managers</h1>
+            <div className='managers'>
+                
+                {managers.map(manager => (
+                    <Manager key={manager.manager_id} m={manager} deleteHandle={deleteManager} editHandle={editManager} />
+                ))}
+
+                <button className="add-button" onClick={() => setModalVisible(true)}>+ Add Manager</button>
+                {modalVisible && (
+                    <div className='modal'>
+                        <div className='modal-content'>
+                            <span className='close' onClick={toggleModal}>
+                                &times;    
+                            </span>
+                            <form onSubmit={(e) => addManager(e)}>
+                                <label htmlFor='manager_id'>Manager ID</label>
+                                <input id='manager_id' type='text' required/> 
+                                <label htmlFor='family_name'>Family Name</label>
+                                <input id='family_name' type='text' required/>
+                                <label htmlFor='given_name'>Given Name</label>
+                                <input id='given_name' type='text' required/>   
+                                <div className="radiocontainer">
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            id="male"
+                                            name="female"
+                                            value={false}
+                                            defaultChecked={true}
+                                            required
+                                        />
+                                        Male
+                                    </label>
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            id="female"
+                                            name="female"
+                                            value={true}
+                                            defaultChecked={false}
+                                            required
+                                        />
+                                        Female
+                                    </label>
+                                </div>
+                                <label htmlFor='country_name'>Country Name</label>
+                                <input id='country_name' type='text' required/>
+                                <label htmlFor='manager_wikipedia_link'>Manager Wikipedia Link</label>
+                                <input id='manager_wikipedia_link' type='text' required/>
+                                <button type='submit'>Add Manager</button>
+                            </form>
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
+            </div>
         </div>
     );
 }
 
-function Manager(m,deleteHandle) {
+function Manager({m,deleteHandle, editHandle}) {
 
     const [manager, setManager] = useState(m);
     const [isEditing, setIsEditing] = useState(false);
@@ -122,33 +172,22 @@ function Manager(m,deleteHandle) {
 
     const submitForm = (event) => {
         event.preventDefault();
-        const newManager = {... manager};
-        newManager.manager_id = event.target.manager_id.value;
-        newManager.family_name = event.target.family_name.value;
-        newManager.given_name = event.target.given_name.value;
-        newManager.female= event.target.female.value;
-        newManager.country_name = event.target.country_name.value;
-        newManager.manager_wikipedia_link = event.target.manager_wikipedia_link.value;
 
-        fetch('http://localhost:5000/managers', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({newManager}),
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Success:', data);
-                setManager(data);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
+        const newManager = {
+            manager_id: event.target.elements.manager_id.value,
+            family_name: event.target.elements.family_name.value,
+            given_name: event.target.elements.given_name.value,
+            female : event.target.elements.female.value,
+            country_name: event.target.elements.country_name.value,
+            manager_wikipedia_link: event.target.elements.manager_wikipedia_link.value
+        }
+
+
+        editHandle(newManager);
         setIsEditing(false);
     }
 
-    const deleteManager = () => {
+    const delete_Manager = () => {
         deleteHandle(manager);
     }
 
@@ -158,10 +197,12 @@ function Manager(m,deleteHandle) {
                 {!isEditing ? (
                     <>
                         <h1 className='name'>{m.given_name} {m.family_name}</h1>
-                        <a className='link' href={m.manager_wikipedia_link}>{m.manager_id}</a>
-                        <div className='buttons'>
+                        <p >Country: {m.country_name}</p>
+                        <a className='link' href={m.manager_wikipedia_link}>Wikipedia link </a>
+                        <br/>
+                        <div className='buttons' style={{display:'flex'}} >
                             <button className='edit-button' onClick={editManager}>Edit</button>
-                            <button className='delete-button' onClick={deleteManager}>Delete</button>
+                            <button className='delete-button-danas' onClick={delete_Manager}>Delete</button>
                         </div>
                     </>
                 ) : (
@@ -172,7 +213,30 @@ function Manager(m,deleteHandle) {
                         <input id='family_name' type='text' defaultValue={m.family_name} required/>
                         <label htmlFor='given_name'>Given Name</label>
                         <input id='given_name' type='text' defaultValue={m.given_name} required/>
-                        <label htmlFor='female' type='text' defaultValue={m.female} required/>
+                        <div className="radiocontainer">
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            id="male"
+                                            name="female"
+                                            value={0}
+                                            defaultChecked={!m.female}
+                                            required
+                                        />
+                                        Male
+                                    </label>
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            id="female"
+                                            name="female"
+                                            value={1}
+                                            defaultChecked={m.female}
+                                            required
+                                        />
+                                        Female
+                                    </label>
+                                </div>
                         <label htmlFor='country_name'>Country Name</label>
                         <input id='country_name' type='text' defaultValue={m.country_name} required/>
                         <label htmlFor='manager_wikipedia_link'>Manager Wikipedia Link</label>

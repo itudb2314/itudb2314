@@ -49,4 +49,4 @@ start-servers:
     make frontend-start & \
     make server && fg
 
-.PHONY: mysql mysql-start mysql-stop mysql-remove frontend-build frontend-start frontend-stop remove-frontend-docker frontend
+.PHONY: mysql mysql-start mysql-stop mysql-remove frontend-build frontend-start frontend-stop remove-frontend-docker frontend start-servers

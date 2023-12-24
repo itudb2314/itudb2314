@@ -1,4 +1,4 @@
-import "../css/Groupstanding.css";
+import "../css/Groups_and_standing.css";
 import React, { useEffect, useState } from 'react';
 
 export default function Groupstandings() {
@@ -19,7 +19,7 @@ export default function Groupstandings() {
 
     return (
         <div className="groupstanding">
-            <h1 style={{ textAlign: "center" }}>Group Standings</h1>
+            <h1 style={{ textAlign: "center" }}>Groups and Standings</h1>
             {allgroups.map(alls => (
                 <div key={alls.tournament_id} className="tournament-group">
                     <h2 style={{ textAlign: 'center' }}>
