@@ -294,7 +294,7 @@ class GroupStandingDAO():
                     goals_against=%s,
                     goal_difference=%s,
                     points=%s,
-                    advanced=1,
+                    advanced=%s
                     WHERE tournament_id=%s AND stage_number=%s AND group_name=%s AND position=%s
                     """
             cursor = conn.cursor()
@@ -308,14 +308,17 @@ class GroupStandingDAO():
                 group_standing.goals_against,
                 group_standing.goal_difference,
                 group_standing.points,
+                group_standing.advanced,
                 group_standing.tournament_id,
                 group_standing.stage_number,
                 group_standing.group_name,
                 group_standing.position,
+                
                 ))
             conn.commit()
             print("Group_standing updated")
         except mysql.connector.Error as err:
+            print(f"Error: {err}")
             conn.rollback()
         finally:
             cursor.close()

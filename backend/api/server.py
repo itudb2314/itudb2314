@@ -131,8 +131,11 @@ def create_server(db):
     @app.route('/group_standings', methods=['PUT'])
     def update_group_standings():
         group_standing = flask.request.get_json()['updated']
-        group_standing = make_dataclass('GroupStanding', group_standing.keys())(**group_standing)
-        GroupStandingDAO.update_group_standing(db, group_standing)
+        group_standing1 = make_dataclass('GroupStanding', group_standing.keys())(**group_standing)
+        
+        print(group_standing1)
+
+        GroupStandingDAO.update_group_standing(db, group_standing1)
         return flask.jsonify({})
     
     @app.route('/group_standings', methods=['POST'])

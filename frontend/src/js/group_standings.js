@@ -8,7 +8,7 @@ export default function Group_standings() {
     const [addTrigger, setAddTrigger] = useState(false);
     const [editTrigger, setEditTrigger] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
+    const [isEditing, setIsEditing] = useState(null);
     const [ tournaments, setTournaments ] = useState([]);
     const [ teams, setTeams ] = useState([]);
     
@@ -54,11 +54,11 @@ export default function Group_standings() {
     function saveGroup_standings(e) {
         e.preventDefault();
         const updated = {
-            tournament_id: e.target.elements.tournament_id,
-            stage_number: e.target.elements.stage_number,
-            stage_name: e.target.elements.stage_name,
-            group_name: e.target.elements.group_name,
-            position: e.target.elements.position,
+            tournament_id: e.target.elements.tournament_id.value,
+            stage_number: e.target.elements.stage_number.value,
+            stage_name: e.target.elements.stage_name.value,
+            group_name: e.target.elements.group_name.value,
+            position: e.target.elements.position.value,
             team_id: e.target.elements.team_id.value,
             played: e.target.elements.played.value,
             wins: e.target.elements.wins.value,
@@ -68,8 +68,9 @@ export default function Group_standings() {
             goals_against: e.target.elements.goals_against.value,
             goal_difference: e.target.elements.goal_difference.value,
             points: e.target.elements.points.value,
-            advanced: e.target.elements.advanced,
+            advanced: e.target.elements.advanced.value,
         }
+
 
         fetch('http://localhost:5000/group_standings', {
             method: 'PUT',
@@ -86,6 +87,10 @@ export default function Group_standings() {
             .catch((error) => {
                 console.error('Error:', error);
             });
+
+            setModalVisible(false);
+            setAddTrigger(!addTrigger);
+
         }
 
     function addGroup_standings(e) {
@@ -104,8 +109,7 @@ export default function Group_standings() {
             goals_against: e.target.elements.goals_against.value,
             goal_difference: e.target.elements.goal_difference.value,
             points: e.target.elements.points.value,
-            position: e.target.elements.position.value,
-            advanced: e.target.elements.advanced,
+            position: e.target.elements.position.value
         }
 
         fetch('http://localhost:5000/group_standings', {
@@ -156,84 +160,7 @@ export default function Group_standings() {
     return (
         <div className='g_s'>
             <h1 style={style}  >Group Standings</h1>
-            <button className='add-button' onClick={toggleModal}>Add Group Standings</button>
-            {modalVisible &&
-                <div className="modal">
-                    <div className="modal-content">
-                        <span className="close" onClick={() => {toggleModal(); setIsEditing(0)}}>&times;</span>
-                        {!isEditing ? (
-                            <form onSubmit={(e) => addGroup_standings(e)}>
-                                <label htmlFor="tournament_id">Tournament:</label>
-                                <select id="tournament_id" name="tournament_id">
-                                    <option>All</option>
-                                    {tournaments.map(tournament => (
-                                        <option key={tournament.tournament_id} value={tournament.tournament_id}>{tournament.tournament_name}</option>
-                                    ))}
-                                </select>
-                                <label htmlFor="stage_number">Stage Number:</label>
-                                <input type="number" id="stage_number" name="stage_number" defaultValue={isEditing.stage_number} />
-                                <label htmlFor="stage_name">Stage Name:</label>
-                                <input type="text" id="stage_name" name="stage_name" defaultValue={isEditing.stage_name} />
-                                <label htmlFor="group_name">Group Name:</label>
-                                <input type="text" id="group_name" name="group_name" defaultValue={isEditing.group_name} />
-                                <label htmlFor="team_id">Team ID:</label>
-                                <select id="team_id" name="team_id">
-                                    <option>All</option>
-                                    {teams.map(team => (
-                                        <option key={team.team_id} value={team.team_id}>{team.team_name}</option>
-                                    ))}
-                                </select>
-                                <label htmlFor="played">Played:</label>
-                                <input type="number" id="played" name="played" defaultValue={isEditing.played} />
-                                <label htmlFor="wins">Wins:</label>
-                                <input type="number" id="wins" name="wins" defaultValue={isEditing.wins} />
-                                <label htmlFor="draws">Draws:</label>
-                                <input type="number" id="draws" name="draws" defaultValue={isEditing.draws} />
-                                <label htmlFor="losses">Losses:</label>
-                                <input type="number" id="losses" name="losses" defaultValue={isEditing.losses} />
-                                <label htmlFor="goals_for">Goals For:</label>
-                                <input type="number" id="goals_for" name="goals_for" defaultValue={isEditing.goals_for} />
-                                <label htmlFor="goals_against">Goals Against:</label>
-                                <input type="number" id="goals_against" name="goals_against" defaultValue={isEditing.goals_against} />
-                                <label htmlFor="goal_difference">Goal Difference:</label>
-                                <input type="number" id="goal_difference" name="goal_difference" defaultValue={isEditing.goal_difference} />
-                                <label htmlFor="points">Points:</label>
-                                <input type="number" id="points" name="points" defaultValue={isEditing.points} />
-                                <label htmlFor="position">Position:</label>
-                                <input type="number" id="position" name="position" defaultValue={isEditing.position} />
-                                <button type="submit">Add</button>
-                            </form>
-                        ) : (
-                            <form onSubmit={(e) => saveGroup_standings(e)}>
-                                <label htmlFor="team_id">Team ID:</label>
-                                <select id="team_id" name="team_id">
-                                    <option>All</option>
-                                    {teams.map(team => (
-                                        <option key={team.team_id} value={team.team_id}>{team.team_name}</option>
-                                    ))}
-                                </select>
-                                <label htmlFor="played">Played:</label>
-                                <input type="number" id="played" name="played" />
-                                <label htmlFor="wins">Wins:</label>
-                                <input type="number" id="wins" name="wins" />
-                                <label htmlFor="draws">Draws:</label>
-                                <input type="number" id="draws" name="draws" />
-                                <label htmlFor="losses">Losses:</label>
-                                <input type="number" id="losses" name="losses" />
-                                <label htmlFor="goals_for">Goals For:</label>
-                                <input type="number" id="goals_for" name="goals_for" />
-                                <label htmlFor="goals_against">Goals Against:</label>
-                                <input type="number" id="goals_against" name="goals_against" />
-                                <label htmlFor="goal_difference">Goal Difference:</label>
-                                <input type="number" id="goal_difference" name="goal_difference" />
-                                <label htmlFor="points">Points:</label>
-                                <input type="number" id="points" name="points" />
-                                <button type="submit">Save</button>
-                            </form>
-                        )}
-                    </div>
-                </div>
-            }
+            
             <table>
                 <thead>
                     <tr>
@@ -278,8 +205,103 @@ export default function Group_standings() {
                 </tbody>
             </table>
 
+            <button className='add-button' onClick={toggleModal}>Add Group Standings</button>
+            {modalVisible &&
+                <div className="modal">
+                    <div className="modal-content">
+                        <span className="close" onClick={() => {toggleModal(); setIsEditing(0)}}>&times;</span>
+                        {!isEditing ? (
+                            <form onSubmit={(e) => addGroup_standings(e)}>
+                                <label htmlFor="tournament_id">Tournament:</label>
+                                <select id="tournament_id" name="tournament_id">
+                                    <option>All</option>
+                                    {tournaments.map(tournament => (
+                                        <option key={tournament.tournament_id} value={tournament.tournament_id}>{tournament.tournament_name}</option>
+                                    ))}
+                                </select>
+                                <label htmlFor="stage_number">Stage Number:</label>
+                                <input type="number" id="stage_number" name="stage_number" required/>
+                                <label htmlFor="stage_name">Stage Name:</label>
+                                <input type="text" id="stage_name" name="stage_name" required />
+                                <label htmlFor="group_name">Group Name:</label>
+                                <input type="text" id="group_name" name="group_name" required />
+                                <label htmlFor="team_id">Team ID:</label>
+                                <select id="team_id" name="team_id">
+                                    <option>All</option>
+                                    {teams.map(team => (
+                                        <option key={team.team_id} value={team.team_id}>{team.team_name}</option>
+                                    ))}
+                                </select>
+                                <label htmlFor="played">Played:</label>
+                                <input type="number" id="played" name="played" required />
+                                <label htmlFor="wins">Wins:</label>
+                                <input type="number" id="wins" name="wins"required />
+                                <label htmlFor="draws">Draws:</label>
+                                <input type="number" id="draws" name="draws" required />
+                                <label htmlFor="losses">Losses:</label>
+                                <input type="number" id="losses" name="losses" required/>
+                                <label htmlFor="goals_for">Goals For:</label>
+                                <input type="number" id="goals_for" name="goals_for" required />
+                                <label htmlFor="goals_against">Goals Against:</label>
+                                <input type="number" id="goals_against" name="goals_against" required />
+                                <label htmlFor="goal_difference">Goal Difference:</label>
+                                <input type="number" id="goal_difference" name="goal_difference" required />
+                                <label htmlFor="points">Points:</label>
+                                <input type="number" id="points" name="points" required />
+                                <label htmlFor="position">Position:</label>
+                                <input type="number" id="position" name="position" required />
+                                <button type="submit">Add</button>
+                            </form>
+                        ) : (
+                            
+                            <form onSubmit={(e) => saveGroup_standings(e)}>
+                                
+                                <input type="hidden" id="tournament_id" name="tournament_id" value={isEditing.tournament_id} required />
+                                <input type="hidden" id="stage_number" name="stage_number" value={isEditing.stage_number} required />
+                                <input type="hidden" id="stage_name" name="stage_name" value={isEditing.stage_name}  required/>
+                                <input type="hidden" id="group_name" name="group_name" value={isEditing.group_name} required/>
+                                <input type="hidden" id="position" name="position" defaultValue={isEditing.position} required/>
+                                <input type="hidden" id="advanced" name="advanced" defaultValue={isEditing.advanced}  required/>
+                                
+
+                                <label htmlFor="team_id">Team ID:</label>
+                                <select id="team_id" name="team_id">
+                                    <option>All</option>
+                                    {teams.map(team => (
+                                        <option key={team.team_id} value={team.team_id}>{team.team_name}</option>
+                                    ))}
+                                </select>
+                                
+                                <label htmlFor="played">Played:</label>
+                                <input type="number" id="played" name="played" defaultValue={isEditing.played} />
+                                <label htmlFor="wins">Wins:</label>
+                                <input type="number" id="wins" name="wins" defaultValue={isEditing.wins} />
+                                <label htmlFor="draws">Draws:</label>
+                                <input type="number" id="draws" name="draws" defaultValue={isEditing.draws} />
+                                <label htmlFor="losses">Losses:</label>
+                                <input type="number" id="losses" name="losses" defaultValue={isEditing.losses}/>
+                                <label htmlFor="goals_for">Goals For:</label>
+                                <input type="number" id="goals_for" name="goals_for" defaultValue={isEditing.goals_for} />
+                                <label htmlFor="goals_against">Goals Against:</label> 
+                                <input type="number" id="goals_against" name="goals_against" defaultValue={isEditing.goals_against} />
+                                <label htmlFor="goal_difference">Goal Difference:</label>
+                                <input type="number" id="goal_difference" name="goal_difference" defaultValue={isEditing.goal_difference} />
+                                <label htmlFor="points">Points:</label>
+                                
+                                <input type="number" id="points" name="points" defaultValue={isEditing.points}/>
+                                
+                                <button type="submit">Save</button>
+                            </form>
+                            
+                        )}
+                    </div>
+                </div>
+            }
+
         </div>
 
     );
 }
+
+
 
