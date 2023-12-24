@@ -1,6 +1,6 @@
 import React from "react";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import messi from '../assets/messi.jpg';
+import { useHistory } from "react-router-dom";
 
 const Home = () => {
     const history = useHistory();
