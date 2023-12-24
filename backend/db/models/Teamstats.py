@@ -23,10 +23,10 @@ class TeamStatsDAO():
                 tournament_filter = '%'
 
             conn = db.get_connection()
-            query = """SELECT      tac.team_id,      tac.team_name,      tac.tournament_id,      tac.award_count,     nog.number_of_goals,     now.number_of_wins,     nod.number_of_draws,     nol.number_of_losses 
+            query = """SELECT      tac.team_id,      tac.team_name,      tac.tournament_id,      tac.award_count,     nog.number_of_goals,     nofw.number_of_wins,     nod.number_of_draws,     nol.number_of_losses 
             FROM      team_award_count tac  
             LEFT JOIN      number_of_goals nog ON tac.team_id = nog.team_id AND tac.tournament_id = nog.tournament_id 
-            LEFT JOIN      number_of_wins now ON tac.team_id = now.team_id AND tac.tournament_id = now.tournament_id 
+            LEFT JOIN      number_of_wins nofw ON tac.team_id = nofw.team_id AND tac.tournament_id = nofw.tournament_id 
             LEFT JOIN      number_of_draws nod ON tac.team_id = nod.team_id AND tac.tournament_id = nod.tournament_id 
             LEFT JOIN      number_of_losses nol ON tac.team_id = nol.team_id AND tac.tournament_id = nol.tournament_id
             where tac.tournament_id like %s and tac.team_id = %s"""
