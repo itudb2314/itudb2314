@@ -357,12 +357,12 @@ export default function Matches() {
                 </div>
             }
             {/*button to toggle insert form*/}
-            {match_id ?  (<></>): (<button onClick={toggleInsertForm} className='insert-button'>Insert Match</button>)}
+            {match_id ?  (<></>): (<button onClick={toggleInsertForm} className='add-button'>+ Insert Match</button>)}
             {/*conditional rendering for insertion form*/}
             {showInsertForm && (
                 <div className='form'>
                     <div className='form-content'>
-                        <h2>Insert Match</h2> 
+                        <h2 style={{fontSize: '30px'}}>Insert Match</h2> 
                         <form id = "insert-form" onSubmit={handleInsertMatch}>
                             <label for="Tournament"> Tournament ID </label> <br/>
                             <select id="Tournament" className='input-text-select' name="Tournament" value={chosentournament} onChange={handleTournamentChange}>
@@ -370,20 +370,20 @@ export default function Matches() {
                                 {Array.isArray(alltournaments) && alltournaments.map((tournament) => (
                                     <option value={tournament['tournament_id']}>{tournament['tournament_name']}</option>
                                 ))}
-                            </select>
+                            </select><br/>
                             <label for="matchid"> Match ID </label>
-                            <input id="matchid" type="text" className='input-text-select' name="match_id" pattern="^M-\d{4}-\d{2,}$" placeholder='M-YEAR-MATCHNUMBER' required/>
+                            <input id="matchid" type="text" className='input-text-select' name="match_id" pattern="^M-\d{4}-\d{2,}$" placeholder='M-YEAR-MATCHNUMBER' required/><br/>
                             <label for="match_name"> Match Name </label>
-                            <input id= "match_name" type="text" className='input-text-select' name="match_name" placeholder='HOMETEAM vs AWAYTEAM' required/>
+                            <input id= "match_name" type="text" className='input-text-select' name="match_name" placeholder='HOMETEAM vs AWAYTEAM' required/><br/>
                             {Array.isArray(tournamentstages) && <label for="stage"> Stage Name </label>}
                             {Array.isArray(tournamentstages) && (
-                                <select id="stage" name="stage" value={chosenstage} onChange={handleStageChange}>
+                                <select id="stage" name="stage" value={chosenstage} className='input-text-select' onChange={handleStageChange}>
                                     <option value='NULL' disabled>select</option>
                                     {tournamentstages.map((stage) => (
                                         <option value={stage}>{stage}</option>
                                     ))}
                                 </select>
-                            )}
+                            )}<br/>
                             {Array.isArray(groupnames) && <label for="group_name"> Group Name </label>}
                             {Array.isArray(groupnames) && (
                                 <select id="group_name" name="group_name" className='input-text-select'>
@@ -394,7 +394,7 @@ export default function Matches() {
                                     ))}
                                 </select>
                             )
-                            }
+                            }<br/>
                             <label> Group Stage </label><br/>
                             <input type="radio" id="group_stage_true" name="group-stage" value="1" checked={isgroupstage} readOnly required/>
                             <label for="group_stage_true" className='radio-label'> True </label> 
@@ -416,10 +416,10 @@ export default function Matches() {
                             <input type="radio" id="false" name="replay" value="0" required/>
                             <label for="false" className='radio-label'> False </label> <br/>
                             <label> Match Date </label>
-                            <input type="text" name="match_date" className='input-text-select' pattern="\d{4}-\d{2}-\d{2}" placeholder='YYYY-MM-DD' required/>
+                            <input type="text" name="match_date" className='input-text-select' pattern="\d{4}-\d{2}-\d{2}" placeholder='YYYY-MM-DD' required/><br/>
                             <label> Match Time </label>
-                            <input type="text" name="match_time" placeholder='HH:MM' required/>
-                            <label> Stadium </label>
+                            <input type="text" name="match_time" placeholder='HH:MM' required/><br/>
+                            <label> Stadium </label><br/>
                             {Array.isArray(stadiums) && (
                                 <select id="stadium_name" className='input-text-select' name="stadium_name" required>
                                     <option value='NULL' disabled>select</option>
@@ -427,7 +427,7 @@ export default function Matches() {
                                         <option value={stadium['stadium_id']}>{stadium['stadium_name']}</option>
                                     ))}
                                 </select>
-                            )}
+                            )}<br/>
                             <label> Home Team </label>
                             {Array.isArray(hometeams) && (
                                 <select id="hometeam_name" className='input-text-select' name="hometeam_name" required>
@@ -436,7 +436,7 @@ export default function Matches() {
                                         <option value={hometeam["team_id"]}>{hometeam["team_name"]}</option>
                                     ))}
                                 </select>
-                            )}
+                            )}<br/>
                             <label> Away Team </label>
                             {Array.isArray(awayteams) && (
                                 <select id="awayteam_name"className='input-text-select' name="awayteam_name" required>
@@ -445,17 +445,17 @@ export default function Matches() {
                                         <option value={awayteam["team_id"]}>{awayteam["team_name"]}</option>
                                     ))}
                                 </select>
-                            )}
+                            )}<br/>
                             <label> Score </label>
-                            <input type="text" name="score" pattern="\b\d{1,2}-\d{1,2}\b" placeholder='HomeTeamScore - AwayTeamScore' className='input-text-select'  onChange={HandleScoreChange} required/>
+                            <input type="text" name="score" pattern="\b\d{1,2}-\d{1,2}\b" placeholder='HomeTeamScore - AwayTeamScore' className='input-text-select'  onChange={HandleScoreChange} required/><br/>
                             <label> Home Team Score </label>
-                            <input type="number" min="0" step="1" className='input-text-select' name="home_team_score" value={home_team_score} onChange={(event) => setHomeScore(parseInt(event.target.value, 10))} readOnly required/>
+                            <input type="number" min="0" step="1" className='input-text-select' name="home_team_score" value={home_team_score} onChange={(event) => setHomeScore(parseInt(event.target.value, 10))} readOnly required/><br/>
                             <label> Away Team Score </label>
-                            <input type="number" min="0" step="1" className='input-text-select' name="away_team_score" value={away_team_score} onChange={(event) => setAwayScore(parseInt(event.target.value, 10))} readOnly required/>
+                            <input type="number" min="0" step="1" className='input-text-select' name="away_team_score" value={away_team_score} onChange={(event) => setAwayScore(parseInt(event.target.value, 10))} readOnly required/><br/>
                             <label> Home Team Score Margin </label>
-                            <input type="number" name="home_team_score_margin" value={home_team_score_margin} className='input-text-select' placeholder='HomeTeamScoreMargin = HomeTeamScore - AwayTeamScore' readOnly required/>
+                            <input type="number" name="home_team_score_margin" value={home_team_score_margin} className='input-text-select' placeholder='HomeTeamScoreMargin = HomeTeamScore - AwayTeamScore' readOnly required/><br/>
                             <label> Away Team Score Margin </label>
-                            <input type="number" name="away_team_score_margin" className='input-text-select' value={away_team_score_margin} placeholder='AwayTeamScoreMargin = AwayTeamScore - HomeTeamScore' readOnly required/>
+                            <input type="number" name="away_team_score_margin" className='input-text-select' value={away_team_score_margin} placeholder='AwayTeamScoreMargin = AwayTeamScore - HomeTeamScore' readOnly required/><br/>
                             <label> Extra Time </label><br/>
                             <input type="radio" id="true" name="extra-time" value="1" required/>
                             <label for="true" className='radio-label'> True </label>
@@ -467,13 +467,13 @@ export default function Matches() {
                             <input type="radio" id="false" name="penalty-shootout" value="0" required/>
                             <label for="false" className='radio-label'> False </label> <br/>
                             <label> Score Penalties </label>
-                            <input type="text" name="score_penalties" className='input-text-select' pattern="\b\d{1,2}-\d{1,2}\b" placeholder='HomeTeam - AwayTeam' required/>
+                            <input type="text" name="score_penalties" className='input-text-select' pattern="\b\d{1,2}-\d{1,2}\b" placeholder='HomeTeam - AwayTeam' required/><br/>
                             <label> Home Team Score Penalties </label>
-                            <input type="number" min="0" step="1" className='input-text-select' name="home_team_score_penalties" required/>
+                            <input type="number" min="0" step="1" className='input-text-select' name="home_team_score_penalties" required/><br/>
                             <label> Away Team Score Penalties </label>
-                            <input type="number" min="0" step="1" className='input-text-select' name="away_team_score_penalties" required/>
+                            <input type="number" min="0" step="1" className='input-text-select' name="away_team_score_penalties" required/><br/>
                             <label> Result </label>
-                            <input type="text" name="result" className='input-text-select' placeholder='HomeTeamWin or AwayTeamWin or Draw' required/>
+                            <input type="text" name="result" className='input-text-select' placeholder='HomeTeamWin or AwayTeamWin or Draw' required/><br/>
                             <label> Home Team Win </label><br/>
                             <input type="radio" id="home_team_win_true" name="home_team_win" value="1" checked={match_outcome.home_win} readOnly/>
                             <label for="home_team_win_true" className='radio-label'> True </label>
@@ -490,8 +490,8 @@ export default function Matches() {
                             <input type="radio" id="draw_false" name="draw" value="0"  checked={!match_outcome.draw} readOnly/>
                             <label for="draw_false" className='radio-label'> False </label> <br/>
                         </form>
-                        <button onClick={toggleInsertForm}>Close</button>
-                        <button type='submit' form='insert-form' value='Submit'>Submit</button>
+                        <button onClick={toggleInsertForm} className='cancel-button'>Close</button>
+                        <button type='submit' form='insert-form' value='Submit' className='cancel-button' style={{paddingRight: '10px'}}>Submit</button>
                     </div>
                 </div>
             )}

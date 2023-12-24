@@ -149,14 +149,14 @@
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
-    max-height: 400px;
+    max-height: 800px;
     overflow-y: auto;
   }
 
   label {
     margin-bottom: 5px;
     text-align: left;
-    font-size: small;
+    font-size: 24px;
     font-family: Arial, Helvetica, sans-serif;
     font-weight: bold;
   }
@@ -170,30 +170,20 @@
   .input-text-select {
     text-align: left;
     width: 95%;
-    font-size: 12px;
-    padding: 5px;
+    font-size: 24px;
+    padding: 10px;
     border-radius: 5px;
     border: 1px solid #574f4f;
     margin-bottom: 10px;
   }
 
   input[type="radio"] {
+    padding: 20px;
     width: auto;
     margin-left: 10px;
-  }
-
-  .insert-button {
-    background-color: #144207;
-    color: white;
-    font-size: medium;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    float: right;
-    bottom: 40px;
-    right: 20px;
-    position: fixed;
+    margin-top: 10px;
+    font-size: 24px;
+    transform: scale(1.5);
   }
 
   select {
