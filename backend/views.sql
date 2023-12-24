@@ -1,15 +1,15 @@
 -- Create view for number of awards
 create view team_award_count as
-select count(aw.team_id) as award_count, teams.team_id, teams.team_name, tournament_id
-from teams
-         left join fifa.award_winners aw on teams.team_id = aw.team_id
-group by teams.team_id, tournament_id;
+select count(team_id) as award_count, team_id, team_name, tournament_id
+from award_winners
+         left join fifa.teams using (team_id)
+group by team_id, tournament_id;
 
 -- Create view for number of goals
 create view number_of_goals as
-select count(g.team_id) as number_of_goals, teams.team_id, teams.team_name, tournament_id
+select count(teams.team_id) as number_of_goals, teams.team_id, teams.team_name, tournament_id
 from teams
-         left join fifa.goals g on teams.team_id = g.team_id
+left join fifa.goals g on teams.team_id = g.team_id
 group by teams.team_id, tournament_id;
 
 -- Create view for number of wins
