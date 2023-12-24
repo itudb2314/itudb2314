@@ -61,7 +61,6 @@ def create_server(db):
     def update_tournament():
         tournament = flask.request.get_json()["newTournament"]
         tournament = make_dataclass('Tournament', tournament.keys())(**tournament)
-        print(tournament)
         tournament = TournamentDAO.update_tournament(db, tournament)
         return flask.jsonify(tournament)
 
@@ -87,11 +86,7 @@ def create_server(db):
     def update_manager():
         manager_data = flask.request.get_json()['manager']
         manager_data = make_dataclass('Manager', manager_data.keys())(**manager_data)
-        print(manager_data)
-
         ManagerDAO.update_manager(db, manager_data)
-        print(manager_data)
-
         return flask.jsonify(manager_data)
     
     @app.route('/managers', methods=['DELETE'])
@@ -104,7 +99,6 @@ def create_server(db):
     def get_tournament(tournament_id):
         if tournament_id == 'WC-1950':
             details = MatchDAO.get_tournemant_matches(db, tournament_id, "final round")
-            print(details)
             return flask.jsonify(details)
         details = TournamentDetailsDAO.get_tournament_details(db, tournament_id)
         return flask.jsonify(details)
@@ -131,8 +125,11 @@ def create_server(db):
     @app.route('/group_standings', methods=['PUT'])
     def update_group_standings():
         group_standing = flask.request.get_json()['updated']
-        group_standing = make_dataclass('GroupStanding', group_standing.keys())(**group_standing)
-        GroupStandingDAO.update_group_standing(db, group_standing)
+        group_standing1 = make_dataclass('GroupStanding', group_standing.keys())(**group_standing)
+        
+        print(group_standing1)
+
+        GroupStandingDAO.update_group_standing(db, group_standing1)
         return flask.jsonify({})
     
     @app.route('/group_standings', methods=['POST'])
@@ -189,9 +186,9 @@ def create_server(db):
         else:
             return flask.jsonify({'message': 'Squad not found'}), 404
         
-    @app.route('/matches/<sort>/<order>/<offset>/<limit>/<filter>/<filter_value>', methods=['GET'])
-    def get_all_matches(sort : str, order : str, offset: int, limit: int, filter : str, filter_value : str):
-        match = MatchDAO.get_all_matches(db, sort, order, int(offset), limit, filter, filter_value)
+    @app.route('/matches/<sort>/<order>/<filter>/<filter_value>', methods=['GET'])
+    def get_all_matches(sort : str, order : str, filter : str, filter_value : str):
+        match = MatchDAO.get_all_matches(db, sort, order, filter, filter_value)
         if match:
             return flask.jsonify(match), 200
         else:
@@ -340,7 +337,6 @@ def create_server(db):
     def create_award():
         new_award = flask.request.get_json()
         new_award['shared'] = False
-        print(new_award)
         new_award = make_dataclass('AwardWinner', new_award.keys())(**new_award)
         AwardDAO.create_award(db, new_award)
         return flask.jsonify({})

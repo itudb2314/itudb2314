@@ -41,6 +41,8 @@ class Match:
     home_team_name : str = None
     away_team_name : str = None
     tournament_name : str = None
+    home_team_code : str = None
+    away_team_code : str = None
 
 
 class MatchDAO():
@@ -120,7 +122,7 @@ class MatchDAO():
             connection.close()
 
     @staticmethod
-    def get_all_matches(db: db, sort: str, order: str, offset: int, limit: int, filter: str, filter_value : str) -> list[Match]:
+    def get_all_matches(db: db, sort: str, order: str, filter: str, filter_value : str) -> list[Match]:
         try:
             matches = []
             connection = db.get_connection()
@@ -145,7 +147,7 @@ class MatchDAO():
             elif sort == 'Score-margin':
                 sort = f'ABS(m.home_team_score - m.away_team_score) {order}'
             elif sort == 'Goals-Scored':
-                sort = f'm.home_team_score + m.away_team_score {order}, m.home_team_score'
+                sort = f'm.home_team_score + m.away_team_score {order}, m.home_team_score DESC'
             else: 
                 sort = f'm.tournament_id {order}'
 
@@ -166,7 +168,6 @@ class MatchDAO():
                     LEFT JOIN tournaments t ON m.tournament_id = t.tournament_id
                     WHERE {filter}
                     ORDER BY {sort},  m.match_id DESC
-                    LIMIT {offset}, {limit}
                     """
             cursor = connection.cursor()
             cursor.execute(query)
@@ -195,7 +196,7 @@ class MatchDAO():
         try:
             connection = db.get_connection()
             query = """
-                    SELECT m.*, s.stadium_name, s.city_name, thome.team_name, taway.team_name, t.tournament_name 
+                    SELECT m.*, s.stadium_name, s.city_name, thome.team_name, taway.team_name, t.tournament_name, thome.team_code, taway.team_code 
                     FROM matches m 
                     LEFT JOIN stadiums s ON m.stadium_id = s.stadium_id 
                     LEFT JOIN teams thome ON m.home_team_id = thome.team_id
@@ -207,11 +208,12 @@ class MatchDAO():
             cursor.execute(query, (match_id,))
             result = cursor.fetchone()
             if result:
+                print(result)
                 return Match(result[0], result[1], result[2], result[3],result[4], result[5], result[6], 
                             result[7], result[8], result[9], result[10], result[11],result[12], result[13], 
                             result[14], result[15], result[16], result[17], result[18],result[19], result[20], 
                             result[21], result[22], result[23], result[24], result[25], result[26],result[27], 
-                            result[28], result[29], result[30], result[31], result[32])
+                            result[28], result[29], result[30], result[31], result[32], result[33], result[34])
             else:
                 return None
         

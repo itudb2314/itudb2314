@@ -135,7 +135,6 @@ class TournamentDAO():
                     """
             cursor = conn.cursor()
             cursor.execute(query, (gender,))
-            print(cursor.statement)
             rows = cursor.fetchall()
             cursor.close()
             db.disconnect(conn)

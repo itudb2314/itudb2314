@@ -1,7 +1,8 @@
 import React, {useRef, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { renderMatches, useParams } from 'react-router-dom';
 import '../css/Matches.css';
 import '../css/Filters.css';
+import getCountryISO2 from 'country-iso-3-to-2';
 import Match from "./Match";
 import { useHistory } from 'react-router-dom';
 
@@ -23,54 +24,23 @@ export default function Matches() {
     const [awayteams, setAwayTeams] = useState([]);
     const [sort, setSort] = useState('tournament_name');
     const [order, setOrder] = useState('desc');
-    const [limit, setLimit] = useState(20);
-    const [offset, setOffset] = useState(0);
-    const divRef = useRef(null);
-    const [filter, setFilter] = useState('All');
+    const [filter, setFilter] = useState('tournament');
     const [allteams, setAllTeams] = useState([]);
     const [alltournaments, setAllTournaments] = useState([]);
-    const [filter_value, setFilterValue] = useState('All');
+    const [filter_value, setFilterValue] = useState('WC-1930');
     const [updateTrigger, setUpdateTrigger] = useState(false);
 
-    function handleScroll() {
-        if(matches.length < 10)
-            return
-        const {scrollTop, scrollHeight, clientHeight} = document.documentElement;
-        if(scrollTop + clientHeight >= scrollHeight - 5) {
-            setOffset(offset + 10);
-        }
-    }
-
-    useEffect(() => {
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, [offset]);
-
-    useEffect(() => {
-        setOffset(0);
-    }, [filter, sort, order]);
 
     useEffect(() => {
         if(!match_id) {
             Promise.all([ //fetching data from backend
-                fetch(`http://localhost:5000/matches/${sort}/${order}/${offset}/${limit}/${filter}/${filter_value}`).then((response) => response.json()),
+                fetch(`http://localhost:5000/matches/${sort}/${order}/${filter}/${filter_value}`).then((response) => response.json()),
                 fetch('http://localhost:5000/goals').then((response) => response.json()),
             ])
 
             .then(([matches_data, goals_data]) => { //converting response to json])
-                if(sort === 'tournament_name' && (filter === 'All' || filter === 'tournament')) {
-                    //process and set matches
-                    const tournament_matches = matches_data.reduce((tournament, match) => {
-                        const key = match.tournament_id;  //key based on which matches are grouped
-                        if(!tournament[key])   //check if array exits
-                            tournament[key] = [];
-                        tournament[key].push(match);
-                        return tournament;
-                    }, {});  //initial value of tournament is an empty object
-                    setMatches(Object.values(tournament_matches)); //set matches to array of arrays of matches
-                } else {
-                    setMatches(matches_data);
-                }
+                //set matches
+                setMatches(matches_data);
 
                 //process and set goals
                 const match_goals = goals_data.reduce((match, goal) => {
@@ -105,7 +75,7 @@ export default function Matches() {
                 console.error('Error fetching data:', error);
             }); 
         }
-    }, [match_id, matchAdded, matchDeleted, sort, order, offset, filter_value, updateTrigger]);
+    }, [match_id, matchAdded, matchDeleted, sort, order, filter_value, updateTrigger]);
     const style = {
         margin: '2rem 0 2rem 0',
         color: 'reds',
@@ -167,9 +137,6 @@ export default function Matches() {
         .catch((error) => {
             console.error('Error:', error);
         });
-        if(offset > 0) {
-            setOffset(0);
-        }
         setMatchAdded(false);
     };
  
@@ -285,6 +252,7 @@ export default function Matches() {
 
     function filterMatches(e) {
         setFilter(e.target.value)
+        setFilterValue('none')
     }
 
     function filterValue(e) {
@@ -292,7 +260,7 @@ export default function Matches() {
     }
 
     useEffect(() => {
-        if(filter === 'team') {
+        if(filter === 'team' || filter === 'All') {
             fetch(`http://localhost:5000/tournaments/teams`)
             .then((response) => response.json())
             .then((data) => {
@@ -317,6 +285,29 @@ export default function Matches() {
         }
     }, [filter, showInsertForm]);
 
+    
+    //home and away teams score and margin validations
+    const [score, setScore] = useState('0-0');
+    const [home_team_score, setHomeTeamScore] = useState(0);
+    const [away_team_score, setAwayTeamScore] = useState(0);
+
+    const HandleScoreChange = (event) => {
+        const score = event.target.value;
+        setScore(score);
+
+        const score_split = score.split('-').map(part => parseInt(part.trim(), 10));
+        if(score_split.length === 2 && score_split.every(number => !isNaN(number))) {
+            setHomeTeamScore(score_split[0]);
+            setAwayTeamScore(score_split[1]);
+        } else {
+            setHomeTeamScore(0);
+            setAwayTeamScore(0);
+        }
+    }
+
+    const home_team_score_margin = home_team_score - away_team_score;
+    const away_team_score_margin = away_team_score - home_team_score;
+
     return (
         <div className="matches">
             {/*Filters and sorting */}
@@ -324,8 +315,8 @@ export default function Matches() {
                 <div className="filter-block">
                     <div className="filter">
                         <label>Sort By</label>
-                        <select className="filter_select" onChange={sortMatches}>
-                            <option value="tournament_name">Tournament</option>
+                        <select className="filter_select" defaultValue='none' onChange={sortMatches}>
+                            <option value='none'>None</option>
                             <option value="Stage">Stage</option>
                             <option value="Score-margin">Score Margin</option>
                             <option value="Goals-Scored">Goals Scored</option>
@@ -340,22 +331,23 @@ export default function Matches() {
                     </div>
                     <div className="filter">
                         <label>Filter</label>
-                        <select className="filter_select" onChange={filterMatches}>
-                            <option value="team">Teams</option>
+                        <select className="filter_select" defaultValue="tournament" onChange={filterMatches}>
                             <option value="tournament">Tournaments</option>
+                            <option value="team">Teams</option>
                         </select>
                     </div>         
                     <div className="filter">
                     <label>Options</label>
-                    {filter === 'team' ? (
-                                <select className="filter_select" onChange={filterValue}>
+                    {(filter === 'team' || filter == 'All') ? (
+                                <select className="filter_select" defaultValue="none" onChange={filterValue}>
+                                <option value="none" disabled> None </option>
                                 {allteams.map((team) => (
                                     <option value={team.team_id}>{team.team_name}</option>
                                 ))}
                                 </select>
                         ) : (<></>)}
                     {filter === 'tournament' ? (
-                                <select className="filter_select" onChange={filterValue}>
+                                <select className="filter_select" defaultValue="WC-1930" onChange={filterValue}>
                                 {alltournaments.map((tournament) => (
                                     <option value={tournament.tournament_id}>{tournament.tournament_name}</option>
                                 ))}
@@ -404,14 +396,14 @@ export default function Matches() {
                             )
                             }
                             <label> Group Stage </label><br/>
-                            <input type="radio" id="group_stage_true" name="group-stage" value="1" checked={isgroupstage} disabled required/>
+                            <input type="radio" id="group_stage_true" name="group-stage" value="1" checked={isgroupstage} readOnly required/>
                             <label for="group_stage_true" className='radio-label'> True </label> 
-                            <input type="radio" id="group_stage_false" name="group-stage" value="0" checked={!isgroupstage} disabled required/>
+                            <input type="radio" id="group_stage_false" name="group-stage" value="0" checked={!isgroupstage} readOnly required/>
                             <label for="group_stage_false" className='radio-label'> False </label> <br/>
                             <label> Knockout Stage </label><br/>
-                            <input type="radio" id="knockout_true" name="knockout" value="1" checked={isknockoutstage} disabled required/>
+                            <input type="radio" id="knockout_true" name="knockout" value="1" checked={isknockoutstage} readOnly required/>
                             <label for="knockout_true" className='radio-label'> True </label>
-                            <input type="radio" id="knockout_false" name="knockout" value="0" checked={!isknockoutstage} disabled required/>
+                            <input type="radio" id="knockout_false" name="knockout" value="0" checked={!isknockoutstage} readOnly required/>
                             <label for="knockout_false" className='radio-label'> False </label> <br/>
                             <label> Replayed </label><br/>
                             <input type="radio" id="true" name="replayed" value="1" required/>
@@ -455,15 +447,15 @@ export default function Matches() {
                                 </select>
                             )}
                             <label> Score </label>
-                            <input type="text" name="score" pattern="\b\d{1,2}-\d{1,2}\b" placeholder='HomeTeamScore - AwayTeamScore' className='input-text-select' required/>
+                            <input type="text" name="score" pattern="\b\d{1,2}-\d{1,2}\b" placeholder='HomeTeamScore - AwayTeamScore' className='input-text-select'  onChange={HandleScoreChange} required/>
                             <label> Home Team Score </label>
-                            <input type="number" min="0" step="1" className='input-text-select' name="home_team_score" onChange={(event) => setHomeScore(parseInt(event.target.value, 10))} required/>
+                            <input type="number" min="0" step="1" className='input-text-select' name="home_team_score" value={home_team_score} onChange={(event) => setHomeScore(parseInt(event.target.value, 10))} readOnly required/>
                             <label> Away Team Score </label>
-                            <input type="number" min="0" step="1" className='input-text-select' name="away_team_score"  onChange={(event) => setAwayScore(parseInt(event.target.value, 10))} required/>
+                            <input type="number" min="0" step="1" className='input-text-select' name="away_team_score" value={away_team_score} onChange={(event) => setAwayScore(parseInt(event.target.value, 10))} readOnly required/>
                             <label> Home Team Score Margin </label>
-                            <input type="number" name="home_team_score_margin" className='input-text-select' placeholder='HomeTeamScoreMargin = HomeTeamScore - AwayTeamScore' required/>
+                            <input type="number" name="home_team_score_margin" value={home_team_score_margin} className='input-text-select' placeholder='HomeTeamScoreMargin = HomeTeamScore - AwayTeamScore' readOnly required/>
                             <label> Away Team Score Margin </label>
-                            <input type="number" name="away_team_score_margin" className='input-text-select' placeholder='AwayTeamScoreMargin = AwayTeamScore - HomeTeamScore' required/>
+                            <input type="number" name="away_team_score_margin" className='input-text-select' value={away_team_score_margin} placeholder='AwayTeamScoreMargin = AwayTeamScore - HomeTeamScore' readOnly required/>
                             <label> Extra Time </label><br/>
                             <input type="radio" id="true" name="extra-time" value="1" required/>
                             <label for="true" className='radio-label'> True </label>
@@ -483,19 +475,19 @@ export default function Matches() {
                             <label> Result </label>
                             <input type="text" name="result" className='input-text-select' placeholder='HomeTeamWin or AwayTeamWin or Draw' required/>
                             <label> Home Team Win </label><br/>
-                            <input type="radio" id="home_team_win_true" name="home_team_win" value="1" checked={match_outcome.home_win} disabled/>
+                            <input type="radio" id="home_team_win_true" name="home_team_win" value="1" checked={match_outcome.home_win} readOnly/>
                             <label for="home_team_win_true" className='radio-label'> True </label>
-                            <input type="radio" id="home_team_win_false" name="home_team_win" value="0" checked={!match_outcome.home_win} required disabled/>
+                            <input type="radio" id="home_team_win_false" name="home_team_win" value="0" checked={!match_outcome.home_win} required readOnly/>
                             <label for="home_team_win_false" className='radio-label'> False </label> <br/>
                             <label> Away Team Win </label><br/>
-                            <input type="radio" id="away_team_win_true" name="away_team_win" value="1" checked={match_outcome.away_win} disabled/>
+                            <input type="radio" id="away_team_win_true" name="away_team_win" value="1" checked={match_outcome.away_win} readOnly/>
                             <label for="away_team_win_true" className='radio-label'> True </label>
-                            <input type="radio" id="away_team_win_false" name="away_team_win" value="0" checked={!match_outcome.away_win} required disabled/>
+                            <input type="radio" id="away_team_win_false" name="away_team_win" value="0" checked={!match_outcome.away_win} required readOnly/>
                             <label for="away_team_win_false" className='radio-label'> False </label> <br/>
                             <label> Draw </label><br/>
-                            <input type="radio" id="draw_true" name="draw" value="1" checked={match_outcome.draw} required disabled/>
+                            <input type="radio" id="draw_true" name="draw" value="1" checked={match_outcome.draw} required readOnly/>
                             <label for="draw_true" className='radio-label'> True </label>
-                            <input type="radio" id="draw_false" name="draw" value="0"  checked={!match_outcome.draw} disabled/>
+                            <input type="radio" id="draw_false" name="draw" value="0"  checked={!match_outcome.draw} readOnly/>
                             <label for="draw_false" className='radio-label'> False </label> <br/>
                         </form>
                         <button onClick={toggleInsertForm}>Close</button>
@@ -506,28 +498,17 @@ export default function Matches() {
             {match_id ? (
                 <MatchScoreBoard key={match.match_id}  match={match} goals={goals_by_id} bookings={bookings}/>
             ) : ( 
-                (sort === 'tournament_name' && (filter === 'All' || filter === 'tournament' || (filter === 'team' && filter_value === 'All'))) ?
-                    matches.map((tournament_matches, i) => (
-                        Array.isArray(tournament_matches) ?
-                        <div key={i}>
-                            <h2 style={style}>{tournament_matches[0]?.tournament_name}</h2>
-                            {tournament_matches.map((match) => (
-                                <Match key={match.match_id}  match={match} goals={goals[match.match_id]}  setMatchDeleted={onMatchDelete} setMatch={setMatch} setUpdate={setUpdateTrigger}/>
-                            ))}
-                        </div>
-                        : <></>
-                    ))
-                : 
+                matches.length === 0 ? (<h2>Loading...</h2>)
+                :
                     Array.isArray(matches) ?
                     matches.map((match) => (
-                        <Match key={match.match_id}  match={match} goals={goals[match.match_id]}  setMatchDeleted={onMatchDelete} setMatch={setMatch}/>
+                        <div>
+                            <h2>{match.tournament_name}</h2>
+                            <Match key={match.match_id}  match={match} goals={goals[match.match_id]}  setMatchDeleted={onMatchDelete} setMatch={setMatch} setUpdate={setUpdateTrigger}/>
+                        </div>
                     ))
                     : <></>
 
-            )}
-            {matches.length > 0 && (
-                <div ref={divRef} style={{marginTop: "40px"}}>
-                </div>
             )}
         </div>
     );
@@ -535,6 +516,11 @@ export default function Matches() {
 
 
 function MatchScoreBoard({match, goals, bookings}) {
+    //images
+    const home_iso2 = getCountryISO2(match.home_team_code);
+    const away_iso2 = getCountryISO2(match.away_team_code);
+    const homeflagUrl = `https://flagsapi.com/${home_iso2}/flat/64.png`;
+    const awayflagUrl = `https://flagsapi.com/${away_iso2}/flat/64.png`;
     const history = useHistory();
 
     function renderEvent(event) {
@@ -565,10 +551,11 @@ function MatchScoreBoard({match, goals, bookings}) {
     }
 
     function handleTeamClick(match) {
-        if(match.home_team_id)
             history.push(`/squads/${match.tournament_id}/${match.home_team_id}`);
-        else 
-            history.push(`/squads/${match.tournament_id}/${match.away_team_id}`);
+    }
+
+    function handleAwayTeamClick(match) {
+        history.push(`/squads/${match.tournament_id}/${match.away_team_id}`);
     }
 
     function handlePlayerClick(goal){
@@ -579,6 +566,7 @@ function MatchScoreBoard({match, goals, bookings}) {
         <div className="match-scoreboard">
           <div className="teams-div">
             <div className="team-name">
+              <img src={homeflagUrl} alt={`${match.home_team_name} Flag`} style={{ width: '64px', height: 'auto' }} />
               <h2 onClick={() => handleTeamClick(match)} style={{ cursor: 'pointer' }}>
                 {match.home_team_name}
               </h2>
@@ -598,7 +586,8 @@ function MatchScoreBoard({match, goals, bookings}) {
             </div>
             <div className="vs">{match.home_team_score} - {match.away_team_score}</div>
             <div className="team-name">
-              <h2 onClick={() => handleTeamClick(match)} style={{cursor:'pointer'}}>
+              <img src={awayflagUrl} alt={`${match.away_team_name} Flag`} style={{ width: '64px', height: 'auto' }} />
+              <h2 onClick={() => handleAwayTeamClick(match)} style={{cursor:'pointer'}}>
                 {match.away_team_name}
               </h2>
               <ul className="goals">

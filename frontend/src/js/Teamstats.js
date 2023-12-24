@@ -49,8 +49,8 @@ export default function Teamstats() {
                     </select>
                 </div>
             </div>
-            <h1>Team Stats</h1>
-            <table className="table table-striped">
+            {teamstat.length !== 0 ? 
+            (<table className="table table-striped">
                 <thead>
                 <tr>
                     <th scope="col">Team ID</th>
@@ -77,7 +77,9 @@ export default function Teamstats() {
                     </tr>
                     )}
                 </tbody>
-            </table>
+            </table>) :
+            (
+                <h3>No data available</h3>)}
         </div>
     )
 }
