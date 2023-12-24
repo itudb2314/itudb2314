@@ -286,8 +286,27 @@ export default function Matches() {
     }, [filter, showInsertForm]);
 
     
-    
+    //home and away teams score and margin validations
+    const [score, setScore] = useState('0-0');
+    const [home_team_score, setHomeTeamScore] = useState(0);
+    const [away_team_score, setAwayTeamScore] = useState(0);
 
+    const HandleScoreChange = (event) => {
+        const score = event.target.value;
+        setScore(score);
+
+        const score_split = score.split('-').map(part => parseInt(part.trim(), 10));
+        if(score_split.length === 2 && score_split.every(number => !isNaN(number))) {
+            setHomeTeamScore(score_split[0]);
+            setAwayTeamScore(score_split[1]);
+        } else {
+            setHomeTeamScore(0);
+            setAwayTeamScore(0);
+        }
+    }
+
+    const home_team_score_margin = home_team_score - away_team_score;
+    const away_team_score_margin = away_team_score - home_team_score;
 
     return (
         <div className="matches">
@@ -377,14 +396,14 @@ export default function Matches() {
                             )
                             }
                             <label> Group Stage </label><br/>
-                            <input type="radio" id="group_stage_true" name="group-stage" value="1" checked={isgroupstage} disabled required/>
+                            <input type="radio" id="group_stage_true" name="group-stage" value="1" checked={isgroupstage} readOnly required/>
                             <label for="group_stage_true" className='radio-label'> True </label> 
-                            <input type="radio" id="group_stage_false" name="group-stage" value="0" checked={!isgroupstage} disabled required/>
+                            <input type="radio" id="group_stage_false" name="group-stage" value="0" checked={!isgroupstage} readOnly required/>
                             <label for="group_stage_false" className='radio-label'> False </label> <br/>
                             <label> Knockout Stage </label><br/>
-                            <input type="radio" id="knockout_true" name="knockout" value="1" checked={isknockoutstage} disabled required/>
+                            <input type="radio" id="knockout_true" name="knockout" value="1" checked={isknockoutstage} readOnly required/>
                             <label for="knockout_true" className='radio-label'> True </label>
-                            <input type="radio" id="knockout_false" name="knockout" value="0" checked={!isknockoutstage} disabled required/>
+                            <input type="radio" id="knockout_false" name="knockout" value="0" checked={!isknockoutstage} readOnly required/>
                             <label for="knockout_false" className='radio-label'> False </label> <br/>
                             <label> Replayed </label><br/>
                             <input type="radio" id="true" name="replayed" value="1" required/>
@@ -428,15 +447,15 @@ export default function Matches() {
                                 </select>
                             )}
                             <label> Score </label>
-                            <input type="text" name="score" pattern="\b\d{1,2}-\d{1,2}\b" placeholder='HomeTeamScore - AwayTeamScore' className='input-text-select' required/>
+                            <input type="text" name="score" pattern="\b\d{1,2}-\d{1,2}\b" placeholder='HomeTeamScore - AwayTeamScore' className='input-text-select'  onChange={HandleScoreChange} required/>
                             <label> Home Team Score </label>
-                            <input type="number" min="0" step="1" className='input-text-select' name="home_team_score" onChange={(event) => setHomeScore(parseInt(event.target.value, 10))} required/>
+                            <input type="number" min="0" step="1" className='input-text-select' name="home_team_score" value={home_team_score} onChange={(event) => setHomeScore(parseInt(event.target.value, 10))} readOnly required/>
                             <label> Away Team Score </label>
-                            <input type="number" min="0" step="1" className='input-text-select' name="away_team_score"  onChange={(event) => setAwayScore(parseInt(event.target.value, 10))} required/>
+                            <input type="number" min="0" step="1" className='input-text-select' name="away_team_score" value={away_team_score} onChange={(event) => setAwayScore(parseInt(event.target.value, 10))} readOnly required/>
                             <label> Home Team Score Margin </label>
-                            <input type="number" name="home_team_score_margin" className='input-text-select' placeholder='HomeTeamScoreMargin = HomeTeamScore - AwayTeamScore' required/>
+                            <input type="number" name="home_team_score_margin" value={home_team_score_margin} className='input-text-select' placeholder='HomeTeamScoreMargin = HomeTeamScore - AwayTeamScore' readOnly required/>
                             <label> Away Team Score Margin </label>
-                            <input type="number" name="away_team_score_margin" className='input-text-select' placeholder='AwayTeamScoreMargin = AwayTeamScore - HomeTeamScore' required/>
+                            <input type="number" name="away_team_score_margin" className='input-text-select' value={away_team_score_margin} placeholder='AwayTeamScoreMargin = AwayTeamScore - HomeTeamScore' readOnly required/>
                             <label> Extra Time </label><br/>
                             <input type="radio" id="true" name="extra-time" value="1" required/>
                             <label for="true" className='radio-label'> True </label>
@@ -456,19 +475,19 @@ export default function Matches() {
                             <label> Result </label>
                             <input type="text" name="result" className='input-text-select' placeholder='HomeTeamWin or AwayTeamWin or Draw' required/>
                             <label> Home Team Win </label><br/>
-                            <input type="radio" id="home_team_win_true" name="home_team_win" value="1" checked={match_outcome.home_win} disabled/>
+                            <input type="radio" id="home_team_win_true" name="home_team_win" value="1" checked={match_outcome.home_win} readOnly/>
                             <label for="home_team_win_true" className='radio-label'> True </label>
-                            <input type="radio" id="home_team_win_false" name="home_team_win" value="0" checked={!match_outcome.home_win} required disabled/>
+                            <input type="radio" id="home_team_win_false" name="home_team_win" value="0" checked={!match_outcome.home_win} required readOnly/>
                             <label for="home_team_win_false" className='radio-label'> False </label> <br/>
                             <label> Away Team Win </label><br/>
-                            <input type="radio" id="away_team_win_true" name="away_team_win" value="1" checked={match_outcome.away_win} disabled/>
+                            <input type="radio" id="away_team_win_true" name="away_team_win" value="1" checked={match_outcome.away_win} readOnly/>
                             <label for="away_team_win_true" className='radio-label'> True </label>
-                            <input type="radio" id="away_team_win_false" name="away_team_win" value="0" checked={!match_outcome.away_win} required disabled/>
+                            <input type="radio" id="away_team_win_false" name="away_team_win" value="0" checked={!match_outcome.away_win} required readOnly/>
                             <label for="away_team_win_false" className='radio-label'> False </label> <br/>
                             <label> Draw </label><br/>
-                            <input type="radio" id="draw_true" name="draw" value="1" checked={match_outcome.draw} required disabled/>
+                            <input type="radio" id="draw_true" name="draw" value="1" checked={match_outcome.draw} required readOnly/>
                             <label for="draw_true" className='radio-label'> True </label>
-                            <input type="radio" id="draw_false" name="draw" value="0"  checked={!match_outcome.draw} disabled/>
+                            <input type="radio" id="draw_false" name="draw" value="0"  checked={!match_outcome.draw} readOnly/>
                             <label for="draw_false" className='radio-label'> False </label> <br/>
                         </form>
                         <button onClick={toggleInsertForm}>Close</button>
@@ -485,7 +504,7 @@ export default function Matches() {
                     matches.map((match) => (
                         <div>
                             <h2>{match.tournament_name}</h2>
-                            <Match key={match.match_id}  match={match} goals={goals[match.match_id]}  setMatchDeleted={onMatchDelete} setMatch={setMatch}/>
+                            <Match key={match.match_id}  match={match} goals={goals[match.match_id]}  setMatchDeleted={onMatchDelete} setMatch={setMatch} setUpdate={setUpdateTrigger}/>
                         </div>
                     ))
                     : <></>
