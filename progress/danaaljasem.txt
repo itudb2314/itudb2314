@@ -26,3 +26,9 @@ added api to get goals by match id and the frontend to display it with the detai
 
 Week 10 commit:
 added apis and frontend for insert and delete operations
+
+Week 11 commit:
+added validations to forms and made several modifications
+
+Week 12 commit:
+added update operation and made several modifications
