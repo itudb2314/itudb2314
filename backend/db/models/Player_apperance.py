@@ -70,7 +70,6 @@ class Player_apperanceDAO():
                 player_apperance.substitute
             ))
             connection.commit()
-            print("Player_apperance created successfully.")
         except mysql.connector.Error as err:
             print(f"Error: {err}")
             connection.rollback()
@@ -191,7 +190,6 @@ class Player_apperanceDAO():
                 player_apperance.player_id
             ))
             connection.commit()
-            print("Player_apperance updated successfully.")
         except mysql.connector.Error as err:
             print(f"Error: {err}")
             connection.rollback()
@@ -209,7 +207,6 @@ class Player_apperanceDAO():
             cursor = connection.cursor()
             cursor.execute(query, (tournament_id, match_id, team_id, player_id))
             connection.commit()
-            print("Player_apperance deleted successfully.")
         except mysql.connector.Error as err:
             print(f"Error: {err}")
             connection.rollback()

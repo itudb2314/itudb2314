@@ -3,6 +3,7 @@ import '../css/Buttons.css';
 import '../css/Filters.css';
 import React, {useEffect, useState} from "react";
 import {useHistory} from "react-router-dom";
+import { FaMedal } from "react-icons/fa";
 
 export default function Tournaments() {
     const [tournaments, setTournaments] = useState([])
@@ -17,6 +18,7 @@ export default function Tournaments() {
         fetch(`http://localhost:5000/tournaments/${sort}/${order}/${gender}`)
             .then(response => response.json())
             .then(data => {
+                console.log(data)
                 setTournaments(data)
                 console.log(data)
             })
@@ -350,7 +352,10 @@ function Tournament({t, deleteHandle}) {
                     <>
                         <h3 onClick={handleClick} style={{cursor: 'pointer'}}>{tournament.tournament_name}</h3>
                         <p style= {{padding: 0, margin: 0}}>Host: {tournament.host_country}</p>
-                        <p>Winner: {tournament.winner}</p>
+                        <p>{tournament.winner} <FaMedal color='orange'/></p> 
+                        <p>{tournament.second}<FaMedal color='silver'/></p>
+                        <p>{tournament.third}<FaMedal color='brown'/></p>
+                        <p>{tournament.fourth}</p>
                         <div className="buttons">
                             <button className="edit-button" onClick={editTournament}>Edit</button>
                             <button className="delete-button-danas" onClick={deleteTournament}>Delete</button>

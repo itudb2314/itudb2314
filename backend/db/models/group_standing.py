@@ -316,7 +316,6 @@ class GroupStandingDAO():
                 
                 ))
             conn.commit()
-            print("Group_standing updated")
         except mysql.connector.Error as err:
             print(f"Error: {err}")
             conn.rollback()
@@ -340,7 +339,6 @@ class GroupStandingDAO():
                 position
                 ))
             conn.commit()
-            print("Group_standing deleted")
         except mysql.connector.Error as err:
             conn.rollback()
         finally:

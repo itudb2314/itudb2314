@@ -4,6 +4,7 @@ import '../css/Players.css';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { FaSort, FaFilter } from 'react-icons/fa';
+import { BiSolidUpArrow } from "react-icons/bi";
 
 export default function Players() {
     const history = useHistory();

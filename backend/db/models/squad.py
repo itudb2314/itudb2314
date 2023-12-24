@@ -43,7 +43,6 @@ class SquadDAO():
                 squad.position_code
             ))
             connection.commit()
-            print("Squad created successfully.")
         except mysql.connector.Error as err:
             print(f"Error: {err}")
             connection.rollback()
@@ -124,7 +123,6 @@ class SquadDAO():
                 squad.player_id
             ))
             connection.commit()
-            print("Squad updated successfully.")
         except mysql.connector.Error as err:
             print(f"Error: {err}")
             connection.rollback()
@@ -142,7 +140,6 @@ class SquadDAO():
             cursor = connection.cursor()
             cursor.execute(query, (tournament_id, team_id))
             connection.commit()
-            print("Squad deleted successfully.")
         except mysql.connector.Error as err:
             print(f"Error: {err}")
             connection.rollback()
@@ -160,7 +157,6 @@ class SquadDAO():
             cursor = connection.cursor()
             cursor.execute(query, (tournament_id, team_id, player_id))
             connection.commit()
-            print("Squad member deleted successfully.")
         except mysql.connector.Error as err:
             print(f"Error: {err}")
             connection.rollback()

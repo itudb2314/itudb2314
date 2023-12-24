@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import '../css/appearances.css';
 //import SearchBar from "./SearchBar";
+import { BiSolidUpArrow } from "react-icons/bi";
+import { BiSolidDownArrow } from "react-icons/bi";
 
 export default function Appearances() {
     const [appearances, setAppearances] = useState([]);
@@ -13,7 +15,7 @@ export default function Appearances() {
     const [offset, setOffset] = useState(0);
     const [ordering, setOrdering] = useState(
         {
-            orderBy: "tournament",
+            orderBy: "tournament_name",
             order: "asc"
         }
     )
@@ -291,11 +293,21 @@ export default function Appearances() {
             <table>
                 <thead>
                     <tr>
-                        <th style={{ textAlign: 'center', cursor: 'pointer' }} onClick={() => { handleHeaderClick('tournament_name'); }}>Tournament Name</th>
-                        <th style={{ textAlign: 'center', cursor: 'pointer' }} onClick={() => { handleHeaderClick('match_name'); }}>Match</th>
-                        <th style={{ textAlign: 'center', cursor: 'pointer' }} onClick={() => { handleHeaderClick('team_name'); }}>Team Name</th>
-                        <th style={{ textAlign: 'center', cursor: 'pointer' }} onClick={() => { handleHeaderClick('given_name'); }}>Given Name</th>
-                        <th style={{ textAlign: 'center', cursor: 'pointer' }} onClick={() => { handleHeaderClick('family_name'); }}>Family Name</th>
+                        <th style={{ textAlign: 'center', cursor: 'pointer' }} onClick={() => { handleHeaderClick('tournament_name'); }}>Tournament Name
+                            {ordering.orderBy === 'tournament_name' && (ordering.order === 'asc' ? <BiSolidUpArrow color="royalblue"/> : <BiSolidDownArrow color="royalblue"/>)}
+                        </th>
+                        <th style={{ textAlign: 'center', cursor: 'pointer' }} onClick={() => { handleHeaderClick('match_name'); }}>Match
+                            {ordering.orderBy === 'match_name' && (ordering.order === 'asc' ? <BiSolidUpArrow color="royalblue"/> : <BiSolidDownArrow color="royalblue"/>)}
+                        </th>
+                        <th style={{ textAlign: 'center', cursor: 'pointer' }} onClick={() => { handleHeaderClick('team_name'); }}>Team Name
+                            {ordering.orderBy === 'team_name' && (ordering.order === 'asc' ? <BiSolidUpArrow color="royalblue"/> : <BiSolidDownArrow color="royalblue"/>)}
+                        </th>
+                        <th style={{ textAlign: 'center', cursor: 'pointer' }} onClick={() => { handleHeaderClick('given_name'); }}>Given Name
+                            {ordering.orderBy === 'given_name' && (ordering.order === 'asc' ? <BiSolidUpArrow color="royalblue"/> : <BiSolidDownArrow color="royalblue"/>)}
+                        </th>
+                        <th style={{ textAlign: 'center', cursor: 'pointer' }} onClick={() => { handleHeaderClick('family_name'); }}>Family Name
+                            {ordering.orderBy === 'family_name' && (ordering.order === 'asc' ? <BiSolidUpArrow color="royalblue"/> : <BiSolidDownArrow color="royalblue"/>)}
+                        </th>
                         <th style={{ textAlign: 'center' }}>Home Team</th>
                         <th style={{ textAlign: 'center' }}>Away Team</th>
                         <th style={{ textAlign: 'center' }}>Shirt Number</th>

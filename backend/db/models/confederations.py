@@ -22,7 +22,7 @@ class ConfederationDAO:
             result = cursor.fetchall()
             return [Confederation(*row) for row in result]
         except mysql.connector.Error as err:
-            print(err)
+            print(f"Mysql Error: {err}")
         finally:
             cursor.close()
             conn.close()

@@ -4,6 +4,7 @@ import siu from '../assets/ronaldo.png';
 import siu2 from '../assets/ronaldo2.png';
 import { useParams } from 'react-router-dom';
 import { useHistory } from "react-router-dom";
+import { Link } from 'react-router-dom/cjs/react-router-dom.min';
 
 const SingleSquadPage = () => {
     const history = useHistory();
@@ -142,10 +143,18 @@ const SingleSquadPage = () => {
         history.push(`/players/${squad.player_id}`);
     }
 
+    function handleTournamentClick() {
+        history.push(`/tournaments/${squad.tournament_id}`);
+    }
+
+    function handleTeamClick() {
+        history.push(`/teams/${squad.team_id}`);
+    }
+
     return (
         <div className="squad-group">
             <h1 className="Title">
-                {squad.tournament_name} / {squad.team_name} Squad
+                <span style={{cursor:"pointer"}} onClick={handleTournamentClick}>{squad.tournament_name}</span> /<span style={{cursor:"pointer"}} onClick={handleTeamClick}> {squad.team_name}</span>
             </h1>
             {squad.squad &&
                 squad.squad.map((squadMember, playerIndex) => (
