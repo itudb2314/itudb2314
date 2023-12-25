@@ -95,6 +95,7 @@ export default function Match({ match, goals, setMatchDeleted, setMatch, setUpda
         return str ? str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : '';
     }
 
+
     return (
         <div style={match_style} className='center_div'>
             <h2 className="match_header" onClick={()=>{history.push(`/matches/${match.match_id}`)}} style={{ cursor: 'pointer' }}>

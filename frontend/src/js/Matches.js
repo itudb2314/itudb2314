@@ -29,6 +29,8 @@ export default function Matches() {
     const [alltournaments, setAllTournaments] = useState([]);
     const [filter_value, setFilterValue] = useState('WC-1930');
     const [updateTrigger, setUpdateTrigger] = useState(false);
+    const [goalAdded, setGoalAdded] = useState(false);
+    const [goalDeleted, setGoalDeleted] = useState(false);
 
 
     useEffect(() => {
@@ -75,7 +77,7 @@ export default function Matches() {
                 console.error('Error fetching data:', error);
             }); 
         }
-    }, [match_id, matchAdded, matchDeleted, sort, order, filter_value, updateTrigger]);
+    }, [match_id, matchAdded, matchDeleted, sort, order, filter_value, updateTrigger, goalAdded]);
     const style = {
         margin: '2rem 0 2rem 0',
         color: 'reds',
@@ -308,6 +310,71 @@ export default function Matches() {
     const home_team_score_margin = home_team_score - away_team_score;
     const away_team_score_margin = away_team_score - home_team_score;
 
+    //insert goal
+    const [showInsertGoalForm, setShowInsertGoalForm] = useState(false);
+    const toggleInsertGoalForm = () => setShowInsertGoalForm(!showInsertGoalForm);
+    const handleInsertGoal = (event) => {
+        event.preventDefault();
+        const formdata = new FormData(event.target);
+        const goaldata = {
+            goal_id: formdata.get('goal_id'),
+            tournament_id: match.tournament_id,
+            match_id: match.match_id,
+            team_id: formdata.get('team_id'),
+            home_team: match.home_team_id === formdata.get('team_id') ? '1' : '0',
+            away_team: match.away_team_id === formdata.get('team_id') ? '1' : '0',
+            player_id: formdata.get('player_id'),
+            shirt_number: formdata.get('shirt_number'),
+            player_team_id: formdata.get('own_goal') ? match.away_team_id : match.home_team_id,
+            minute_label: formdata.get('minute_label'),
+            minute_regulation: formdata.get('minute_regulation'),
+            minute_stoppage: formdata.get('minute_stoppage'),
+            match_period: formdata.get('match_period'),
+            own_goal: formdata.get('own_goal'),
+            penalty: formdata.get('penalty'),
+        };
+        console.log(goaldata);
+        fetch('http://localhost:5000/goals', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({goaldata}),
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            toggleInsertGoalForm();
+            setGoalAdded(true);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+        setGoalAdded(false);
+    }
+
+    //fetch players
+    const [players, setPlayers] = useState([]);
+    const [playersLoaded, setPlayersLoaded] = useState(false);
+    const [team_id, setTeamID] = useState(match.home_team_id);
+
+    const handleTeamID = (event) => {
+        setTeamID(event.target.value)
+    }
+
+    useEffect(() => {
+        if(showInsertGoalForm) {
+            fetch(`http://localhost:5000/get_squad/${match.tournament_id}/${match.match_id}/${team_id}`)
+            .then((response) => response.json())
+            .then((data) => {
+                setPlayers(data);
+                setPlayersLoaded(true);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+    }, [team_id]);
+
     return (
         <div className="matches">
             {/*Filters and sorting */}
@@ -356,6 +423,62 @@ export default function Matches() {
                     </div>       
                 </div>
             }
+            {/*button to toggle insert goal form*/}
+            {match_id ?  (<button onClick={toggleInsertGoalForm} className='add-button'>+ Insert Goal</button>) : (<></>)}
+            {/*conditional rendering for insertion form*/}
+            {showInsertGoalForm && (
+                <div className='form'>
+                    <div className='form-content'>
+                        <h2 style={{fontSize: '30px'}}>Insert Goal</h2>
+                        <form id = "insert-goal-form" onSubmit={handleInsertGoal}>
+                            <label for="goal_id"> Goal ID </label>
+                            <input id="goal_id" type="text" className='input-text-select' name="goal_id" pattern="^G-\d{4}$" placeholder='G-GOALNUMBER' required/><br/>
+                            <label for="team_id"> Team ID </label>
+                            <select id="team_id" className='input-text-select' name="team_id" onChange={handleTeamID} required>
+                                <option value='NULL' disabled>select</option>
+                                <option value={match.home_team_id}>{match.home_team_name}</option>
+                                <option value={match.away_team_id}>{match.away_team_name}</option>
+                            </select><br/>
+                            <label for="player_id"> Player ID </label>
+                            {playersLoaded && (
+                                <select id="player_id" className='input-text-select' name="player_id" required>
+                                    {players.map((player) => (
+                                        <option value={player.player_id}>{player.given_name} {player.family_name}</option>
+                                    ))}
+                                </select>
+                            )}<br/>
+                            <label for="shirt_number"> Shirt Number </label>
+                            <input id="shirt_number" type="number" min="0" step="1" max="23" className='input-text-select' name="shirt_number" required/><br/>
+                            <label for="minute_label"> Minute Label </label>
+                            <input id="minute_label" type="text" className='input-text-select' pattern="\d{1,3}'" name="minute_label" placeholder='MINUTE' required/><br/>
+                            <label for="minute_regulation"> Minute Regulation </label>
+                            <input id="minute_regulation" type="number" min="0" step="1" className='input-text-select' name="minute_regulation" required/><br/>
+                            <label for="minute_stoppage"> Minute Stoppage </label>
+                            <input id="minute_stoppage" type="number" min="0" step="1" className='input-text-select' name="minute_stoppage" required/><br/>
+                            <label> Match Period </label><br/>
+                            <select id="match_period" className='input-text-select' name="match_period" required>
+                                <option value='NULL' disabled>select</option>
+                                <option value="first half">First Half</option>
+                                <option value="second half">Second Half</option>
+                                <option value="first extra time">First Extra Time</option>
+                                <option value="second extra time">Second Extra Time</option>
+                            </select><br/>
+                            <label> Own Goal </label><br/>
+                            <input type="radio" id="true" name="own_goal" value="1" required/>
+                            <label for="true" className='radio-label'> True </label>
+                            <input type="radio" id="false" name="own_goal" value="0" required/>
+                            <label for="false" className='radio-label'> False </label> <br/>
+                            <label> Penalty </label><br/>
+                            <input type="radio" id="true" name="penalty" value="1" required/>
+                            <label for="true" className='radio-label'> True </label>
+                            <input type="radio" id="false" name="penalty" value="0" required/>
+                            <label for="false" className='radio-label'> False </label> <br/>
+                        </form>
+                        <button onClick={toggleInsertGoalForm} className='cancel-button'>Close</button>
+                        <button type='submit' form='insert-goal-form' value='Submit' className='cancel-button' style={{paddingRight: '10px'}}>Submit</button>
+                    </div>
+                </div>
+            )}
             {/*button to toggle insert form*/}
             {match_id ?  (<></>): (<button onClick={toggleInsertForm} className='add-button'>+ Insert Match</button>)}
             {/*conditional rendering for insertion form*/}
@@ -496,7 +619,7 @@ export default function Matches() {
                 </div>
             )}
             {match_id ? (
-                <MatchScoreBoard key={match.match_id}  match={match} goals={goals_by_id} bookings={bookings}/>
+                <MatchScoreBoard key={match.match_id}  match={match} goals={goals_by_id} bookings={bookings} setGoalDeleted={setGoalDeleted}/>
             ) : ( 
                 matches.length === 0 ? (<h2>Loading...</h2>)
                 :
@@ -515,7 +638,7 @@ export default function Matches() {
 }
 
 
-function MatchScoreBoard({match, goals, bookings}) {
+function MatchScoreBoard({match, goals, bookings, setGoalDeleted}) {
     //images
     const home_iso2 = getCountryISO2(match.home_team_code);
     const away_iso2 = getCountryISO2(match.away_team_code);
@@ -562,6 +685,21 @@ function MatchScoreBoard({match, goals, bookings}) {
         history.push(`/players/${goal.player_id}`); 
     }
 
+    //delete goal
+    function handleDeleteGoal(goal_id) {
+        fetch(`http://localhost:5000/goals/${goal_id}`, {
+            method: 'DELETE',
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            setGoalDeleted(true);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+        setGoalDeleted(false);
+    }
+    
     return (
         <div className="match-scoreboard">
           <div className="teams-div">
@@ -577,6 +715,7 @@ function MatchScoreBoard({match, goals, bookings}) {
                   .sort((a, b) => parseInt(a.minute_label) - parseInt(b.minute_label))
                   .map((event, index) => (
                     <li key={index}>
+                      <button onClick={() => handleDeleteGoal(event.goal_id)}>x</button>
                       <p onClick={() => handlePlayerClick(event)} style={{cursor:'pointer'}}>
                             {renderEvent(event)} {event.minute_label} {event.given_name} {event.family_name}{event.penalty ? (<span>(P)</span>) : (<></>)}
                       </p>                   
@@ -597,6 +736,7 @@ function MatchScoreBoard({match, goals, bookings}) {
                   .sort((a, b) => parseInt(a.minute_label) - parseInt(b.minute_label))
                   .map((event, index) => (
                     <li key={index}>
+                      <button onClick={() => handleDeleteGoal(event.goal_id)}>x</button>
                       <p onClick={() => handlePlayerClick(event)} style={{cursor:'pointer'}}>
                             {renderEvent(event)} {event.minute_label} {event.given_name} {event.family_name}{event.penalty ? (<span>(P)</span>) : (<></>)}
                       </p>

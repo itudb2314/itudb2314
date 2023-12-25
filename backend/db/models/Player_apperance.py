@@ -16,6 +16,10 @@ class Player_apperance():
     starter: bool
     substitute: bool
 
+    #join data
+    given_name: str = None
+    family_name: str = None
+
 @dataclass
 class Joined_Player_apperance():
     tournament_id: str
@@ -82,11 +86,15 @@ class Player_apperanceDAO():
         try:
             connection = db.get_connection()
             query = """
-                SELECT * FROM player_appearances WHERE tournament_id = %s AND match_id = %s AND team_id = %s
+                SELECT pa.*, p.given_name, p.family_name
+                FROM player_appearances pa 
+                JOIN players p ON pa.player_id = p.player_id
+                WHERE tournament_id = %s AND match_id = %s AND team_id = %s
             """
             cursor = connection.cursor()
             cursor.execute(query, (tournament_id, match_id, team_id))
             results = cursor.fetchall()
+            print(results[0])
             if results is None:
                 return None
             return [Player_apperance(*result) for result in results]

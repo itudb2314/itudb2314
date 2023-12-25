@@ -220,11 +220,24 @@ def create_server(db):
         MatchDAO.delete_match(db, match_id)
         return flask.jsonify({'message': 'Match deleted successfully'})
     
+    @app.route('/goals/<goal_id>', methods=['DELETE'])
+    def delete_goal(goal_id : str):
+        GoalDAO.delete_goal(db, goal_id)
+        return flask.jsonify({'message': 'Goal deleted successfully'})
+    
     @app.route('/matches', methods=['POST'])
     def create_match():
         match = flask.request.get_json()['matchdata']
         match = make_dataclass('Match', match.keys())(**match)
         MatchDAO.create_match(db, match)
+        return flask.jsonify({})
+    
+    @app.route('/goals', methods=['POST'])
+    def create_goal():
+        goal = flask.request.get_json()['goaldata']
+        goal = make_dataclass('Goal', goal.keys())(**goal)
+        print(goal)
+        GoalDAO.create_goal(db, goal)
         return flask.jsonify({})
     
 
@@ -443,7 +456,13 @@ def create_server(db):
     @app.route('/get_player_penalties/<player_id>', methods=['GET'])
     def get_player_penalties(player_id):
         penalties = GoalDAO.get_penalties(db, player_id)
-        return flask.jsonify(penalties)
+        return flask.jsonify(penalties)\
+        
+    @app.route('/get_squad/<tournament_id>/<match_id>/<team_id>', methods=['GET'])
+    def get_players(tournament_id, match_id, team_id):
+        players = Player_apperanceDAO.get_squad_apperance(db, tournament_id, match_id, team_id)
+        print(players)
+        return flask.jsonify(players)
     
     return app
 

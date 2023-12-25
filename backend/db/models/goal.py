@@ -32,6 +32,7 @@ class GoalDAO():
     def create_goal(db: db, goal: Goal) -> None:
         try:
             connection = db.get_connection()
+            print(goal)
             query = """
                 INSERT INTO goals (
                     goal_id,
@@ -49,7 +50,7 @@ class GoalDAO():
                     match_period,
                     own_goal,
                     penalty
-                ) VALUES (%s, %s, %s, %s, %s, %s %s, %s, %s, %s, %s, %s, %s, %s, %s) 
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) 
             """
             cursor = connection.cursor()
             cursor.execute(query, (
@@ -276,14 +277,14 @@ class GoalDAO():
             connection.close()
 
     @staticmethod
-    def delete_match(db: db, match_id: str) -> None:
+    def delete_goal(db: db, goal_id: str) -> None:
         try:
             connection = db.get_connection()
             query = """
-                    DELETE FROM goals WHERE match_id = %s
+                    DELETE FROM goals WHERE goal_id = %s
                     """
             cursor = connection.cursor()
-            cursor.execute(query, (match_id,))
+            cursor.execute(query, (goal_id,))
             connection.commit()
         except mysql.connector.Error as error:
             connection.rollback()
