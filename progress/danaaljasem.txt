@@ -32,3 +32,4 @@ added validations to forms and made several modifications
 
 Week 12 commit:
 added update operation and made several modifications
+added insert and delete operations to goals
