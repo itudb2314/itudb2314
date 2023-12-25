@@ -233,9 +233,9 @@ export default function Matches() {
     const [match_outcome, setMatchOutcome] = useState({home_win: false, away_win: false, draw: false});
 
     useEffect(()=> {
-        if(home_score > away_score) {
+        if(home_team_score > away_team_score) {
             setMatchOutcome({home_win: true, away_win: false, draw: false})
-        }else if(away_score > home_score) {
+        }else if(away_team_score > home_team_score) {
             setMatchOutcome({home_win: false, away_win: true, draw: false})
         }else {
             setMatchOutcome({home_win: false, away_win: false, draw: true})
